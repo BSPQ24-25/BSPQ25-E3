@@ -1,1 +1,7 @@
+com\student_loan\model\Item.class
 com\student_loan\StudentLoanManagement\StudentLoanManagementApplication.class
+com\student_loan\model\Item$Condition.class
+com\student_loan\model\Loan$Status.class
+com\student_loan\model\Item$Status.class
+com\student_loan\model\User.class
+com\student_loan\model\Loan.class
