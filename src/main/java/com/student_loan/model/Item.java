@@ -41,7 +41,25 @@ public class Item {
         NEW, LIKE_NEW, GOOD, USED, VERY_USED, DAMAGED
     }
 
-    // Getters y Setters
+    // Empty constructor
+    public Item() {
+    }
+
+    // Constructor
+    public Item(Long id, String name, String description, String category, Status status, User owner, Date purchaseDate, Double purchasePrice, Condition condition, String image) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.status = status;
+        this.owner = owner;
+        this.purchaseDate = purchaseDate;
+        this.purchasePrice = purchasePrice;
+        this.condition = condition;
+        this.image = image;
+    }
+
+    // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -71,4 +89,21 @@ public class Item {
 
     public String getImage() { return image; }
     public void setImage(String image) { this.image = image; }
+
+    // toString
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", category='" + category + '\'' +
+                ", status=" + status +
+                ", owner=" + owner +
+                ", purchaseDate=" + purchaseDate +
+                ", purchasePrice=" + purchasePrice +
+                ", condition=" + condition +
+                ", image='" + image + '\'' +
+                '}';
+    }
 }

@@ -18,11 +18,9 @@ public class User {
     
     private String address;
     
-    @Column(name = "university_degree")
-    private String universityDegree;
-    
+    @Enumerated(EnumType.STRING)
     @Column(name = "degree_type")
-    private String degreeType;
+    private DegreeType degreeType;
     
     @Column(name = "degree_year")
     private Integer degreeYear;
@@ -34,7 +32,35 @@ public class User {
     
     private Boolean admin;
 
-    // Getters y Setters
+    // Enum para DegreeType
+    public enum DegreeType {
+        UNIVERSITY_DEGREE,
+        MASTER,
+        DOCTORATE
+    }
+
+    // Empty constructor
+    public User() {
+    }
+
+    // Constructor con parámetros
+    public User(Long id, String name, String email, String password, String telephoneNumber, 
+                String address, DegreeType degreeType, Integer degreeYear, Integer penalties, 
+                Double averageRating, Boolean admin) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.telephoneNumber = telephoneNumber;
+        this.address = address;
+        this.degreeType = degreeType;
+        this.degreeYear = degreeYear;
+        this.penalties = penalties;
+        this.averageRating = averageRating;
+        this.admin = admin;
+    }
+
+    // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -53,11 +79,8 @@ public class User {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
-    public String getUniversityDegree() { return universityDegree; }
-    public void setUniversityDegree(String universityDegree) { this.universityDegree = universityDegree; }
-
-    public String getDegreeType() { return degreeType; }
-    public void setDegreeType(String degreeType) { this.degreeType = degreeType; }
+    public DegreeType getDegreeType() { return degreeType; }
+    public void setDegreeType(DegreeType degreeType) { this.degreeType = degreeType; }
 
     public Integer getDegreeYear() { return degreeYear; }
     public void setDegreeYear(Integer degreeYear) { this.degreeYear = degreeYear; }
@@ -70,4 +93,22 @@ public class User {
 
     public Boolean getAdmin() { return admin; }
     public void setAdmin(Boolean admin) { this.admin = admin; }
+
+    // toString
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", telephoneNumber='" + telephoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", degreeType=" + degreeType +
+                ", degreeYear=" + degreeYear +
+                ", penalties=" + penalties +
+                ", averageRating=" + averageRating +
+                ", admin=" + admin +
+                '}';
+    }
 }

@@ -46,7 +46,25 @@ public class Loan {
         IN_USE, RETURNED, DELAYED, LOST
     }
 
-    // Getters y Setters
+    // Empty constructor
+    public Loan() {
+    }
+
+    // Constructor 
+    public Loan(Long id, User lender, User borrower, Item item, Date loanDate, Date estimatedReturnDate, Date realReturnDate, Status loanStatus, Double rating, String observations) {
+        this.id = id;
+        this.lender = lender;
+        this.borrower = borrower;
+        this.item = item;
+        this.loanDate = loanDate;
+        this.estimatedReturnDate = estimatedReturnDate;
+        this.realReturnDate = realReturnDate;
+        this.loanStatus = loanStatus;
+        this.rating = rating;
+        this.observations = observations;
+    }
+
+    // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -76,4 +94,21 @@ public class Loan {
 
     public String getObservations() { return observations; }
     public void setObservations(String observations) { this.observations = observations; }
+
+    // toString
+    @Override
+    public String toString() {
+        return "Loan{" +
+                "id=" + id +
+                ", lender=" + lender +
+                ", borrower=" + borrower +
+                ", item=" + item +
+                ", loanDate=" + loanDate +
+                ", estimatedReturnDate=" + estimatedReturnDate +
+                ", realReturnDate=" + realReturnDate +
+                ", loanStatus=" + loanStatus +
+                ", rating=" + rating +
+                ", observations='" + observations + '\'' +
+                '}';
+    }
 }
