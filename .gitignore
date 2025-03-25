@@ -33,9 +33,8 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 
-# Maven Wrapper
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+# Maven folder
+.mvn/
 
 # Eclipse IDE
 .project
