@@ -1,0 +1,84 @@
+/* Navbar styles */
+.navbar {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1rem 0;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.navbar-link {
+  color: #666;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid transparent;
+}
+
+.navbar-link:hover {
+  color: #333;
+  border-bottom-color: #333;
+}
+
+/* Home and About page styles */
+.home-container,
+.about-container {
+  min-height: calc(100vh - 64px);
+  background-color: #f5f5f5;
+  padding: 2rem 1rem;
+}
+
+.home-content,
+.about-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-text,
+.about-text {
+  text-align: center;
+}
+
+.home-title,
+.about-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.home-description,
+.about-description {
+  font-size: 1.1rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+} 
