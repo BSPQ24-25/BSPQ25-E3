@@ -1,4 +1,4 @@
-package com.student_loan.StudentLoanManagement;
+package com.student_loan;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
