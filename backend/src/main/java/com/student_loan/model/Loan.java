@@ -10,17 +10,14 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "lender_id", nullable = false)
-    private User lender;
+    @Column(name = "lender_id", nullable = false)
+    private Long lender;
 
-    @ManyToOne
-    @JoinColumn(name = "borrower_id", nullable = false)
-    private User borrower;
+    @Column(name = "borrower_id", nullable = false)
+    private Long borrower;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
+    @Column(name = "item_id", nullable = false)
+    private Long item;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "loan_date", nullable = false)
@@ -38,6 +35,7 @@ public class Loan {
     @Column(name = "loan_status", nullable = false)
     private Status loanStatus;
 
+    @Column(name = "rating")
     private Double rating;
 
     private String observations;
@@ -51,7 +49,7 @@ public class Loan {
     }
 
     // Constructor 
-    public Loan(Long id, User lender, User borrower, Item item, Date loanDate, Date estimatedReturnDate, Date realReturnDate, Status loanStatus, Double rating, String observations) {
+    public Loan(Long id, Long lender, Long borrower, Long item, Date loanDate, Date estimatedReturnDate, Date realReturnDate, Status loanStatus, Double rating, String observations) {
         this.id = id;
         this.lender = lender;
         this.borrower = borrower;
@@ -68,14 +66,14 @@ public class Loan {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public User getLender() { return lender; }
-    public void setLender(User lender) { this.lender = lender; }
+    public Long getLender() { return lender; }
+    public void setLender(Long lender) { this.lender = lender; }
 
-    public User getBorrower() { return borrower; }
-    public void setBorrower(User borrower) { this.borrower = borrower; }
+    public Long getBorrower() { return borrower; }
+    public void setBorrower(Long borrower) { this.borrower = borrower; }
 
-    public Item getItem() { return item; }
-    public void setItem(Item item) { this.item = item; }
+    public Long getItem() { return item; }
+    public void setItem(Long item) { this.item = item; }
 
     public Date getLoanDate() { return loanDate; }
     public void setLoanDate(Date loanDate) { this.loanDate = loanDate; }

@@ -18,7 +18,7 @@ public class Item {
     @Column(name = "status")
     private ItemStatus status;
 
-    @Column(name = "owner_id")
+    @Column(name = "owner_id", nullable = false)
     private Long owner;
 
     @Temporal(TemporalType.DATE)
