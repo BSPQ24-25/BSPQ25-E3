@@ -15,11 +15,11 @@ public class Item {
     private String category;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    @Column(name = "status")
+    private ItemStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;
+    @Column(name = "owner_id")
+    private Long owner;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "purchase_date")
@@ -29,15 +29,16 @@ public class Item {
     private Double purchasePrice;
 
     @Enumerated(EnumType.STRING)
-    private Condition condition;
+    @Column(name = "`condition`")
+    private ItemCondition condition;
 
     private String image;
 
-    public enum Status {
+    public enum ItemStatus {
         AVAILABLE, BORROWED, UNAVAILABLE
     }
 
-    public enum Condition {
+    public enum ItemCondition {
         NEW, LIKE_NEW, GOOD, USED, VERY_USED, DAMAGED
     }
 
@@ -46,7 +47,7 @@ public class Item {
     }
 
     // Constructor
-    public Item(Long id, String name, String description, String category, Status status, User owner, Date purchaseDate, Double purchasePrice, Condition condition, String image) {
+    public Item(Long id, String name, String description, String category, ItemStatus status, Long owner, Date purchaseDate, Double purchasePrice, ItemCondition condition, String image) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -72,11 +73,11 @@ public class Item {
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
 
-    public Status getStatus() { return status; }
-    public void setStatus(Status status) { this.status = status; }
+    public ItemStatus getStatus() { return status; }
+    public void setStatus(ItemStatus status) { this.status = status; }
 
-    public User getOwner() { return owner; }
-    public void setOwner(User owner) { this.owner = owner; }
+    public Long getOwner() { return owner; }
+    public void setOwner(Long owner) { this.owner = owner; }
 
     public Date getPurchaseDate() { return purchaseDate; }
     public void setPurchaseDate(Date purchaseDate) { this.purchaseDate = purchaseDate; }
@@ -84,8 +85,8 @@ public class Item {
     public Double getPurchasePrice() { return purchasePrice; }
     public void setPurchasePrice(Double purchasePrice) { this.purchasePrice = purchasePrice; }
 
-    public Condition getCondition() { return condition; }
-    public void setCondition(Condition condition) { this.condition = condition; }
+    public ItemCondition getCondition() { return condition; }
+    public void setCondition(ItemCondition condition) { this.condition = condition; }
 
     public String getImage() { return image; }
     public void setImage(String image) { this.image = image; }

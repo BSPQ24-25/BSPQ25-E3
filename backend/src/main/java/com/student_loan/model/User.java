@@ -43,7 +43,7 @@ public class User {
     public User() {
     }
 
-    // Constructor con parámetros
+    // Constructor
     public User(Long id, String name, String email, String password, String telephoneNumber, 
                 String address, DegreeType degreeType, Integer degreeYear, Integer penalties, 
                 Double averageRating, Boolean admin) {
