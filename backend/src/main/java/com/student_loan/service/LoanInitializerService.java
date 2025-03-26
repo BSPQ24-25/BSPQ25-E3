@@ -25,7 +25,7 @@ public class LoanInitializerService {
     @Autowired
     private LoanRepository loanRepository;
 
-    private boolean lanzado = false;
+    private boolean lanzado = true;
 
     @PostConstruct
     @Transactional
