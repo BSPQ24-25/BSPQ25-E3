@@ -18,6 +18,8 @@
 
 	<properties>
 		<java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
 	<dependencies>
@@ -47,13 +49,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.12.1</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.12.1</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -139,6 +141,20 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Plugin Surefire para ejecutar los tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version> <!-- Asegúrate de tener la versión correcta -->
+                <configuration>
+                    <useModulePath>false</useModulePath> <!-- Deshabilitar módulo si usas JDK 9+ -->
+                    <includes>
+                        <include>**/*Test.java</include> <!-- Incluir todas las clases de prueba con sufijo Test -->
+                    </includes>
+                    
+                </configuration>
             </plugin>
 
             <!-- JaCoCo plugin for coverage -->
