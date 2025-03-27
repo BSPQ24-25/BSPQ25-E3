@@ -25,6 +25,10 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypts the password
         return userRepository.save(user);
