@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { loginUser } from "../api";
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Implement login logic
+    // Login logic
+    const credentials = { email, password }
+
+    try {
+      const response = await loginUser(credentials);
+      alert("Login exitoso: " + response.message);
+      localStorage.setItem("token", response.token); // Guardamos el token
+    } catch (error) {
+      alert("Error en el login: " + (error.response?.data?.message || error.message));
+    }
     console.log('Login attempt:', { email, password });
   };
 
