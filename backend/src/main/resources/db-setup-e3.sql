@@ -4,7 +4,7 @@ DROP USER IF EXISTS 'e3'@'localhost';
 CREATE SCHEMA mv;
 CREATE USER IF NOT EXISTS 'e3'@'localhost' IDENTIFIED BY 'e3';
 
-GRANT ALL ON mv.* TO 'e3'@'e3' WITH GRANT OPTION;
+GRANT ALL ON mv.* TO 'e3'@'localhost';
 FLUSH PRIVILEGES;
 
 
