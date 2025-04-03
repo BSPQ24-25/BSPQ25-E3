@@ -2,6 +2,7 @@ package com.student_loan.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.student_loan.model.User;
 import com.student_loan.dtos.CredentialsDTO;
 import com.student_loan.repository.UserRepository;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class UserService {
     @Autowired
     private UserRepository userRepository;
