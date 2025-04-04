@@ -1,6 +1,17 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from "../api";
+import { useAuth } from '../context/AuthContext';
+
+// Debug mode configuration
+const DEBUG_ACCOUNT = {
+  token: 'debug-token-12345',
+  user: {
+    firstName: 'Debug',
+    lastName: 'User',
+    email: 'debug@example.com'
+  }
+};
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -11,6 +22,22 @@ function Register() {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  const [debugMode, setDebugMode] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  // Check for debug mode in localStorage on component mount
+  useEffect(() => {
+    const savedDebugMode = localStorage.getItem('debugMode') === 'true';
+    setDebugMode(savedDebugMode);
+  }, []);
+
+  // Save debug mode preference to localStorage
+  const toggleDebugMode = () => {
+    const newDebugMode = !debugMode;
+    setDebugMode(newDebugMode);
+    localStorage.setItem('debugMode', newDebugMode);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,17 +56,30 @@ function Register() {
       setError('Passwords do not match');
       return;
     }
+    
     // Registration logic
     try {
-      const response = await registerUser({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-      });
+      let response;
+      
+      if (debugMode) {
+        // In debug mode, simulate successful registration with debug account
+        console.log('Debug mode: Simulating successful registration');
+        response = DEBUG_ACCOUNT;
+      } else {
+        // Normal registration flow
+        response = await registerUser({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+        });
+      }
   
-      alert("Registration successful!"); // Show success message
-      console.log("Registration response:", response);
+      // Log the user in automatically after successful registration
+      login(response.token, response.user);
+      
+      // Redirect to home page
+      navigate('/');
     } catch (error) {
       setError(error.response?.data?.message || error.message);
     }
@@ -56,11 +96,43 @@ function Register() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {/* Debug Mode Toggle */}
+          <div className="mb-4 flex items-center justify-end">
+            <label htmlFor="debug-mode" className="mr-2 text-sm text-gray-600">
+              Debug Mode
+            </label>
+            <button
+              type="button"
+              id="debug-mode"
+              onClick={toggleDebugMode}
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                debugMode ? 'bg-blue-600' : 'bg-gray-200'
+              }`}
+              role="switch"
+              aria-checked={debugMode}
+              aria-labelledby="debug-mode-label"
+            >
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  debugMode ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+          
+          {debugMode && (
+            <div className="mb-4 p-3 text-sm text-blue-700 bg-blue-100 rounded-md">
+              Debug mode is enabled. You will be logged in with the debug account.
+            </div>
+          )}
+          
           {error && (
             <div className="mb-4 p-3 text-sm text-red-700 bg-red-100 rounded-md">
               {error}
             </div>
           )}
+          
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
@@ -76,7 +148,8 @@ function Register() {
                     required
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    disabled={debugMode}
+                    className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${debugMode ? 'bg-gray-100 text-gray-500' : ''}`}
                   />
                 </div>
               </div>
@@ -94,7 +167,8 @@ function Register() {
                     required
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    disabled={debugMode}
+                    className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${debugMode ? 'bg-gray-100 text-gray-500' : ''}`}
                   />
                 </div>
               </div>
@@ -113,7 +187,8 @@ function Register() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  disabled={debugMode}
+                  className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${debugMode ? 'bg-gray-100 text-gray-500' : ''}`}
                 />
               </div>
             </div>
@@ -131,7 +206,8 @@ function Register() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  disabled={debugMode}
+                  className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${debugMode ? 'bg-gray-100 text-gray-500' : ''}`}
                 />
               </div>
             </div>
@@ -149,7 +225,8 @@ function Register() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  disabled={debugMode}
+                  className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${debugMode ? 'bg-gray-100 text-gray-500' : ''}`}
                 />
               </div>
             </div>
@@ -159,7 +236,7 @@ function Register() {
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                Create account
+                {debugMode ? 'Register with Debug Account' : 'Create account'}
               </button>
             </div>
           </form>
