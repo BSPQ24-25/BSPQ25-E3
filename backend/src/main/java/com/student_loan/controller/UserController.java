@@ -48,12 +48,15 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-    Optional<User> updated = userService.updateUser(id, updatedUser);
-        return updated
-            .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
-            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userData) {
+        try {
+            User updatedUser = userService.updateUser(id, userData);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
+
 
     //Register 
     @PostMapping("/register")

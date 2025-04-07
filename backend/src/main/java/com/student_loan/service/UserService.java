@@ -32,6 +32,26 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public User updateUser(Long id, User updatedUserData) {
+        Optional<User> existingUserOptional = userRepository.findById(id);
+
+        if (existingUserOptional.isPresent()) {
+            User existingUser = existingUserOptional.get();
+            existingUser.setName(updatedUserData.getName());
+            existingUser.setEmail(updatedUserData.getEmail());
+
+            if (updatedUserData.getPassword() != null && !updatedUserData.getPassword().isEmpty()) {
+                existingUser.setPassword(passwordEncoder.encode(updatedUserData.getPassword()));
+            }
+            
+            return userRepository.save(existingUser);
+        } else {
+            throw new RuntimeException("User not found with id: " + id);
+        }
+    }
+
+
+
     public boolean register(User user) {
         if(userRepository.findByEmail(user.getEmail())!=null) {
     		return false;
