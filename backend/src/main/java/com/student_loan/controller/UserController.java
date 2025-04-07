@@ -49,6 +49,16 @@ public class UserController {
     }
 
     
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+    Optional<User> updated = userService.updateUser(id, updatedUser);
+        return updated
+            .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+}
+
+
+    
     //Register 
     
     @PostMapping
