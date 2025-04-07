@@ -5,15 +5,16 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
+import java.util.Base64;
 
 @Component
 public class JwtUtil {
     // Not the best practice to put the secret key in the code
     // We will do it this way for now to ease the process
-    private static final String SECRET_KEY = "Zk9EZXIybW50MTIzU0RGT1JlZW9Qbm9PUlNjUXc=";
+    private static final String SECRET_KEY = "c29tZXZlcnlzZWN1cmVhbmRsb25nYmFzZTY0a2V5MTIzNDU2";
     private static final long EXPIRATION_TIME = 86400000; // 1 day in miliseconds
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    private final Key key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY));
 
     public String generateToken(String email) {
         return Jwts.builder()
