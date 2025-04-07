@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { registerUser } from "../api";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -21,14 +22,27 @@ function Register() {
     setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-    // TODO: Implement registration logic
+    // Registration logic
+    try {
+      const response = await registerUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+      });
+  
+      alert("Registration successful!"); // Show success message
+      console.log("Registration response:", response);
+    } catch (error) {
+      setError(error.response?.data?.message || error.message);
+    }
     console.log('Registration attempt:', formData);
   };
 

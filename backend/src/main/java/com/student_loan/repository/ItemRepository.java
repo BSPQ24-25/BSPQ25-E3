@@ -6,4 +6,5 @@ import com.student_loan.model.Item;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
+	Item findByName(String name);
 }

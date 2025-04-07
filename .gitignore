@@ -39,3 +39,6 @@ buildNumber.properties
 # Eclipse IDE
 .project
 .classpath
+
+# misc
+.DS_Store
