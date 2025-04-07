@@ -4,7 +4,7 @@ const API_URL = "http://localhost:8080";
 
 export const registerUser = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/users`, userData);
+    const response = await axios.post(`${API_URL}/users/register`, userData);
     return response.data;
   } catch (error) {
     console.error("Error en el registro:", error.response?.data || error.message);

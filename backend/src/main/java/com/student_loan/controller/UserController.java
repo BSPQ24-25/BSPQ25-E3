@@ -24,14 +24,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody CredentialsDTO credentials) {
-         String token = userService.login(credentials);
-         
-         if(token.equals("Invalid credentials")) {
-        	 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-         }else {
-        	 return new ResponseEntity<>(token, HttpStatus.OK);
-         }
+    public ResponseEntity<?> login(@RequestBody CredentialsDTO credentials) {
+        String token = userService.login(credentials);
+
+        if (token.equals("Invalid credentials")) {
+            return ResponseEntity.status(401).body("Invalid credentials");
+        }
+        return ResponseEntity.ok().body("{\"token\": \"" + token + "\"}");
     }
     
     @PostMapping("/logout")
@@ -48,25 +47,21 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
     Optional<User> updated = userService.updateUser(id, updatedUser);
         return updated
             .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-}
+    }
 
-
-    
     //Register 
-    
-    @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO) {
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody UserDTO userDTO) {
         if (userService.register(dtoToUser(userDTO))) {
-			return new ResponseEntity<>(HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.ok("User registered correctly");
+        } else {
+            return ResponseEntity.badRequest().body("The user already exists");
         }
     }
 

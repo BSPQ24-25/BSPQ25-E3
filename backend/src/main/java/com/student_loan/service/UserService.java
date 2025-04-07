@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.student_loan.model.User;
 import com.student_loan.dtos.CredentialsDTO;
 import com.student_loan.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.student_loan.security.JwtUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +21,9 @@ public class UserService {
     private UserRepository userRepository;
     private Map<String, User> tokens = new HashMap<>();
 
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JwtUtil jwtUtil = new JwtUtil();
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -28,25 +33,26 @@ public class UserService {
     }
 
     public boolean register(User user) {
-    	if(userRepository.findByEmail(user.getEmail())!=null) {
+        if(userRepository.findByEmail(user.getEmail())!=null) {
     		return false;
     	}else {
-			userRepository.save(user);
+            user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypts the password
+            userRepository.save(user);
 			return true;
     	}
     }
-    
+
     public String login(CredentialsDTO credentials) {
-    	User userDB = userRepository.findByEmail(credentials.getEmail());
-		if (tokens.containsValue(userDB)) {
-			return "User already logged in";
-		}	else if(userDB != null && userDB.getPassword().equals(credentials.getPassword())) {
-			String token = generateToken();
-			tokens.put(token, userDB);
-			return token;
-    	}else {
-    		return "Invalid credentials";
-    	}
+        User user = userRepository.findByEmail(credentials.getEmail());
+        if (tokens.containsValue(user)) {
+            return "User already logged in";
+        } else if (user != null && passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {
+            String token = jwtUtil.generateToken(credentials.getEmail());
+            tokens.put(token, user);
+            return token;
+        } else {
+            return "Invalid credentials";
+        }
     }
 
 	public boolean logout(String token) {
@@ -56,13 +62,8 @@ public class UserService {
         }else{
         	return false;}
 	}
+    
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
-    
-    
-    private static synchronized String generateToken() {
-        return Long.toString(System.currentTimeMillis());
-    }
-    
 }
