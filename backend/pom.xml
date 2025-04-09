@@ -37,6 +37,12 @@
             <scope>runtime</scope>
         </dependency>
 
+		<!-- Access metrics at: http://localhost:8080/actuator/metrics -->
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
         <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
