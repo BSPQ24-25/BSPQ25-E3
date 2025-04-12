@@ -24,6 +24,7 @@ public class DataInitializer {
       return args -> {
          List<User> users = createUsers();
          saveUsers(users, userRepository);
+         
 
          List<Item> items = createItems(userRepository);
          saveItems(items, itemRepository);
@@ -63,7 +64,7 @@ public class DataInitializer {
 
    private void saveUsers(List<User> users, UserRepository userRepository) {
       for (User user : users) {
-         if (user.getId() != null && userRepository.findByEmail(user.getEmail()) == null) {
+         if (userRepository.findByEmail(user.getEmail()) == null) {
                userRepository.save(user);
          }
       }
@@ -148,7 +149,7 @@ public class DataInitializer {
 
    private void saveItems(List<Item> items, ItemRepository itemRepository) {
       for (Item item : items) {
-         if (item.getId() != null && itemRepository.findById(item.getId()) == null) {
+         if (itemRepository.findByName(item.getName()) == null) {
                itemRepository.save(item);
          }
       }
@@ -217,7 +218,7 @@ public class DataInitializer {
 
    private void saveLoans(List<Loan> loans, LoanRepository loanRepository) {
       for (Loan loan : loans) {
-         if (loan.getId() != null && loanRepository.findByItem(loan.getId()) == null) {
+         if (loanRepository.findByItem(loan.getItem()) == null) {
                loanRepository.save(loan);
          }
       }
