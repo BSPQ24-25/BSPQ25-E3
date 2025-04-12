@@ -31,6 +31,10 @@ public class ItemService {
     		throw new RuntimeException("Failed to get items! User not found with id: " + id);
     	}
     }
+    
+	public List<Item> getItemsByAvailability(Item.ItemStatus status) {
+		return itemRepository.findByStatus(status);
+	}
 
     public Item saveItem(Item item) {
     	if(!userRepository.findById(item.getOwner()).isPresent()) {

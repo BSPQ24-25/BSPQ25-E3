@@ -52,6 +52,16 @@ public class ItemController {
         }
     }
     
+    @GetMapping("/available")
+    public ResponseEntity<List<Item>> getAvailableItems(@RequestParam("token") String token) {
+    	User user = userService.getUserByToken(token);
+        if (user == null) {
+        	return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
+        }
+        List<Item> items = itemService.getItemsByAvailability(Item.ItemStatus.AVAILABLE);
+        return new ResponseEntity<>(items, HttpStatus.OK);
+    }
+    
     @GetMapping("/{id}")
     public ResponseEntity<Item> getItemById(@PathVariable Long id,@RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);

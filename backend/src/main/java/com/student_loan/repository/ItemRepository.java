@@ -10,4 +10,5 @@ import com.student_loan.model.Item;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 	Item findByName(String name);
 	List<Item> findByOwner(Long ownerId);
+	List<Item> findByStatus(Item.ItemStatus status);
 }

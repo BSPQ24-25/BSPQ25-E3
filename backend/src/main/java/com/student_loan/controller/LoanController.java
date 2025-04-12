@@ -88,7 +88,7 @@ public class LoanController {
 		
 		Loan loanEntity = convertToLoan(loan);
 		try {
-			loanService.saveLoan(loanEntity);
+			loanService.createLoan(loanEntity);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
