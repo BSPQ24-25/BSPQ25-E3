@@ -41,6 +41,8 @@ public class User {
 
     // Empty constructor
     public User() {
+    	
+    	
     }
 
     // Constructor
