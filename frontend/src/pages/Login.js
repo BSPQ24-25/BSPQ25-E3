@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from "../api";
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,6 +16,9 @@ function Login() {
       const response = await loginUser(credentials);
       alert("Login exitoso: " + response.message);
       localStorage.setItem("token", response.token); // Guardamos el token
+
+      // Redirect to home page
+      navigate('/home');
     } catch (error) {
       alert("Error en el login: " + (error.response?.data?.message || error.message));
     }

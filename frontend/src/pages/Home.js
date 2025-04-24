@@ -1,20 +1,57 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../axiosInstance';
 
-function Home() {
+function HomePage() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await axiosInstance.get('/items'); // Ruta protegida
+        setItems(res.data);
+      } catch (error) {
+        console.error('Error al cargar los ítems:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl md:text-6xl">
-            Welcome to Our App
-          </h1>
-          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            This is the home page of our application. Feel free to explore!
-          </p>
-        </div>
-      </div>
+    <div style={{ padding: '2rem' }}>
+      <h1>Bienvenido al sistema de préstamo de material escolar</h1>
+      <button onClick={handleLogout}>Cerrar sesión</button>
+
+      {loading ? (
+        <p>Cargando materiales...</p>
+      ) : (
+        <>
+          <h2>Material disponible:</h2>
+          {items.length === 0 ? (
+            <p>No hay materiales disponibles.</p>
+          ) : (
+            <ul>
+              {items.map(item => (
+                <li key={item.id}>
+                  {item.name} - {item.description}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
     </div>
   );
 }
 
-export default Home; 
+export default Home;
