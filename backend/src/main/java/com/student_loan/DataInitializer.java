@@ -25,7 +25,6 @@ public class DataInitializer {
          List<User> users = createUsers();
          saveUsers(users, userRepository);
          
-
          List<Item> items = createItems(userRepository);
          saveItems(items, itemRepository);
 

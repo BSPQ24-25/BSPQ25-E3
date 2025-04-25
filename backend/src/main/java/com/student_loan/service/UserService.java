@@ -71,8 +71,6 @@ public class UserService {
         }
     }
 
-
-
     public boolean register(User user) {
         if(userRepository.findByEmail(user.getEmail())!=null) {
     		return false;
@@ -105,7 +103,12 @@ public class UserService {
 	}
     
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
     
 	public User getUserByToken(String token) {
