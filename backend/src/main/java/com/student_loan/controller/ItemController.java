@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.student_loan.dtos.ItemRecord;
@@ -28,9 +30,12 @@ public class ItemController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<Item>> getAllItems(@RequestParam("token") String token) {
-    	User user = userService.getUserByToken(token);
-        if (user == null || user.getAdmin()==false) {
+    public ResponseEntity<List<Item>> getAllItems() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+    	User user = userService.getUserByEmail(email);
+        if (user == null) { // || user.getAdmin()==false) {  Temporal
 			return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
         }
     	

@@ -111,4 +111,8 @@ public class UserService {
 	public User getUserByToken(String token) {
 		return tokens.get(token);
 	}
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
