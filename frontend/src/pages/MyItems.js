@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReturnItemModal from '../components/ReturnItemModal';
+import ReminderModal from '../components/ReminderModal';
 
 function MyItems() {
   // Dummy data for borrowed items
@@ -20,24 +21,80 @@ function MyItems() {
     }
   ];
 
+  // Dummy data for lent items
+  const lentItems = [
+    {
+      id: 1,
+      name: 'Chemistry Lab Equipment',
+      borrower: 'Mike Brown',
+      dueDate: '2024-05-10',
+      status: 'borrowed'
+    },
+    {
+      id: 2,
+      name: 'Biology Textbook',
+      borrower: 'Emma Wilson',
+      dueDate: '2024-04-25',
+      status: 'overdue'
+    },
+    {
+      id: 3,
+      name: 'Math Calculator',
+      borrower: null,
+      dueDate: null,
+      status: 'available'
+    }
+  ];
+
   const [selectedItem, setSelectedItem] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+  const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
 
   const handleReturnItem = (item) => {
     setSelectedItem(item);
-    setIsModalOpen(true);
+    setIsReturnModalOpen(true);
   };
 
   const handleConfirmReturn = () => {
     // TODO: Implement return item functionality
     console.log('Returning item:', selectedItem.id);
-    setIsModalOpen(false);
+    setIsReturnModalOpen(false);
     setSelectedItem(null);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseReturnModal = () => {
+    setIsReturnModalOpen(false);
     setSelectedItem(null);
+  };
+
+  const handleSendReminder = (item) => {
+    setSelectedItem(item);
+    setIsReminderModalOpen(true);
+  };
+
+  const handleConfirmReminder = () => {
+    // TODO: Implement send reminder functionality
+    console.log('Sending reminder for item:', selectedItem.id);
+    setIsReminderModalOpen(false);
+    setSelectedItem(null);
+  };
+
+  const handleCloseReminderModal = () => {
+    setIsReminderModalOpen(false);
+    setSelectedItem(null);
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'borrowed':
+        return 'bg-green-100 text-green-800';
+      case 'overdue':
+        return 'bg-red-100 text-red-800';
+      case 'available':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
 
   return (
@@ -105,20 +162,79 @@ function MyItems() {
           </div>
         </div>
 
-        {/* My Listed Items Section */}
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">My Listed Items</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Items will be displayed here */}
+        {/* Lent by Me Section */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-left">Lent by Me</h2>
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Item Name
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Borrower
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Lent Until
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {lentItems.map((item) => (
+                  <tr key={item.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-left font-medium text-gray-900">
+                      {item.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-left text-gray-500">
+                      {item.borrower || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-left text-gray-500">
+                      {item.dueDate || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-left">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(item.status)}`}>
+                        {item.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-left text-gray-500">
+                      {item.status !== 'available' && (
+                        <button
+                          onClick={() => handleSendReminder(item)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          Send Reminder
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
         {/* Return Item Confirmation Modal */}
         <ReturnItemModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
+          isOpen={isReturnModalOpen}
+          onClose={handleCloseReturnModal}
           onConfirm={handleConfirmReturn}
           itemName={selectedItem?.name}
+        />
+
+        {/* Send Reminder Confirmation Modal */}
+        <ReminderModal
+          isOpen={isReminderModalOpen}
+          onClose={handleCloseReminderModal}
+          onConfirm={handleConfirmReminder}
+          itemName={selectedItem?.name}
+          borrowerName={selectedItem?.borrower}
         />
       </div>
     </div>
