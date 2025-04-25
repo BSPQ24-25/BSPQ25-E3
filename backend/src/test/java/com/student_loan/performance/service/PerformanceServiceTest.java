@@ -23,7 +23,7 @@ import com.student_loan.model.Loan;
 
 
 @SpringBootTest
-@ExtendWith(JUnitPerfInterceptor.class) //Medimos el rendimiento con JUnitPerf
+@ExtendWith(JUnitPerfInterceptor.class) //We measure performance with JUnitPerf
 public class PerformanceServiceTest {
 
     @Autowired
@@ -35,14 +35,14 @@ public class PerformanceServiceTest {
     @Autowired
     private LoanService loanService;
 
-    @JUnitPerfTestActiveConfig //Para guardar los reportes generados por ContiPerf en target/reports/perf-report.html 
+    @JUnitPerfTestActiveConfig //We save the reports made by ContiPerf in target/reports/perf-report.html 
     private final static JUnitPerfReportingConfig PERF_CONFIG = JUnitPerfReportingConfig.builder()
         .reportGenerator(new HtmlReportGenerator(System.getProperty("user.dir") + "/target/reports/perf-report.html"))
         .build();
 
 
-    // 1. TESTS SOBRE USERSERVICE    
-    //Test exitoso : getAllUsers() Obtener todos los usuarios
+    // 1. TESTS IN USERSERVICE    
+    //Successful test : getAllUsers() Get all the users
     @Test
     @JUnitPerfTest(threads = 10, durationMs = 5000, warmUpMs = 1000)
     @JUnitPerfTestRequirement(executionsPerSec = 30, percentiles = "95:200ms")
@@ -50,7 +50,7 @@ public class PerformanceServiceTest {
         userService.getAllUsers();
     }
 
-    //Test exitoso : login válido
+    //Successful test : valid login
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 5000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
@@ -59,7 +59,7 @@ public class PerformanceServiceTest {
         userService.login(credentials);
     }
 
-     // Test fallido: login con credenciales inválidas
+     // Failed test: login with invalid credentials
      @Test
      @JUnitPerfTest(threads = 5, durationMs = 3000)
      @JUnitPerfTestRequirement(executionsPerSec = 5, allowedErrorPercentage = 0.30f)
@@ -68,7 +68,7 @@ public class PerformanceServiceTest {
         userService.login(credentials);
      }
 
-    // Prueba fallida: getUserById con ID inválido
+    // Failed test: getUserById with invalid ID 
     @Test
     @JUnitPerfTest(threads = 3, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
@@ -77,8 +77,8 @@ public class PerformanceServiceTest {
     }
 
 
-    // 2. TESTS SOBRE ITEMSERVICE
-    // Test exitoso: getAllItems()
+    // 2. TESTS IN ITEMSERVICE
+    // Successful test : getAllItems()
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 4000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
@@ -86,7 +86,7 @@ public class PerformanceServiceTest {
         itemService.getAllItems();
     }
 
-    //Test exitoso: getItemsByUser(). Probamos con el primer user de nuestra base de datos
+    //Successful test: valid login  We test with the first user in our db
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 4000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
@@ -100,17 +100,17 @@ public class PerformanceServiceTest {
         itemService.getItemsByUser(validUserId);
     }
 
-    // Test fallido: getItemsByUser() no existe un user con ese id en nuestra base de datos
+    // Failed test: getItemsByUser() no user with that id in our db
     @Test
     @JUnitPerfTest(threads = 3, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
     public void testGetItemsByUserInvalidUserPerformance() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            itemService.getItemsByUser(9999L); // ID no existe en nuestra bbdd
+            itemService.getItemsByUser(9999L); // ID doesn't exist in our db
     });
     }
 
-    //Test exitoso: saveItem(). Guardar un item nuevo
+    //Successfull Test: saveItem(). Save a new item
     @Test
     @JUnitPerfTest(threads = 4, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
@@ -130,21 +130,21 @@ public class PerformanceServiceTest {
 
 
 
-    // Test fallido : saveItem() El dueño (usuario) no existe
+    // Failed test : saveItem() The user doesn't exist
     @Test
     @JUnitPerfTest(threads = 2, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 2)
     public void testSaveItemInvalidOwnerPerformance() {
         Item newItem = new Item();
         newItem.setName("Invalid Owner Item");
-        newItem.setOwner(9999L); // Usuario no existe
+        newItem.setOwner(9999L); // Non existing user
 
         Assertions.assertThrows(RuntimeException.class, () -> {
             itemService.saveItem(newItem);
         });
     }
 
-    //Test fallido: createItem() El item está duplicado
+    // Failed test: createItem() the item already exists
     @Test
     @JUnitPerfTest(threads = 3, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 3)
@@ -160,9 +160,9 @@ public class PerformanceServiceTest {
     }
 
 
-    // 3. TEST SOBRE LOAN SERVICE
+    // 3. TEST IN LOAN SERVICE
 
-    //Test exitoso: obtener todos los prestamos
+    //Successful test: get all the loans
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 5000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
@@ -171,7 +171,7 @@ public class PerformanceServiceTest {
     }
 
 
-    //Test exitoso: obtener prestamos de un prestamista especifico
+    //Successful test: get the loans of a user
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 5000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
@@ -180,7 +180,7 @@ public class PerformanceServiceTest {
         loanService.getLoansByLender(lenderId);
     }
 
-    // Test fallido : el usuario del que queremos conseguir prestamos no existe
+    // Failed test: the user whose loans we want to get doesn't exist
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 5000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
@@ -188,11 +188,10 @@ public class PerformanceServiceTest {
         try {
             loanService.getLoansByLender(9999L);  // Usuario no existente
         } catch (RuntimeException e) {
-        // Esperamos esta excepción, ya que no existe el usuario
         }
     }
 
-    // Test exitoso: cerar un préstamo
+    // Successful test: create a loan
     @Test
     @JUnitPerfTest(threads = 3, durationMs = 4000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
