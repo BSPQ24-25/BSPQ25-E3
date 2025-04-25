@@ -43,13 +43,17 @@ public class ItemController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<Item>> getItemsByUser(@PathVariable int userId,@RequestParam("token") String token) {
-    	User user = userService.getUserByToken(token);
-        if (user == null || user.getAdmin()==false && user.getId()!=userId) {
+    public ResponseEntity<List<Item>> getItemsByUser(@PathVariable Long id) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+    	User user = userService.getUserByEmail(email);
+		
+        if (user == null) { // || (user.getAdmin()==false && user.getId()!=id)) { TODO Uncomment to enable a user only to see its own items
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }else {
         	try {
-    			List<Item> items = itemService.getItemsByUser(user.getId() );
+    			List<Item> items = itemService.getItemsByUser(id);
     			return new ResponseEntity<>(items, HttpStatus.OK);
 			} catch (RuntimeException e) {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
