@@ -1,24 +1,27 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from "../api";
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Login logic
+    setError('');
     const credentials = { email, password }
 
     try {
       const response = await loginUser(credentials);
-      alert("Login exitoso: " + response.message);
-      localStorage.setItem("token", response.token); // Guardamos el token
+      login(response.token, response.user);
+      navigate('/');
     } catch (error) {
-      alert("Error en el login: " + (error.response?.data?.message || error.message));
+      setError(error.response?.data?.message || error.message || 'An error occurred during login');
     }
-    console.log('Login attempt:', { email, password });
   };
 
   return (
@@ -31,6 +34,11 @@ function Login() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {error && (
+            <div className="mb-4 p-3 text-sm text-red-700 bg-red-100 rounded-md">
+              {error}
+            </div>
+          )}
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left">
