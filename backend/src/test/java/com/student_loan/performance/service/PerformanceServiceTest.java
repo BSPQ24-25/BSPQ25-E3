@@ -1,4 +1,4 @@
-package com.student_loan.performance;
+package com.student_loan.performance.service;
 
 import com.github.noconnor.junitperf.JUnitPerfTest;
 import com.github.noconnor.junitperf.JUnitPerfTestActiveConfig;
@@ -24,7 +24,7 @@ import com.student_loan.model.Loan;
 
 @SpringBootTest
 @ExtendWith(JUnitPerfInterceptor.class) //Medimos el rendimiento con JUnitPerf
-public class PerformanceTest {
+public class PerformanceServiceTest {
 
     @Autowired
     private UserService userService;
