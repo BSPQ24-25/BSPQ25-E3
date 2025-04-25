@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import MyItems from './pages/MyItems';
 import ProtectedRoute from './components/ProtectedRoute';
 import './index.css';
 import './App.css';
@@ -24,6 +25,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-items"
+          element={
+            <ProtectedRoute>
+              <MyItems />
             </ProtectedRoute>
           }
         />
