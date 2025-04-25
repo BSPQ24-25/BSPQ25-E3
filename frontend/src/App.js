@@ -4,7 +4,6 @@ import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import About from './pages/About';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -25,14 +24,6 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/about"
-          element={
-            <ProtectedRoute>
-              <About />
             </ProtectedRoute>
           }
         />
