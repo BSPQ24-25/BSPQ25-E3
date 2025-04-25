@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReturnItemModal from '../components/ReturnItemModal';
 import ReminderModal from '../components/ReminderModal';
+import UploadItemModal from '../components/UploadItemModal';
 
 function MyItems() {
   // Dummy data for borrowed items
@@ -49,6 +50,7 @@ function MyItems() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const handleReturnItem = (item) => {
     setSelectedItem(item);
@@ -97,10 +99,32 @@ function MyItems() {
     }
   };
 
+  const handleUploadItem = () => {
+    setIsUploadModalOpen(true);
+  };
+
+  const handleCloseUploadModal = () => {
+    setIsUploadModalOpen(false);
+  };
+
+  const handleConfirmUpload = (formData) => {
+    // TODO: Implement upload item functionality
+    console.log('Uploading item:', formData);
+    setIsUploadModalOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">My Items</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">My Items</h1>
+          <button
+            onClick={handleUploadItem}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Upload Item
+          </button>
+        </div>
         
         {/* Borrowed by Me Section */}
         <div className="mb-12">
@@ -219,6 +243,13 @@ function MyItems() {
             </table>
           </div>
         </div>
+
+        {/* Upload Item Modal */}
+        <UploadItemModal
+          isOpen={isUploadModalOpen}
+          onClose={handleCloseUploadModal}
+          onConfirm={handleConfirmUpload}
+        />
 
         {/* Return Item Confirmation Modal */}
         <ReturnItemModal
