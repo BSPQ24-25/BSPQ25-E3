@@ -17,6 +17,7 @@ import com.student_loan.service.UserService;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class UnitUserServiceTest {
@@ -75,6 +76,25 @@ public class UnitUserServiceTest {
 
         assertEquals("Invalid credentials", result);
     }
+
+    @Test
+    public void testLogin_UserFound() {
+    
+        CredentialsDTO credentials = new CredentialsDTO("john.doe@example.com", "password123");
+        
+        when(userRepository.findByEmail("john.doe@example.com")).thenReturn(user);
+
+        when(passwordEncoder.matches("password123", user.getPassword())).thenReturn(true);
+
+        when(jwtUtil.generateToken("john.doe@example.com")).thenReturn("mockedToken");
+
+   
+        String result = userService.login(credentials);
+
+        assertEquals("mockedToken", result);
+}
+
+
 
     @Test
     public void testUpdateUser_UserExists() {
