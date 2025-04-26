@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../axiosInstance';
 import ReturnItemModal from '../components/ReturnItemModal';
 import ReminderModal from '../components/ReminderModal';
 import UploadItemModal from '../components/UploadItemModal';
 
 function MyItems() {
+  /*
   // Dummy data for borrowed items
   const borrowedItems = [
     {
@@ -45,12 +47,54 @@ function MyItems() {
       dueDate: null,
       status: 'available'
     }
-  ];
+  ]; */
+
+  const [borrowedItems, setBorrowedItems] = useState([]);
+  const [lentItems, setLentItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const [borrowedResponse, lentResponse] = await Promise.all([
+          axiosInstance.get('/items/borrowed'), // endpoint de los items que tomaste prestados
+          axiosInstance.get('/items/lent') // endpoint de los items que prestaste
+        ]);
+
+        const borrowed = borrowedResponse.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          owner: item.owner, // TODO by now id is shown, not the name
+          dueDate: item.dueDate || '-', // if is NULL show '-'
+          status: item.status.toLowerCase(),
+        }));
+  
+        const lent = lentResponse.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          borrower: item.borrower || '-',
+          dueDate: item.dueDate || '-',
+          status: item.status.toLowerCase(),
+        }));
+
+        setBorrowedItems(borrowed);
+        setLentItems(lent);
+      } catch (err) {
+        console.error('Error fetching items:', err);
+        setError('Failed to load items');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, []);
 
   const handleReturnItem = (item) => {
     setSelectedItem(item);

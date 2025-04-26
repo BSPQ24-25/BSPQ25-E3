@@ -218,9 +218,19 @@ public class DataInitializer {
 
    private void saveLoans(List<Loan> loans, LoanRepository loanRepository) {
       for (Loan loan : loans) {
-         if (loanRepository.findByItem(loan.getItem()) == null) {
-               loanRepository.save(loan);
+         List<Loan> itemLoans = loanRepository.findByItem(loan.getItem());
+          
+         boolean hasActiveLoan = false;
+         for (Loan loan2 : itemLoans) {
+            if (loan2.getLoanStatus() != Loan.Status.RETURNED) {
+               hasActiveLoan = true;
+               break;
+            }
+         }
+  
+         if (!hasActiveLoan) {
+            loanRepository.save(loan);
          }
       }
-   }    
+   }   
 }

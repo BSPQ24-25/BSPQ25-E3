@@ -5,16 +5,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.student_loan.dtos.ItemRecord;
 import com.student_loan.model.Item;
 import com.student_loan.model.User;
 import com.student_loan.service.ItemService;
+import com.student_loan.service.LoanService;
 import com.student_loan.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/items")
@@ -26,11 +30,16 @@ public class ItemController {
     private ItemService itemService;
     @Autowired
     private UserService userService;
+	@Autowired
+    private LoanService loanService;
 
     @GetMapping
-    public ResponseEntity<List<Item>> getAllItems(@RequestParam("token") String token) {
-    	User user = userService.getUserByToken(token);
-        if (user == null || user.getAdmin()==false) {
+    public ResponseEntity<List<Item>> getAllItems() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+    	User user = userService.getUserByEmail(email);
+        if (user == null) { // || user.getAdmin()==false) {  Temporal
 			return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
         }
     	
@@ -38,13 +47,17 @@ public class ItemController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<Item>> getItemsByUser(@PathVariable int userId,@RequestParam("token") String token) {
-    	User user = userService.getUserByToken(token);
-        if (user == null || user.getAdmin()==false && user.getId()!=userId) {
+    public ResponseEntity<List<Item>> getItemsByUser(@PathVariable Long id) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+    	User user = userService.getUserByEmail(email);
+		
+        if (user == null) { // || (user.getAdmin()==false && user.getId()!=id)) { TODO Uncomment to enable a user only to see its own items
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }else {
         	try {
-    			List<Item> items = itemService.getItemsByUser(user.getId() );
+    			List<Item> items = itemService.getItemsByUser(id);
     			return new ResponseEntity<>(items, HttpStatus.OK);
 			} catch (RuntimeException e) {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -53,14 +66,73 @@ public class ItemController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Item> getItemById(@PathVariable Long id,@RequestParam("token") String token) {
-    	User user = userService.getUserByToken(token);
-        if (user == null || user.getAdmin()==false && user.getId()!=itemService.getItemById(id).get().getOwner()) {
+	public ResponseEntity<Item> getItemById(@PathVariable Long id) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+		User user = userService.getUserByEmail(email);
+		Optional<Item> optionalItem = itemService.getItemById(id);
+
+		if (user == null || optionalItem.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); // o 404 si prefieres
+		}
+
+		Item item = optionalItem.get();
+
+		if (!item.getOwner().equals(user.getId())) { // TODO && !user.getAdmin()) {
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+
+		return new ResponseEntity<>(item, HttpStatus.OK);
+	}
+
+	@GetMapping("/lent")
+	public ResponseEntity<List<Item>> getLentItemsByUser() {
+		// Obtener el usuario autenticado desde el SecurityContext
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName(); // Usamos el email como identificador
+
+		// Buscar al usuario por el email
+		User user = userService.getUserByEmail(email);
+		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-    	
-    	return new ResponseEntity<>(itemService.getItemById(id).get(),HttpStatus.OK);
-    }
+		}
+
+		try {
+			// Obtener los items que el usuario ha prestado
+			List<Long> lentItemsId = loanService.getLentItemsIdByUser(user.getId());
+			List<Item> lentItems = itemService.getItemsById(lentItemsId);
+
+			return new ResponseEntity<>(lentItems, HttpStatus.OK);
+		} catch (RuntimeException e) {
+			// Si ocurre un error, devolvemos un error 500
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("/borrowed")
+	public ResponseEntity<List<Item>> getBorrowedItemsByUser() {
+		// Obtener el usuario autenticado desde el SecurityContext
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName(); // Usamos el email como identificador
+
+		// Buscar al usuario por el email
+		User user = userService.getUserByEmail(email);
+		if (user == null) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		try {
+			// Obtener los items que el usuario ha prestado
+			List<Long> lentItemsId = loanService.getBorrowedItemsIdByUser(user.getId());
+			List<Item> lentItems = itemService.getItemsById(lentItemsId);
+
+			return new ResponseEntity<>(lentItems, HttpStatus.OK);
+		} catch (RuntimeException e) {
+			// Si ocurre un error, devolvemos un error 500
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
     @PostMapping
     public ResponseEntity<String> createItem(@RequestBody ItemRecord item, @RequestParam("token") String token) {

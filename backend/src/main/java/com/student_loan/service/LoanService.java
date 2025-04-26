@@ -7,6 +7,10 @@ import com.student_loan.repository.ItemRepository;
 import com.student_loan.repository.LoanRepository;
 import com.student_loan.repository.UserRepository;
 
+import com.student_loan.model.Item;
+import com.student_loan.model.Loan.Status;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +39,33 @@ public class LoanService {
 		return loanRepository.findByLender(userId);
 	}
 	
+	public List<Long> getLentItemsIdByUser(Long userId) {
+
+        // Obtener los préstamos activos donde el usuario es el prestamista
+        List<Loan> loans = loanRepository.findByLenderAndLoanStatus(userId, Status.IN_USE);
+
+        // Extraer los items de los préstamos activos
+        List<Long> lentItems = new ArrayList<>();
+        for (Loan loan : loans) {
+            lentItems.add(loan.getItem());
+        }
+        
+        return lentItems;
+    }
+
+	public List<Long> getBorrowedItemsIdByUser(Long userId) {
+
+        // Obtener los préstamos activos donde el usuario es el prestamista
+        List<Loan> loans = loanRepository.findByBorrowerAndLoanStatus(userId, Status.IN_USE);
+
+        // Extraer los items de los préstamos activos
+        List<Long> lentItems = new ArrayList<>();
+        for (Loan loan : loans) {
+            lentItems.add(loan.getItem());
+        }
+        
+        return lentItems;
+    }
 
     public Loan saveLoan(Loan loan) {
     	

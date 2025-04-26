@@ -6,6 +6,7 @@ import com.student_loan.model.Item;
 import com.student_loan.repository.ItemRepository;
 import com.student_loan.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,15 @@ public class ItemService {
     public Optional<Item> getItemById(Long id) {
         return itemRepository.findById(id);
     }
+
+	public List<Item> getItemsById(List<Long> itemsId) {
+		List<Item> items = new ArrayList<>();
+		for (Long id : itemsId) {
+			Optional<Item> optionalItem = getItemById(id);
+			optionalItem.ifPresent(items::add); // Solo agregar si existe
+		}
+		return items;
+	}
     
     public List<Item> getItemsByUser(Long id){
     	if(userRepository.findById(id).isPresent()) {
