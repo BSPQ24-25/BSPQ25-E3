@@ -1,4 +1,4 @@
-package com.student_loan.model;
+package com.student_loan.unit.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

@@ -1,4 +1,4 @@
-package com.student_loan.service;
+package com.student_loan.unit.service;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;

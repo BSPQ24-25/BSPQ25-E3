@@ -1,4 +1,4 @@
-package com.student_loan.service;
+package com.student_loan.unit.service;
 
 import com.student_loan.model.User;
 import com.student_loan.dtos.CredentialsDTO;
