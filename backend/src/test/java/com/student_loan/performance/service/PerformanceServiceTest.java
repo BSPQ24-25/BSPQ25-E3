@@ -58,7 +58,7 @@ public class PerformanceServiceTest {
         mockUser = new User();
         mockUser.setId(1L);
         mockUser.setEmail("ana.garcia@email.com");
-        mockUser.setPassword("encodedPassword"); // Simula un password hasheado
+        mockUser.setPassword("encodedPassword");
 
         // Mock item
         mockItem = new Item();

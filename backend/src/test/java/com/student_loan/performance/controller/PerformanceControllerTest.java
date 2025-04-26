@@ -35,11 +35,13 @@ public class PerformanceControllerTest {
 
     @BeforeAll
     public void setup() throws Exception {
+        // Register an admin
         RegistrationRecord admin = new RegistrationRecord(
                 "AdminTest", "User", "admintest@example.com", "password123");
     
         restTemplate.postForEntity("/users/register", admin, String.class);
     
+        // Log in with that admin account
         CredentialsDTO credentials = new CredentialsDTO("admintest@example.com", "password123");
         ResponseEntity<String> loginResponse = restTemplate.postForEntity("/users/login", credentials, String.class);
     
@@ -49,6 +51,8 @@ public class PerformanceControllerTest {
         adminToken = map.get("token");
     }
     
+
+
     @Test
     public void testGetAllUsersPerformance() {
         long start = System.nanoTime();
@@ -88,6 +92,7 @@ public class PerformanceControllerTest {
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
 
+
     @Test
     public void testCreateItemPerformance() {
         Map<String, Object> item = new HashMap<>();
@@ -111,6 +116,7 @@ public class PerformanceControllerTest {
 
     @Test
     public void testCreateLoanPerformance() {
+        // Primero crear un item necesario para prestar
         Map<String, Object> item = new HashMap<>();
         item.put("title", "Loan Test Item");
         item.put("description", "Loan Test Description");
@@ -118,8 +124,9 @@ public class PerformanceControllerTest {
         HttpEntity<Map<String, Object>> itemRequest = new HttpEntity<>(item);
         restTemplate.postForEntity("/items?token=" + adminToken, itemRequest, String.class);
 
+        // Crear préstamo
         Map<String, Object> loan = new HashMap<>();
-        loan.put("lender", 1);
+        loan.put("lender", 1); // ID del admin logueado (en sistemas reales sería dinámico)
         loan.put("borrower", 1);
         loan.put("item", 1);
         loan.put("loanDate", "2024-04-01");
@@ -137,4 +144,5 @@ public class PerformanceControllerTest {
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
+
 }
