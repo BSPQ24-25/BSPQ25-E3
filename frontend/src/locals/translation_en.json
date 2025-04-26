@@ -50,5 +50,27 @@
       "overdue": "Overdue",
       "available": "Available"
     }
+  },
+  "home": {
+    "loading": "Loading available items...",
+    "availableItems": "Available Items"
+  },
+  "itemCard": {
+    "lender": "Lender",
+    "borrow": "Borrow"
+  },
+  "borrowModal": {
+    "borrowItem": "Borrow {{itemName}}",
+    "returnDate": "Return Date",
+    "cancel": "Cancel",
+    "confirmBorrow": "Confirm Borrow"
+  },
+  "uploadModal": {
+    "title": "Upload New Item",
+    "itemName": "Item Name",
+    "itemDescription": "Item Description",
+    "itemImage": "Item Image",
+    "cancel": "Cancel",
+    "uploadItem": "Upload Item"
   }
 }

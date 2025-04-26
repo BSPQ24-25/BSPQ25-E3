@@ -50,6 +50,28 @@
         "overdue": "Überfällig",
         "available": "Verfügbar"
       }
+    },
+    "home": {
+      "loading": "Verfügbare Artikel werden geladen...",
+      "availableItems": "Verfügbare Artikel"
+    },
+    "itemCard": {
+      "lender": "Verleiher",
+      "borrow": "Ausleihen"
+    },
+    "borrowModal": {
+      "borrowItem": "{{itemName}} ausleihen",
+      "returnDate": "Rückgabedatum",
+      "cancel": "Abbrechen",
+      "confirmBorrow": "Ausleihe bestätigen"
+    },
+    "uploadModal": {
+      "title": "Neuen Artikel Hochladen",
+      "itemName": "Artikelname",
+      "itemDescription": "Artikelbeschreibung",
+      "itemImage": "Artikelbild",
+      "cancel": "Abbrechen",
+      "uploadItem": "Artikel Hochladen"
     }
   }
   

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function UploadItemModal({ isOpen, onClose, onConfirm }) {
   const [formData, setFormData] = useState({
@@ -28,18 +29,20 @@ function UploadItemModal({ isOpen, onClose, onConfirm }) {
     onConfirm(formData);
   };
 
+  const { t } = useTranslation();
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
         <h3 className="text-lg font-medium text-gray-900 mb-4 text-left">
-          Upload New Item
+        {t('uploadModal.title')}
         </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 text-left mb-1">
-              Item Name
+            {t('uploadModal.itemName')}
             </label>
             <input
               type="text"
@@ -54,7 +57,7 @@ function UploadItemModal({ isOpen, onClose, onConfirm }) {
           
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 text-left mb-1">
-              Item Description
+            {t('uploadModal.itemDescription')}
             </label>
             <textarea
               id="description"
@@ -69,7 +72,7 @@ function UploadItemModal({ isOpen, onClose, onConfirm }) {
 
           <div>
             <label htmlFor="image" className="block text-sm font-medium text-gray-700 text-left mb-1">
-              Item Image
+            {t('uploadModal.itemImage')}
             </label>
             <input
               type="file"
@@ -93,13 +96,13 @@ function UploadItemModal({ isOpen, onClose, onConfirm }) {
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Cancel
+              {t('uploadModal.cancel')}
             </button>
             <button
               type="submit"
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Upload Item
+              {t('uploadModal.uploadItem')}
             </button>
           </div>
         </form>

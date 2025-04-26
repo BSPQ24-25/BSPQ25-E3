@@ -50,6 +50,28 @@
         "overdue": "Atrasado",
         "available": "Disponible"
       }
+    },
+    "home": {
+      "loading": "Cargando Artículos Disponibles...",
+      "availableItems": "Artículos Disponibles"
+    },
+    "itemCard": {
+      "lender": "Prestamista",
+      "borrow": "Pedir prestado"
+    },
+    "borrowModal": {
+      "borrowItem": "Pedir prestado {{itemName}}",
+      "returnDate": "Fecha de devolución",
+      "cancel": "Cancelar",
+      "confirmBorrow": "Confirmar Préstamo"
+    },
+    "uploadModal": {
+      "title": "Subir Nuevo Artículo",
+      "itemName": "Nombre del Artículo",
+      "itemDescription": "Descripción del Artículo",
+      "itemImage": "Imagen del Artículo",
+      "cancel": "Cancelar",
+      "uploadItem": "Subir Artículo"
     }
   }
   
