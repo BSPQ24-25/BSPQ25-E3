@@ -28,6 +28,9 @@ import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
+import org.springframework.test.context.ActiveProfiles;
+
+@ActiveProfiles("performance")
 @ExtendWith(MockitoExtension.class)
 public class PerformanceServiceTest {
 

@@ -20,10 +20,14 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    private Map<String, User> tokens = new HashMap<>();
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final JwtUtil jwtUtil = new JwtUtil();
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    private Map<String, User> tokens = new HashMap<>();
 
     public List<User> getAllUsers() {
         return userRepository.findAll();

@@ -8,7 +8,4 @@ public record ItemRecord(
 		String category, 
 		String imageUrl,
 		String status,
-		String condition) {
-	
-	
-}
+		String condition) {}

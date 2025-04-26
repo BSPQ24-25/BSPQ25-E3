@@ -14,7 +14,7 @@ import com.student_loan.model.Loan;
 import com.student_loan.model.Loan.Status;
 import com.student_loan.repository.LoanRepository;
 
-class LoanTest {
+class UnitLoanTest {
 
     private LoanRepository repository;
     private Loan loan;
