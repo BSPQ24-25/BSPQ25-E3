@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ItemCard from '../components/ItemCard';
+import axiosInstance from '../axiosInstance';
 
 // Dummy data for testing
 const dummyItems = [
@@ -47,13 +48,78 @@ const dummyItems = [
   }
 ];
 
-function Home() {
+  function Home() {
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+  
+    useEffect(() => {
+      const fetchItems = async () => {
+        try {
+          const response = await axiosInstance.get('/items/available');
+          const availableItems = response.data;
+  
+          // Ahora, para cada item, traemos el owner
+          const itemsWithOwnerNames = await Promise.all(
+            availableItems.map(async (item) => {
+              try {
+                const ownerResponse = await axiosInstance.get(`/users/${item.owner}`);
+                const ownerName = `${ownerResponse.data.username}`;
+                
+                return {
+                  id: item.id,
+                  name: item.name,
+                  description: item.description,
+                  imageUrl: `https://images.unsplash.com/photo-1606813907291-d86efa9b94db?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60`, // o ajusta si necesitas
+                  lenderName: ownerName
+                };
+              } catch (ownerError) {
+                console.error(`Error fetching owner for item ${item.id}:`, ownerError);
+                return {
+                  id: item.id,
+                  name: item.name,
+                  description: item.description,
+                  imageUrl: `https://images.unsplash.com/photo-1606813907291-d86efa9b94db?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60`,
+                  lenderName: 'Unknown'
+                };
+              }
+            })
+          );
+  
+          setItems(itemsWithOwnerNames);
+        } catch (error) {
+          console.error('Error fetching available items:', error);
+          setError('Failed to load available items');
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchItems();
+    }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-700 text-lg">Loading available items...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-600 text-lg">{error}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Available Items</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {dummyItems.map(item => (
+          {items.map(item => (
             <ItemCard key={item.id} item={item} />
           ))}
         </div>

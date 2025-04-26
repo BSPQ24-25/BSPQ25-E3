@@ -3,6 +3,7 @@ package com.student_loan.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.student_loan.model.Item;
+import com.student_loan.model.Item.ItemStatus;
 import com.student_loan.repository.ItemRepository;
 import com.student_loan.repository.UserRepository;
 
@@ -19,6 +20,10 @@ public class ItemService {
     
     public List<Item> getAllItems() {
         return itemRepository.findAll();
+    }
+
+	public List<Item> getAvailableItems() {
+        return itemRepository.findByStatus(ItemStatus.AVAILABLE);
     }
 
     public Optional<Item> getItemById(Long id) {

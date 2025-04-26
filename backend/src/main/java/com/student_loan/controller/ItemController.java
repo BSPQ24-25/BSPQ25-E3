@@ -46,6 +46,19 @@ public class ItemController {
     	return new ResponseEntity<>(itemService.getAllItems(),HttpStatus.OK);
     }
 
+	@GetMapping("/available")
+    public ResponseEntity<List<Item>> getAvailableItems() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+    	User user = userService.getUserByEmail(email);
+        if (user == null) {
+			return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
+        }
+    	
+    	return new ResponseEntity<>(itemService.getAvailableItems(),HttpStatus.OK);
+    }
+
     @GetMapping("/user/{id}")
     public ResponseEntity<List<Item>> getItemsByUser(@PathVariable Long id) {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
