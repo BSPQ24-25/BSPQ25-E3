@@ -33,6 +33,19 @@ public class ItemController {
 	@Autowired
     private LoanService loanService;
 
+	@Autowired
+	public ItemController(ItemService itemService, UserService userService, LoanService loanService) {
+		this.itemService = itemService;
+		this.userService = userService;
+		this.loanService = loanService;
+	}
+
+	private User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userService.getUserByEmail(email);
+    }
+
     @GetMapping
     public ResponseEntity<List<Item>> getAllItems() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

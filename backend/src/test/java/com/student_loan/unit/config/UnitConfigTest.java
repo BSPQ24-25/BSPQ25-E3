@@ -1,33 +1,58 @@
-package com.student_loan.config;
+package com.student_loan.unit.config;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class ConfigUnitTests {
+import com.student_loan.security.JwtUtil;
+import com.student_loan.config.SecurityConfig;
+import com.student_loan.config.CorsConfig;
+
+class UnitConfigTest {
+
+    @Configuration
+    static class TestJwtConfig {
+        @Bean
+        public JwtUtil jwtUtil() {
+            return mock(JwtUtil.class);
+        }
+
+        // Provide MVC introspector so SecurityConfig's CORS can wire correctly
+        @Bean
+        public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+            return new HandlerMappingIntrospector();
+        }
+    }
 
     @Test
     void testBCryptPasswordEncoderBean() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SecurityConfig.class);
-        BCryptPasswordEncoder encoder = context.getBean(BCryptPasswordEncoder.class);
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(TestJwtConfig.class, SecurityConfig.class);
+        ctx.refresh();
+
+        BCryptPasswordEncoder encoder = ctx.getBean(BCryptPasswordEncoder.class);
         assertNotNull(encoder);
-        assertTrue(encoder instanceof BCryptPasswordEncoder);
-        context.close();
+        ctx.close();
     }
 
     @Test
     void testSecurityFilterChainBeanExists() throws Exception {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SecurityConfig.class);
-        SecurityFilterChain chain = context.getBean(SecurityFilterChain.class);
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(TestJwtConfig.class, SecurityConfig.class);
+        ctx.refresh();
+
+        SecurityFilterChain chain = ctx.getBean(SecurityFilterChain.class);
         assertNotNull(chain);
-        context.close();
+        ctx.close();
     }
 
     @Test

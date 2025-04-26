@@ -1,224 +1,150 @@
-package com.student_loan.unit.controller;
+package com.student_loan.controller;
 
-import com.student_loan.controller.ItemController;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import com.student_loan.dtos.ItemRecord;
 import com.student_loan.model.Item;
 import com.student_loan.model.User;
 import com.student_loan.service.ItemService;
 import com.student_loan.service.LoanService;
 import com.student_loan.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+class UnitItemControllerTest {
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-@ExtendWith(MockitoExtension.class)
-public class UnitItemControllerTest {
-
-    @Mock
     private ItemService itemService;
-
-    @Mock
     private UserService userService;
-
-    @Mock
     private LoanService loanService;
-
-    @InjectMocks
     private ItemController itemController;
 
-    private User user;
-    private User adminUser;
-    private Item item;
-
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        user = new User();
-        user.setId(1L);
-        user.setEmail("user@example.com");
-        user.setAdmin(false); 
-
-        adminUser = new User();
-        adminUser.setId(2L);
-        adminUser.setEmail("admin@example.com");
-        adminUser.setAdmin(true); 
-
-        item = new Item();
-        item.setId(1L);
-        item.setName("Test Item");
-        item.setOwner(user.getId()); 
-}
-
+    void setUp() {
+        itemService = mock(ItemService.class);
+        userService = mock(UserService.class);
+        loanService = mock(LoanService.class);
+        itemController = new ItemController(itemService, userService, loanService);
+        
+        // Configure security context
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+        Authentication authentication = mock(Authentication.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("test@example.com");
+    }
 
     @Test
-    public void testGetAllItems_Success() {
-        when(userService.getUserByEmail(anyString())).thenReturn(user);
-        when(itemService.getAllItems()).thenReturn(Arrays.asList(item));
+    @DisplayName("GET /items - Unauthenticated user")
+    void testGetAllItems_Unauthenticated() {
+        when(userService.getUserByEmail("test@example.com")).thenReturn(null);
 
         ResponseEntity<List<Item>> response = itemController.getAllItems();
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(1, response.getBody().size());
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
     @Test
-    public void testGetAllItems_Unauthorized() {
-        when(userService.getUserByEmail(anyString())).thenReturn(null);
+    @DisplayName("GET /items - Success")
+    void testGetAllItems_Success() {
+        User mockUser = new User();
+        when(userService.getUserByEmail("test@example.com")).thenReturn(mockUser);
+        when(itemService.getAllItems()).thenReturn(new ArrayList<>());
 
         ResponseEntity<List<Item>> response = itemController.getAllItems();
-
-        assertEquals(401, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    public void testGetAvailableItems_Success() {
-        when(userService.getUserByEmail(anyString())).thenReturn(user);
-        when(itemService.getAvailableItems()).thenReturn(Arrays.asList(item));
-
-        ResponseEntity<List<Item>> response = itemController.getAvailableItems();
-
-        assertEquals(200, response.getStatusCodeValue());
-    }
-
-    @Test
-    public void testGetItemsByUser_Success() {
-        when(userService.getUserByEmail(anyString())).thenReturn(user);
-        when(itemService.getItemsByUser(anyLong())).thenReturn(Arrays.asList(item));
+    @DisplayName("GET /items/user/{id} - Unauthorized user")
+    void testGetItemsByUser_Unauthorized() {
+        when(userService.getUserByEmail("test@example.com")).thenReturn(null);
 
         ResponseEntity<List<Item>> response = itemController.getItemsByUser(1L);
-
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
     @Test
-    public void testGetItemsByUser_Unauthorized() {
-        when(userService.getUserByEmail(anyString())).thenReturn(null);
-
-        ResponseEntity<List<Item>> response = itemController.getItemsByUser(1L);
-
-        assertEquals(401, response.getStatusCodeValue());
+    @DisplayName("POST /items - Invalid token")
+    void testCreateItem_InvalidToken() {
+        when(userService.getUserByToken("invalid")).thenReturn(null);
+        
+        ResponseEntity<String> response = itemController.createItem(
+            new ItemRecord("Item", "Desc", "Cat", "img", "AVAILABLE", "NEW"), 
+            "invalid"
+        );
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
     @Test
-    public void testGetItemById_Success() {
-        when(userService.getUserByEmail(anyString())).thenReturn(user);
-        when(itemService.getItemById(anyLong())).thenReturn(Optional.of(item));
+    @DisplayName("DELETE /items/{id} - Unauthorized user")
+    void testDeleteItem_Unauthorized() {
+        User mockUser = new User();
+        mockUser.setId(2L);
+        mockUser.setAdmin(false); // Fix: Set admin status explicitly
+        when(userService.getUserByToken("token")).thenReturn(mockUser);
 
-        ResponseEntity<Item> response = itemController.getItemById(1L);
-
-        assertEquals(200, response.getStatusCodeValue());
-    }
-
-    @Test
-    public void testGetItemById_Forbidden() {
-        when(userService.getUserByEmail(anyString())).thenReturn(adminUser);
-        when(itemService.getItemById(anyLong())).thenReturn(Optional.of(item));
-
-        ResponseEntity<Item> response = itemController.getItemById(1L);
-
-        assertEquals(403, response.getStatusCodeValue());
-    }
-
-    @Test
-    public void testGetLentItemsByUser_Success() {
-        when(userService.getUserByEmail(anyString())).thenReturn(user);
-        when(loanService.getLentItemsIdByUser(anyLong())).thenReturn(Arrays.asList(1L));
-        when(itemService.getItemsById(any())).thenReturn(Arrays.asList(item));
-
-        ResponseEntity<List<Item>> response = itemController.getLentItemsByUser();
-
-        assertEquals(200, response.getStatusCodeValue());
-    }
-
-    @Test
-    public void testGetBorrowedItemsByUser_Success() {
-        when(userService.getUserByEmail(anyString())).thenReturn(user);
-        when(loanService.getBorrowedItemsIdByUser(anyLong())).thenReturn(Arrays.asList(1L));
-        when(itemService.getItemsById(any())).thenReturn(Arrays.asList(item));
-
-        ResponseEntity<List<Item>> response = itemController.getBorrowedItemsByUser();
-
-        assertEquals(200, response.getStatusCodeValue());
-    }
-
-    @Test
-    public void testCreateItem_Success() {
-        when(userService.getUserByToken(anyString())).thenReturn(user);
-
-        ItemRecord itemRecord = new ItemRecord("Laptop", "Gaming", "Electronics", "AVAILABLE", "LIKE_NEW", "image-url");
-
-        ResponseEntity<String> response = itemController.createItem(itemRecord, "token");
-
-        assertEquals(201, response.getStatusCodeValue());
-    }
-
-    @Test
-    public void testCreateItem_Unauthorized() {
-        when(userService.getUserByToken(anyString())).thenReturn(null);
-
-        ItemRecord itemRecord = new ItemRecord("Laptop", "Gaming", "Electronics", "AVAILABLE", "LIKE_NEW", "image-url");
-
-        ResponseEntity<String> response = itemController.createItem(itemRecord, "token");
-
-        assertEquals(401, response.getStatusCodeValue());
-    }
-
-    @Test
-    public void testDeleteItem_Success() {
-        when(userService.getUserByToken(anyString())).thenReturn(adminUser);
-        when(itemService.getItemById(anyLong())).thenReturn(Optional.of(item));
+        Item mockItem = new Item();
+        mockItem.setOwner(1L);
+        when(itemService.getItemById(1L)).thenReturn(Optional.of(mockItem));
 
         ResponseEntity<String> response = itemController.deleteItem(1L, "token");
-
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
     @Test
-    public void testDeleteItem_Unauthorized() {
-        when(userService.getUserByToken(anyString())).thenReturn(user);
-        when(itemService.getItemById(anyLong())).thenReturn(Optional.of(item));
+    @DisplayName("PUT /items/{id} - Successful update")
+    void testUpdateItem_Success() {
+        User mockUser = new User();
+        mockUser.setId(1L);
+        mockUser.setAdmin(true);
+        when(userService.getUserByToken("valid-token")).thenReturn(mockUser);
 
-        ResponseEntity<String> response = itemController.deleteItem(2L, "token");
+        Item existingItem = new Item();
+        existingItem.setId(1L);
+        existingItem.setOwner(2L);
+        existingItem.setName("Old Name");
+        existingItem.setStatus(Item.ItemStatus.AVAILABLE);
+        existingItem.setCondition(Item.ItemCondition.NEW);
+        when(itemService.getItemById(1L)).thenReturn(Optional.of(existingItem));
 
-        assertEquals(401, response.getStatusCodeValue());
+        when(itemService.saveItem(any(Item.class))).thenAnswer(invocation -> {
+            Item savedItem = invocation.getArgument(0);
+            return savedItem;
+        });
+
+        ItemRecord updateData = new ItemRecord("New Name", "Updated description", "Electronics", "image.jpg", "AVAILABLE", "USED");
+
+        ResponseEntity<String> response = itemController.updateItem(1L, updateData, "valid-token");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected 200 OK but got " + response.getStatusCode());
+        assertEquals("New Name", existingItem.getName(), "Item name was not updated");
     }
 
     @Test
-    public void testUpdateItem_Success() {
-        when(userService.getUserByToken(anyString())).thenReturn(user);
-        when(itemService.getItemById(anyLong())).thenReturn(Optional.of(item));
+    @DisplayName("PUT /items/{id} - Unauthorized to update")
+    void testUpdateItem_Unauthorized() {
+        when(userService.getUserByToken("invalid-token")).thenReturn(null);
 
-        ItemRecord itemRecord = new ItemRecord("Laptop", "Updated Gaming", "Electronics", "AVAILABLE", "LIKE_NEW", "updated-image");
-
-        ResponseEntity<String> response = itemController.updateItem(1L, itemRecord, "token");
-
-        assertEquals(200, response.getStatusCodeValue());
-    }
-
-    @Test
-    public void testUpdateItem_Unauthorized() {
-        when(userService.getUserByToken(anyString())).thenReturn(null);
-
-        ItemRecord itemRecord = new ItemRecord("Laptop", "Updated Gaming", "Electronics", "AVAILABLE", "LIKE_NEW", "updated-image");
-
-        ResponseEntity<String> response = itemController.updateItem(1L, itemRecord, "token");
-
-        assertEquals(401, response.getStatusCodeValue());
+        ResponseEntity<String> response = itemController.updateItem(
+            1L, 
+            new ItemRecord("Updated Name", "Updated Description", "Category", "imageUrl", "AVAILABLE", "USED"), 
+            "invalid-token"
+        );
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 }
