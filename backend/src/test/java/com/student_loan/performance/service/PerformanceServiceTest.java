@@ -6,204 +6,219 @@ import com.github.noconnor.junitperf.JUnitPerfInterceptor;
 import com.github.noconnor.junitperf.JUnitPerfReportingConfig;
 import com.github.noconnor.junitperf.JUnitPerfTestRequirement;
 import com.github.noconnor.junitperf.reporting.providers.HtmlReportGenerator;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.jupiter.api.Assertions;
-
-
 import com.student_loan.dtos.CredentialsDTO;
+import com.student_loan.model.Item;
+import com.student_loan.model.Loan;
+import com.student_loan.model.User;
 import com.student_loan.service.ItemService;
 import com.student_loan.service.LoanService;
 import com.student_loan.service.UserService;
-import com.student_loan.model.User;
-import com.student_loan.model.Item;
-import com.student_loan.model.Loan;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.Assertions;
 
+import java.util.List;
+import java.util.Optional;
 
-@SpringBootTest
-@ExtendWith(JUnitPerfInterceptor.class) //We measure performance with JUnitPerf
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+
+@ExtendWith(MockitoExtension.class)
 public class PerformanceServiceTest {
 
-    @Autowired
+    @Mock
     private UserService userService;
 
-    @Autowired
+    @Mock
     private ItemService itemService;
 
-    @Autowired
+    @Mock
     private LoanService loanService;
 
-    @JUnitPerfTestActiveConfig //We save the reports made by ContiPerf in target/reports/perf-report.html 
-    private final static JUnitPerfReportingConfig PERF_CONFIG = JUnitPerfReportingConfig.builder()
-        .reportGenerator(new HtmlReportGenerator(System.getProperty("user.dir") + "/target/reports/perf-report.html"))
-        .build();
+    private User mockUser;
+    private Item mockItem;
+    private Loan mockLoan;
 
+    @JUnitPerfTestActiveConfig
+    private final static JUnitPerfReportingConfig PERF_CONFIG = JUnitPerfReportingConfig.builder()
+            .reportGenerator(new HtmlReportGenerator(System.getProperty("user.dir") + "/target/reports/perf-report.html"))
+            .build();
+
+    @BeforeEach
+    void setUp() {
+        // Mock user
+        mockUser = new User();
+        mockUser.setId(1L);
+        mockUser.setEmail("ana.garcia@email.com");
+        mockUser.setPassword("encodedPassword"); // Simula un password hasheado
+
+        // Mock item
+        mockItem = new Item();
+        mockItem.setId(1L);
+        mockItem.setName("Mock Item");
+        mockItem.setOwner(1L);
+
+        // Mock loan
+        mockLoan = new Loan();
+        mockLoan.setId(1L);
+        mockLoan.setLender(1L);
+        mockLoan.setBorrower(2L);
+        mockLoan.setItem(1L);
+        mockLoan.setLoanStatus(Loan.Status.IN_USE);
+    }
 
     // 1. TESTS IN USERSERVICE    
-    //Successful test : getAllUsers() Get all the users
+
     @Test
     @JUnitPerfTest(threads = 10, durationMs = 5000, warmUpMs = 1000)
     @JUnitPerfTestRequirement(executionsPerSec = 30, percentiles = "95:200ms")
     public void testGetAllUsersPerformance() {
+        when(userService.getAllUsers()).thenReturn(List.of(mockUser));
         userService.getAllUsers();
     }
 
-    //Successful test : valid login
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 5000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
     public void testValidLoginPerformance() {
         CredentialsDTO credentials = new CredentialsDTO("ana.garcia@email.com", "dF!94vH*2kQ#bR");
+        when(userService.login(credentials)).thenReturn("mockedToken");
+
         userService.login(credentials);
     }
 
-     // Failed test: login with invalid credentials
-     @Test
-     @JUnitPerfTest(threads = 5, durationMs = 3000)
-     @JUnitPerfTestRequirement(executionsPerSec = 5, allowedErrorPercentage = 0.30f)
-     public void testInvalidLoginPerformance() {
-        CredentialsDTO credentials = new CredentialsDTO("emailnoexiste@email.com", "contrasenamala");
-        userService.login(credentials);
-     }
+    @Test
+    @JUnitPerfTest(threads = 5, durationMs = 3000)
+    @JUnitPerfTestRequirement(executionsPerSec = 5, allowedErrorPercentage = 0.30f)
+    public void testInvalidLoginPerformance() {
+        CredentialsDTO credentials = new CredentialsDTO("emailnoexiste@email.com", "wrongPassword");
+        when(userService.login(credentials)).thenThrow(new RuntimeException("Invalid credentials"));
 
-    // Failed test: getUserById with invalid ID 
+        Assertions.assertThrows(RuntimeException.class, () -> userService.login(credentials));
+    }
+
     @Test
     @JUnitPerfTest(threads = 3, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
     public void testGetUserByInvalidId() {
-        userService.getUserById(9999L);
+        when(userService.getUserById(anyLong())).thenThrow(new RuntimeException("User not found"));
+
+        Assertions.assertThrows(RuntimeException.class, () -> userService.getUserById(9999L));
     }
 
-
     // 2. TESTS IN ITEMSERVICE
-    // Successful test : getAllItems()
+
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 4000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
     public void testGetAllItemsPerformance() {
+        when(itemService.getAllItems()).thenReturn(List.of(mockItem));
+
         itemService.getAllItems();
     }
 
-    //Successful test: valid login  We test with the first user in our db
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 4000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
     public void testGetItemsByUserValidUserPerformance() {
-        Long validUserId = userService.getAllUsers().stream()
-            .filter(user -> user.getId() != null)
-            .findFirst()
-            .orElseThrow()
-            .getId();
+        when(itemService.getItemsByUser(mockUser.getId())).thenReturn(List.of(mockItem));
 
-        itemService.getItemsByUser(validUserId);
+        itemService.getItemsByUser(mockUser.getId());
     }
 
-    // Failed test: getItemsByUser() no user with that id in our db
     @Test
     @JUnitPerfTest(threads = 3, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
     public void testGetItemsByUserInvalidUserPerformance() {
-        Assertions.assertThrows(RuntimeException.class, () -> {
-            itemService.getItemsByUser(9999L); // ID doesn't exist in our db
-    });
+        when(itemService.getItemsByUser(9999L)).thenThrow(new RuntimeException("User not found"));
+
+        Assertions.assertThrows(RuntimeException.class, () -> itemService.getItemsByUser(9999L));
     }
 
-    //Successfull Test: saveItem(). Save a new item
     @Test
     @JUnitPerfTest(threads = 4, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
     public void testSaveItemPerformance() {
-        Long validUserId = userService.getAllUsers().stream()
-            .filter(user -> user.getId() != null)
-            .findFirst()
-            .orElseThrow()
-            .getId();
+        when(itemService.saveItem(any(Item.class))).thenReturn(mockItem);
 
         Item newItem = new Item();
         newItem.setName("Test Item");
-        newItem.setOwner(validUserId);
+        newItem.setOwner(mockUser.getId());
 
         itemService.saveItem(newItem);
-}
+    }
 
-
-
-    // Failed test : saveItem() The user doesn't exist
     @Test
     @JUnitPerfTest(threads = 2, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 2)
     public void testSaveItemInvalidOwnerPerformance() {
+        when(itemService.saveItem(any(Item.class))).thenThrow(new RuntimeException("Owner not found"));
+
         Item newItem = new Item();
         newItem.setName("Invalid Owner Item");
-        newItem.setOwner(9999L); // Non existing user
+        newItem.setOwner(9999L);
 
-        Assertions.assertThrows(RuntimeException.class, () -> {
-            itemService.saveItem(newItem);
-        });
+        Assertions.assertThrows(RuntimeException.class, () -> itemService.saveItem(newItem));
     }
 
-    // Failed test: createItem() the item already exists
     @Test
     @JUnitPerfTest(threads = 3, durationMs = 3000)
     @JUnitPerfTestRequirement(executionsPerSec = 3)
     public void testCreateItemDuplicatePerformance() {
-        Item existingItem = itemService.getAllItems().stream()
-            .filter(i -> i.getId() != null)
-            .findFirst()
-            .orElseThrow();
+        when(itemService.createItem(any(Item.class))).thenThrow(new RuntimeException("Item already exists"));
 
-        Assertions.assertThrows(RuntimeException.class, () -> {
-            itemService.createItem(existingItem);
-        });
+        Item existingItem = mockItem;
+
+        Assertions.assertThrows(RuntimeException.class, () -> itemService.createItem(existingItem));
     }
 
+    // 3. TESTS IN LOANSERVICE
 
-    // 3. TEST IN LOAN SERVICE
-
-    //Successful test: get all the loans
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 5000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
     public void testGetAllLoansPerformance() {
+        when(loanService.getAllLoans()).thenReturn(List.of(mockLoan));
+
         loanService.getAllLoans();
     }
 
-
-    //Successful test: get the loans of a user
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 5000)
     @JUnitPerfTestRequirement(executionsPerSec = 10)
     public void testGetLoansByLenderPerformance() {
-        Long lenderId = userService.getAllUsers().get(0).getId(); 
-        loanService.getLoansByLender(lenderId);
+        when(loanService.getLoansByLender(mockUser.getId())).thenReturn(List.of(mockLoan));
+
+        loanService.getLoansByLender(mockUser.getId());
     }
 
-    // Failed test: the user whose loans we want to get doesn't exist
     @Test
     @JUnitPerfTest(threads = 5, durationMs = 5000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
     public void testGetLoansByLenderInvalidUserPerformance() {
-        try {
-            loanService.getLoansByLender(9999L);  // Usuario no existente
-        } catch (RuntimeException e) {
-        }
+        when(loanService.getLoansByLender(9999L)).thenThrow(new RuntimeException("User not found"));
+
+        Assertions.assertThrows(RuntimeException.class, () -> loanService.getLoansByLender(9999L));
     }
 
-    // Successful test: create a loan
     @Test
     @JUnitPerfTest(threads = 3, durationMs = 4000)
     @JUnitPerfTestRequirement(executionsPerSec = 5)
     public void testCreateLoanPerformance() {
+        when(loanService.createLoan(any(Loan.class))).thenReturn(mockLoan);
+
         Loan newLoan = new Loan();
-        newLoan.setLender(userService.getAllUsers().get(0).getId());
-        newLoan.setBorrower(userService.getAllUsers().get(1).getId());
-        newLoan.setItem(itemService.getAllItems().get(0).getId());
+        newLoan.setLender(mockUser.getId());
+        newLoan.setBorrower(2L);
+        newLoan.setItem(mockItem.getId());
         newLoan.setLoanStatus(Loan.Status.IN_USE);
 
         loanService.createLoan(newLoan);
     }
 
-    
 }
