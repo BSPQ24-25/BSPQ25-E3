@@ -10,6 +10,8 @@ import com.student_loan.repository.ItemRepository;
 import com.student_loan.repository.UserRepository;
 
 import com.student_loan.model.User;
+import com.student_loan.service.ItemService;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
