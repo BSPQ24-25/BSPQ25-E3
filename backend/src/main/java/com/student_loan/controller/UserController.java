@@ -3,12 +3,15 @@ package com.student_loan.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.student_loan.model.User;
 import com.student_loan.service.UserService;
 import com.student_loan.dtos.UserRecord;
 import com.student_loan.dtos.CredentialsDTO;
 import com.student_loan.dtos.RegistrationRecord;
+import com.student_loan.dtos.UserDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +51,18 @@ public class UserController {
 	}
     
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id, @RequestParam("token") String token) {
-        
-    	User user = userService.getUserByToken(token);
-        if (user == null || user.getAdmin()==false && user.getId()!=id) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+    	User user = userService.getUserByEmail(email);
+        if (user == null) {
         	   return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-    	return new ResponseEntity<>(userService.getUserById(id).get(), HttpStatus.OK);
+		User retrievedUser = userService.getUserById(id).get();
+		UserDTO userDTO = new UserDTO(retrievedUser.getId(), retrievedUser.getName(), retrievedUser.getEmail());
+
+    	return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

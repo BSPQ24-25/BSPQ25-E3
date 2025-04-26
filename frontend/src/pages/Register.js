@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { registerUser } from "../api";
+import { Link, useNavigate } from 'react-router-dom';
+import { registerUser, loginUser } from "../api";
+import { useAuth } from '../context/AuthContext';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,8 @@ function Register() {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,17 +34,25 @@ function Register() {
     }
     // Registration logic
     try {
-      const response = await registerUser({
-        name: formData.name,
+      // First register the user
+      await registerUser({
+        firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
       });
-  
-      alert("Registration successful!"); // Show success message
-      console.log("Registration response:", response);
+
+      // Then automatically log them in
+      const loginResponse = await loginUser({
+        email: formData.email,
+        password: formData.password
+      });
+
+      // Set the authentication state
+      login(loginResponse.token, loginResponse.user);
+      navigate('/');
     } catch (error) {
-      setError(error.response?.data?.message || error.message);
+      setError(error.response?.data?.message || error.message || 'An error occurred during registration');
     }
     console.log('Registration attempt:', formData);
   };
@@ -64,17 +75,17 @@ function Register() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 text-left">
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 text-left">
                   First name
                 </label>
                 <div className="mt-1">
                   <input
-                    id="name"
-                    name="name"
+                    id="firstName"
+                    name="firstName"
                     type="text"
                     autoComplete="given-name"
                     required
-                    value={formData.name}
+                    value={formData.firstName}
                     onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
