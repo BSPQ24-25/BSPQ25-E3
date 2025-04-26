@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.student_loan.dtos.CredentialsDTO;
 import com.student_loan.dtos.RegistrationRecord;
+import com.student_loan.dtos.UserDTO;
 import com.student_loan.model.Item;
 import com.student_loan.model.Loan;
 import com.student_loan.model.User;
@@ -68,6 +69,32 @@ public class PerformanceControllerTest {
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
+
+    @Test
+    public void testLogoutPerformance() {
+        long start = System.nanoTime();
+        ResponseEntity<String> response = restTemplate.postForEntity(
+            "/users/logout?token=" + adminToken, null, String.class);
+        long end = System.nanoTime();
+        long durationMs = (end - start) / 1_000_000;
+        assertTrue(response.getStatusCode().is2xxSuccessful());
+        assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
+    }
+
+
+    @Test
+    public void testGetUserByIdPerformance() {
+        long start = System.nanoTime();
+        ResponseEntity<UserDTO> response = restTemplate.exchange(
+            "/users/{id}?token=" + adminToken, HttpMethod.GET, null, UserDTO.class, 1L);
+        long end = System.nanoTime();
+        long durationMs = (end - start) / 1_000_000;
+        assertTrue(response.getStatusCode().is2xxSuccessful());
+        assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
+    }
+
+
+
 
     @Test
     public void testCreateItemPerformance() {
