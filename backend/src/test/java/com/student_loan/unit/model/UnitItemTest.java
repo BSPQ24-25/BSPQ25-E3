@@ -1,4 +1,4 @@
-package com.student_loan.model;
+package com.student_loan.unit.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -15,7 +15,7 @@ import com.student_loan.model.Item.ItemCondition;
 import com.student_loan.model.Item.ItemStatus;
 import com.student_loan.repository.ItemRepository;
 
-class ItemTest {
+class UnitItemTest {
 
     private ItemRepository repository;
     private Item item;

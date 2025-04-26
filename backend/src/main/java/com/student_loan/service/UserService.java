@@ -20,10 +20,14 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    private Map<String, User> tokens = new HashMap<>();
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final JwtUtil jwtUtil = new JwtUtil();
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    private Map<String, User> tokens = new HashMap<>();
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -71,8 +75,6 @@ public class UserService {
         }
     }
 
-
-
     public boolean register(User user) {
         if(userRepository.findByEmail(user.getEmail())!=null) {
     		return false;
@@ -105,7 +107,12 @@ public class UserService {
 	}
     
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
     
 	public User getUserByToken(String token) {

@@ -1,4 +1,4 @@
-package com.student_loan.model;
+package com.student_loan.unit.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import com.student_loan.model.User;
 import com.student_loan.repository.UserRepository;
 
-class UserTest {
+class UnitUserTest {
 
     private UserRepository repository;
     private User user;

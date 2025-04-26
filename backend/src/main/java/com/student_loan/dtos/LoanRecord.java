@@ -11,6 +11,4 @@ public record LoanRecord(
     String realReturnDate,
     String loanStatus,
     String rating,
-    String observations
-) {
-}
+    String observations) {}
