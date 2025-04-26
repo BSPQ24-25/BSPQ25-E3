@@ -15,14 +15,14 @@ class DtoTests {
     @Test
     @DisplayName("CredentialsDTO getters and setters should work")
     void testCredentialsDTO() {
-        // Test no-arg constructor and setters
         CredentialsDTO creds = new CredentialsDTO();
+        
         creds.setEmail("user@example.com");
         creds.setPassword("secret");
+
         assertEquals("user@example.com", creds.getEmail());
         assertEquals("secret", creds.getPassword());
 
-        // Test all-args constructor
         CredentialsDTO creds2 = new CredentialsDTO("a@b.com", "pwd");
         assertEquals("a@b.com", creds2.getEmail());
         assertEquals("pwd", creds2.getPassword());
