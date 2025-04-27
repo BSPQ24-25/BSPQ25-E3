@@ -1,47 +1,47 @@
 package com.student_loan.integration;
-
-import com.student_loan.dtos.CredentialsDTO;
-import com.student_loan.model.Item;
-import com.student_loan.model.Loan;
-import com.student_loan.model.User;
-import com.student_loan.repository.ItemRepository;
-import com.student_loan.repository.UserRepository;
-import com.student_loan.repository.LoanRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.jupiter.api.Test;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
-
-import java.time.LocalDate;
-import java.util.Optional;
-import java.util.Map;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class StudentLoanIntegrationTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ItemRepository itemRepository;
-
-    @Autowired
-    private LoanRepository loanRepository;
-
-
-    @Test
-    void testEndToEndLoanFlow() throws Exception {
+ 
+ import com.student_loan.dtos.CredentialsDTO;
+ import com.student_loan.model.Item;
+ import com.student_loan.model.Loan;
+ import com.student_loan.model.User;
+ import com.student_loan.repository.ItemRepository;
+ import com.student_loan.repository.UserRepository;
+ import com.student_loan.repository.LoanRepository;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+ import com.fasterxml.jackson.databind.SerializationFeature;
+ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+ import org.junit.jupiter.api.Test;
+ import org.springframework.web.client.RestTemplate;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.boot.test.context.SpringBootTest;
+ import org.springframework.boot.test.web.client.TestRestTemplate;
+ import org.springframework.http.*;
+ 
+ import java.time.LocalDate;
+ import java.util.Optional;
+ import java.util.Map;
+ import java.util.List;
+ 
+ import static org.junit.jupiter.api.Assertions.*;
+ 
+ @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+ class StudentLoanIntegrationTest {
+ 
+     @Autowired
+     private TestRestTemplate restTemplate;
+ 
+     @Autowired
+     private UserRepository userRepository;
+ 
+     @Autowired
+     private ItemRepository itemRepository;
+ 
+     @Autowired
+     private LoanRepository loanRepository;
+ 
+ 
+     @Test
+     void testEndToEndLoanFlow() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -155,7 +155,8 @@ class StudentLoanIntegrationTest {
         Long loanId = loans[0].getId();
         assertEquals(Loan.Status.IN_USE, loans[0].getLoanStatus());
         assertEquals(loanId, loans[0].getId());
-        System.out.println("INTEGRATION TEST FINISHED");
+                
+        System.out.println("INTEGREATION TEST FINISHED");
 
         // // 7. Return loan
         // Map<String, String> returnLoanRequest = Map.of(
@@ -178,6 +179,7 @@ class StudentLoanIntegrationTest {
         //     String.class
         // );
 
+        // System.out.println("HOLA" + returnLoanResponse.getBody());
         // assertEquals(HttpStatus.OK, returnLoanResponse.getStatusCode());
 
         // // Step 8: Verify loan status is updated
@@ -194,6 +196,5 @@ class StudentLoanIntegrationTest {
         // 10. Verify item and loan deletion
         // assertFalse(itemRepository.existsById(itemId));
         // assertFalse(userRepository.existsById(loanId));
-
     }
 }
