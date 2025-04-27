@@ -142,7 +142,7 @@ class StudentLoanIntegrationTest {
 
         assertEquals(HttpStatus.CREATED, cLoan.getStatusCode());
 
-        // 6. Verify loan via GET loans/borrower
+        // 6. Verify the status of a loan
         ResponseEntity<Loan[]> respLoans = restTemplate.getForEntity(
             "/loans/borrower?token=" + tokenB + "&borrowerId=" + borrowerId, Loan[].class);
         
@@ -178,7 +178,6 @@ class StudentLoanIntegrationTest {
         //     String.class
         // );
 
-        // System.out.println("HOLA" + returnLoanResponse.getBody());
         // assertEquals(HttpStatus.OK, returnLoanResponse.getStatusCode());
 
         // // Step 8: Verify loan status is updated
@@ -208,6 +207,5 @@ class StudentLoanIntegrationTest {
         // // Step 10: Verify loan and item deletion
         // assertFalse(loanRepository.existsById(loanId));
         // assertFalse(itemRepository.existsById(itemId));
-    
     }
 }
