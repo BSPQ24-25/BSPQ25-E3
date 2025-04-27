@@ -1,4 +1,4 @@
-package com.student_loan.unit.dto;
+package com.student_loan.unit.dtos;
 
 import com.student_loan.dtos.CredentialsDTO;
 import com.student_loan.dtos.ItemRecord;

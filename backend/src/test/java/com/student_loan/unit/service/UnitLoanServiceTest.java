@@ -1,4 +1,4 @@
-package com.student_loan.service;
+package com.student_loan.unit.service;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,6 +9,7 @@ import com.student_loan.model.Item;
 import com.student_loan.repository.LoanRepository;
 import com.student_loan.repository.UserRepository;
 import com.student_loan.repository.ItemRepository;
+import com.student_loan.service.LoanService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ class UnitLoanServiceTest {
     @Test
     void testGetLoansByBorrower() {
         Loan loan = new Loan(); loan.setId(2L);
-        when(loanRepository.findByLender(2L)).thenReturn(Collections.singletonList(loan));
+        when(loanRepository.findByBorrower(2L)).thenReturn(Collections.singletonList(loan));
 
         List<Loan> result = loanService.getLoansByBorrower(2L);
 

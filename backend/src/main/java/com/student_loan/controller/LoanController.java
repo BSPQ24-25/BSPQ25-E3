@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import com.student_loan.dtos.LoanRecord;
 import com.student_loan.model.Loan;
 import com.student_loan.model.User;
@@ -15,6 +16,7 @@ import com.student_loan.service.UserService;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,18 +47,23 @@ public class LoanController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Loan> getLoanById(@PathVariable Long id, @RequestParam("token") String token) {
+	public ResponseEntity<Loan> getLoanById(@PathVariable Long id, @RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);
-    	if (user == null || user.getAdmin()==false && user.getId()!=loanService.getLoanById(id).get().getLender() && user.getId()!=loanService.getLoanById(id).get().getBorrower()) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
-    	try {
-            return new ResponseEntity<>(loanService.getLoanById(id).get(),HttpStatus.OK);
-        } catch (RuntimeException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	if (user == null || 
+        	(!user.getAdmin() && 
+        	user.getId() != loanService.getLoanById(id).get().getLender() && 
+        	user.getId() != loanService.getLoanById(id).get().getBorrower())) {
+        	return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     	}
-    }
-    
+
+    	Optional<Loan> loanOpt = loanService.getLoanById(id);
+    	if (loanOpt.isEmpty()) {
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    	Loan loan = loanOpt.get();
+    	return new ResponseEntity<>(loan, HttpStatus.OK);
+	}
+
     @GetMapping("/lender")
     public ResponseEntity<List<Loan>> getLoansByLender(@RequestParam("token") String token, @RequestParam("lenderId") Long lenderId) {
     	User user = userService.getUserByToken(token);
@@ -64,28 +71,30 @@ public class LoanController {
 			return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
         }
         try {
-        List<Loan> loans = loanService.getLoansByLender(lenderId);
-        return new ResponseEntity<>(loans, HttpStatus.OK);
-        
-        } catch (RuntimeException e) {
-        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			List<Loan> loans = loanService.getLoansByLender(lenderId);
+			return new ResponseEntity<>(loans, HttpStatus.OK);
+			
+			} catch (RuntimeException e) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 	}
     
     @GetMapping("/borrower")
-    public ResponseEntity<List<Loan>> getLoansByBorrower(@RequestParam("token") String token, @RequestParam("borrowerId") Long borrowerId) {
-    	User user = userService.getUserByToken(token);
-        if (user == null || user.getId()==borrowerId && user.getAdmin()==false) {
-			return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
-        }
-        try {
-        List<Loan> loans = loanService.getLoansByBorrower(borrowerId);
-        return new ResponseEntity<>(loans, HttpStatus.OK);
-		} catch (RuntimeException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-	}
+	public ResponseEntity<List<Loan>> getLoansByBorrower(
+			@RequestParam("token") String token,
+			@RequestParam("borrowerId") Long borrowerId) {
 
+		User user = userService.getUserByToken(token);
+
+		if (user == null || (!user.getAdmin() && !Objects.equals(user.getId(), borrowerId))) {
+			logger.warn("Unauthorized access: token='{}' yielded user={}, trying to query borrowerId={}",
+						token, user, borrowerId);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		List<Loan> loans = loanService.getLoansByBorrower(borrowerId);
+		return new ResponseEntity<>(loans, HttpStatus.OK);
+	}
 
     @PostMapping
     public ResponseEntity<String> createLoan(@RequestBody LoanRecord loan, @RequestParam("token") String token) {
@@ -105,7 +114,13 @@ public class LoanController {
     }
     
     @PutMapping("/{id}")
-	public ResponseEntity<String> updateLoan(@PathVariable Long id, @RequestBody LoanRecord loan, @RequestParam("token") String token) {
+	public ResponseEntity<String> updateLoan(@PathVariable Long id, @RequestBody LoanRecord loan, @RequestHeader("Authorization") String authHeader) {
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        	return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    	}
+		
+    	String token = authHeader.substring(7);
+
     	User user = userService.getUserByToken(token);
     	Loan existingLoan = loanService.getLoanById(id).get();
 		if (user == null || user.getId()!=existingLoan.getLender() && user.getId()!=existingLoan.getBorrower() && user.getAdmin()==false) {
