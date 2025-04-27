@@ -22,6 +22,7 @@ public class DataInitializer {
    @Bean
     CommandLineRunner initData(UserRepository userRepository, ItemRepository itemRepository, LoanRepository loanRepository) {
       return args -> {
+         System.out.println("Initializing data...");
          List<User> users = createUsers();
          saveUsers(users, userRepository);
          

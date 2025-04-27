@@ -106,6 +106,7 @@ public class UserController {
 
     	return new ResponseEntity<>(HttpStatus.OK);
     }
+
     private User registerRecordToUser(RegistrationRecord data) {
     	        User user = new User();
     	        user.setName(data.name() + " " + data.lastName() );
@@ -118,9 +119,7 @@ public class UserController {
     			user.setPenalties(0);
     			user.setAverageRating(0.0);
     			user.setAdmin(false);
-    			return user;
-    			
-    	                
+    			return user;           
     }
     
 	private User userRecordToUser(UserRecord userDTO) {
