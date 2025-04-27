@@ -102,7 +102,7 @@ function MyItems() {
   };
 
   const handleConfirmReturn = async () => {
-    // TODO: Implement return item functionality
+    // Return item functionality
     try {
       const response = await axiosInstance.put(`loans/${selectedItem.id}/return`) 
       if (response.status === 200) {
@@ -163,10 +163,25 @@ function MyItems() {
     setIsUploadModalOpen(false);
   };
 
-  const handleConfirmUpload = (formData) => {
-    // TODO: Implement upload item functionality
-    console.log('Uploading item:', formData);
-    setIsUploadModalOpen(false);
+  const handleConfirmUpload = async (formData) => {
+    try {
+      // TODO change forms to be able to upload the whole info of the item
+      const adaptedData = {
+        name: formData.name,
+        description: formData.description,
+        category: 'Misc', // TODO
+        imageUrl: 'http://example.com/fake-image.jpg', // TODO
+        status: 'available', // TODO
+        condition: 'NEW' // TODO
+      };
+  
+      await axiosInstance.post('/items/create', adaptedData);
+  
+      console.log('Item uploaded successfully!');
+      setIsUploadModalOpen(false);
+    } catch (error) {
+      console.error('Failed to upload item:', error.response?.data || error.message);
+    }
   };
 
   return (
