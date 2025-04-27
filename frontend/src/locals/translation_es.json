@@ -1,0 +1,77 @@
+{
+    "login": {
+      "signInTitle": "Inicia sesión en tu cuenta",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "signIn": "Iniciar sesión",
+      "dontHaveAccount": "¿No tienes una cuenta?",
+      "signUp": "Regístrate",
+      "error": "Ocurrió un error durante el inicio de sesión"
+    },
+    "register": {
+      "createAccount": "Crear una cuenta",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "registrationSuccess": "¡Registro exitoso!",
+      "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+      "signIn": "Iniciar sesión",
+      "error": "Ocurrió un error durante el registro"
+    },
+    "navbar": {
+      "browseItems": "Explorar artículos",
+      "myItems": "Mis artículos",
+      "logout": "Cerrar sesión",
+      "signin": "Iniciar sesión"
+    },
+    "myItems": {
+      "title": "Mis Artículos",
+      "uploadButton": "Subir Artículo",
+      "borrowedSection": "Prestados a Mí",
+      "lentSection": "Prestados por Mí",
+      "table": {
+        "itemName": "Nombre del Artículo",
+        "owner": "Propietario",
+        "borrower": "Prestatario",
+        "dueDate": "Fecha de Vencimiento",
+        "lentUntil": "Prestado Hasta",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "actions": {
+        "returnItem": "Devolver Artículo",
+        "sendReminder": "Enviar Recordatorio"
+      },
+      "status": {
+        "borrowed": "Prestado",
+        "overdue": "Atrasado",
+        "available": "Disponible"
+      }
+    },
+    "home": {
+      "loading": "Cargando Artículos Disponibles...",
+      "availableItems": "Artículos Disponibles"
+    },
+    "itemCard": {
+      "lender": "Prestamista",
+      "borrow": "Pedir prestado"
+    },
+    "borrowModal": {
+      "borrowItem": "Pedir prestado {{itemName}}",
+      "returnDate": "Fecha de devolución",
+      "cancel": "Cancelar",
+      "confirmBorrow": "Confirmar Préstamo"
+    },
+    "uploadModal": {
+      "title": "Subir Nuevo Artículo",
+      "itemName": "Nombre del Artículo",
+      "itemDescription": "Descripción del Artículo",
+      "itemImage": "Imagen del Artículo",
+      "cancel": "Cancelar",
+      "uploadItem": "Subir Artículo"
+    }
+  }
+  

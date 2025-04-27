@@ -1,0 +1,77 @@
+{
+    "login": {
+      "signInTitle": "Melden Sie sich bei Ihrem Konto an",
+      "email": "E-Mail-Adresse",
+      "password": "Passwort",
+      "signIn": "Anmelden",
+      "dontHaveAccount": "Sie haben noch kein Konto?",
+      "signUp": "Registrieren",
+      "error": "Beim Anmelden ist ein Fehler aufgetreten"
+    },
+    "register": {
+      "createAccount": "Ein Konto erstellen",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail-Adresse",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "registrationSuccess": "Registrierung erfolgreich!",
+      "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+      "signIn": "Anmelden",
+      "error": "Beim Registrieren ist ein Fehler aufgetreten"
+    },
+    "navbar": {
+      "browseItems": "Artikel durchsuchen",
+      "myItems": "Meine Artikel",
+      "logout": "Abmelden",
+      "signin": "Anmelden"
+    },
+    "myItems": {
+      "title": "Meine Gegenstände",
+      "uploadButton": "Gegenstand Hochladen",
+      "borrowedSection": "Von mir ausgeliehen",
+      "lentSection": "Von mir verliehen",
+      "table": {
+        "itemName": "Gegenstandsname",
+        "owner": "Besitzer",
+        "borrower": "Entleiher",
+        "dueDate": "Fälligkeitsdatum",
+        "lentUntil": "Verliehen bis",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "actions": {
+        "returnItem": "Gegenstand Zurückgeben",
+        "sendReminder": "Erinnerung Senden"
+      },
+      "status": {
+        "borrowed": "Ausgeliehen",
+        "overdue": "Überfällig",
+        "available": "Verfügbar"
+      }
+    },
+    "home": {
+      "loading": "Verfügbare Artikel werden geladen...",
+      "availableItems": "Verfügbare Artikel"
+    },
+    "itemCard": {
+      "lender": "Verleiher",
+      "borrow": "Ausleihen"
+    },
+    "borrowModal": {
+      "borrowItem": "{{itemName}} ausleihen",
+      "returnDate": "Rückgabedatum",
+      "cancel": "Abbrechen",
+      "confirmBorrow": "Ausleihe bestätigen"
+    },
+    "uploadModal": {
+      "title": "Neuen Artikel Hochladen",
+      "itemName": "Artikelname",
+      "itemDescription": "Artikelbeschreibung",
+      "itemImage": "Artikelbild",
+      "cancel": "Abbrechen",
+      "uploadItem": "Artikel Hochladen"
+    }
+  }
+  

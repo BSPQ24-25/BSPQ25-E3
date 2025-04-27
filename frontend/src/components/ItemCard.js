@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import BorrowModal from './BorrowModal';
+import { useTranslation } from 'react-i18next';
 
 function ItemCard({ item }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleBorrowClick = () => {
     setIsModalOpen(true);
@@ -32,14 +34,14 @@ function ItemCard({ item }) {
           <h3 className="text-lg font-semibold text-gray-800 mb-2">{item.name}</h3>
           <p className="text-gray-600 text-sm mb-4">{item.description}</p>
           <div className="flex items-center text-sm text-gray-500 mb-4">
-            <span className="mr-2">Lender:</span>
+            <span className="mr-2">{t('itemCard.lender')}:</span>
             <span className="font-medium">{item.lenderName}</span>
           </div>
           <button 
             onClick={handleBorrowClick}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300"
           >
-            Borrow
+            {t('itemCard.borrow')}
           </button>
         </div>
       </div>

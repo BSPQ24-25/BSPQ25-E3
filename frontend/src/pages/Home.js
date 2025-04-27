@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ItemCard from '../components/ItemCard';
 import axiosInstance from '../axiosInstance';
+import { useTranslation } from 'react-i18next';
 
 // Dummy data for testing
 const dummyItems = [
@@ -52,6 +53,8 @@ const dummyItems = [
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { t } = useTranslation();
   
     useEffect(() => {
       const fetchItems = async () => {
@@ -101,7 +104,7 @@ const dummyItems = [
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-700 text-lg">Loading available items...</div>
+        <div className="text-gray-700 text-lg">{t('home.loading')}</div>
       </div>
     );
   }
@@ -117,7 +120,7 @@ const dummyItems = [
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Available Items</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">{t('home.availableItems')}</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map(item => (
             <ItemCard key={item.id} item={item} />
@@ -128,4 +131,4 @@ const dummyItems = [
   );
 }
 
-export default Home; 
+export default Home;

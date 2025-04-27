@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from "../api";
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 function Login() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -13,14 +15,14 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const credentials = { email, password }
+    const credentials = { email, password };
 
     try {
       const response = await loginUser(credentials);
       login(response.token, response.user);
       navigate('/');
     } catch (error) {
-      setError(error.response?.data?.message || error.message || 'An error occurred during login');
+      setError(error.response?.data?.message || error.message || t('login.error'));
     }
   };
 
@@ -28,7 +30,7 @@ function Login() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-start pt-20 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
+          {t('login.signInTitle')}
         </h2>
       </div>
 
@@ -42,7 +44,7 @@ function Login() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left">
-                Email address
+                {t('login.email')}
               </label>
               <div className="mt-1">
                 <input
@@ -60,7 +62,7 @@ function Login() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 text-left">
-                Password
+                {t('login.password')}
               </label>
               <div className="mt-1">
                 <input
@@ -81,7 +83,7 @@ function Login() {
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                Sign in
+                {t('login.signIn')}
               </button>
             </div>
           </form>
@@ -90,9 +92,9 @@ function Login() {
             <div className="relative">
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  Don't have an account?{' '}
+                  {t('login.dontHaveAccount')}{' '}
                   <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
-                    Sign up
+                    {t('login.signUp')}
                   </Link>
                 </span>
               </div>
@@ -104,4 +106,4 @@ function Login() {
   );
 }
 
-export default Login; 
+export default Login;

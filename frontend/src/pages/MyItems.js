@@ -3,51 +3,10 @@ import axiosInstance from '../axiosInstance';
 import ReturnItemModal from '../components/ReturnItemModal';
 import ReminderModal from '../components/ReminderModal';
 import UploadItemModal from '../components/UploadItemModal';
+import { useTranslation } from 'react-i18next'; // <-- añadido para traducción
 
 function MyItems() {
-  /*
-  // Dummy data for borrowed items
-  const borrowedItems = [
-    {
-      id: 1,
-      name: 'Calculus Textbook',
-      owner: 'John Smith',
-      dueDate: '2024-05-15',
-      status: 'borrowed'
-    },
-    {
-      id: 2,
-      name: 'Physics Lab Kit',
-      owner: 'Sarah Johnson',
-      dueDate: '2024-04-20',
-      status: 'overdue'
-    }
-  ];
-
-  // Dummy data for lent items
-  const lentItems = [
-    {
-      id: 1,
-      name: 'Chemistry Lab Equipment',
-      borrower: 'Mike Brown',
-      dueDate: '2024-05-10',
-      status: 'borrowed'
-    },
-    {
-      id: 2,
-      name: 'Biology Textbook',
-      borrower: 'Emma Wilson',
-      dueDate: '2024-04-25',
-      status: 'overdue'
-    },
-    {
-      id: 3,
-      name: 'Math Calculator',
-      borrower: null,
-      dueDate: null,
-      status: 'available'
-    }
-  ]; */
+  const { t } = useTranslation(); // <-- añadido para traducción
 
   const [borrowedItems, setBorrowedItems] = useState([]);
   const [lentItems, setLentItems] = useState([]);
@@ -131,7 +90,6 @@ function MyItems() {
   };
 
   const handleConfirmReminder = () => {
-    // TODO: Implement send reminder functionality
     console.log('Sending reminder for item:', selectedItem.id);
     setIsReminderModalOpen(false);
     setSelectedItem(null);
@@ -188,36 +146,36 @@ function MyItems() {
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">My Items</h1>
+          <h1 className="text-3xl font-bold text-gray-800">{t('myItems.title')}</h1>
           <button
             onClick={handleUploadItem}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            Upload Item
+            {t('myItems.uploadButton')}
           </button>
         </div>
-        
+
         {/* Borrowed by Me Section */}
         <div className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-left">Borrowed by Me</h2>
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-left">{t('myItems.borrowedSection')}</h2>
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Item Name
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.itemName')}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Owner
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.owner')}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Due Date
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.dueDate')}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Status
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.status')}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Actions
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.actions')}
                   </th>
                 </tr>
               </thead>
@@ -239,7 +197,7 @@ function MyItems() {
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {item.status}
+                        {t(`myItems.status.${item.status}`)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-left text-gray-500">
@@ -247,7 +205,7 @@ function MyItems() {
                         onClick={() => handleReturnItem(item)}
                         className="text-blue-600 hover:text-blue-900"
                       >
-                        Return Item
+                        {t('myItems.actions.return')}
                       </button>
                     </td>
                   </tr>
@@ -259,25 +217,25 @@ function MyItems() {
 
         {/* Lent by Me Section */}
         <div className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-left">Lent by Me</h2>
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-left">{t('myItems.lentSection')}</h2>
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Item Name
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.itemName')}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Borrower
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.borrower')}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Lent Until
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.lentUntil')}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Status
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.status')}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    Actions
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    {t('myItems.table.actions')}
                   </th>
                 </tr>
               </thead>
@@ -295,7 +253,7 @@ function MyItems() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-left">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(item.status)}`}>
-                        {item.status}
+                        {t(`myItems.status.${item.status}`)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-left text-gray-500">
@@ -304,7 +262,7 @@ function MyItems() {
                           onClick={() => handleSendReminder(item)}
                           className="text-blue-600 hover:text-blue-900"
                         >
-                          Send Reminder
+                          {t('myItems.actions.reminder')}
                         </button>
                       )}
                     </td>
@@ -315,14 +273,12 @@ function MyItems() {
           </div>
         </div>
 
-        {/* Upload Item Modal */}
         <UploadItemModal
           isOpen={isUploadModalOpen}
           onClose={handleCloseUploadModal}
           onConfirm={handleConfirmUpload}
         />
 
-        {/* Return Item Confirmation Modal */}
         <ReturnItemModal
           isOpen={isReturnModalOpen}
           onClose={handleCloseReturnModal}
@@ -330,7 +286,6 @@ function MyItems() {
           itemName={selectedItem?.name}
         />
 
-        {/* Send Reminder Confirmation Modal */}
         <ReminderModal
           isOpen={isReminderModalOpen}
           onClose={handleCloseReminderModal}
@@ -343,4 +298,4 @@ function MyItems() {
   );
 }
 
-export default MyItems; 
+export default MyItems;

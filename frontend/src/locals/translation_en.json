@@ -1,0 +1,76 @@
+{
+  "login": {
+    "signInTitle": "Sign in to your account",
+    "email": "Email address",
+    "password": "Password",
+    "signIn": "Sign in",
+    "dontHaveAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "error": "An error occurred during login"
+  },
+  "register": {
+    "createAccount": "Create an account",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "Passwords do not match",
+    "registrationSuccess": "Registration successful!",
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "error": "An error occurred during registration"
+  },
+  "navbar": {
+    "browseItems": "Browse Items",
+    "myItems": "My Items",
+    "logout": "Log out",
+    "signin": "Sign in"
+  },
+  "myItems": {
+    "title": "My Items",
+    "uploadButton": "Upload Item",
+    "borrowedSection": "Borrowed by Me",
+    "lentSection": "Lent by Me",
+    "table": {
+      "itemName": "Item Name",
+      "owner": "Owner",
+      "borrower": "Borrower",
+      "dueDate": "Due Date",
+      "lentUntil": "Lent Until",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "returnItem": "Return Item",
+      "sendReminder": "Send Reminder"
+    },
+    "status": {
+      "borrowed": "Borrowed",
+      "overdue": "Overdue",
+      "available": "Available"
+    }
+  },
+  "home": {
+    "loading": "Loading available items...",
+    "availableItems": "Available Items"
+  },
+  "itemCard": {
+    "lender": "Lender",
+    "borrow": "Borrow"
+  },
+  "borrowModal": {
+    "borrowItem": "Borrow {{itemName}}",
+    "returnDate": "Return Date",
+    "cancel": "Cancel",
+    "confirmBorrow": "Confirm Borrow"
+  },
+  "uploadModal": {
+    "title": "Upload New Item",
+    "itemName": "Item Name",
+    "itemDescription": "Item Description",
+    "itemImage": "Item Image",
+    "cancel": "Cancel",
+    "uploadItem": "Upload Item"
+  }
+}
