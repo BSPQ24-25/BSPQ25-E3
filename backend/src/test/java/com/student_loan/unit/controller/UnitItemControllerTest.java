@@ -86,8 +86,7 @@ class UnitItemControllerTest {
         when(userService.getUserByToken("invalid")).thenReturn(null);
         
         ResponseEntity<String> response = itemController.createItem(
-            new ItemRecord("Item", "Desc", "Cat", "img", "AVAILABLE", "NEW"), 
-            "invalid"
+            new ItemRecord("Item", "Desc", "Cat", "img", "AVAILABLE", "NEW")
         );
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }

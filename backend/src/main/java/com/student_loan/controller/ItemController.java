@@ -160,17 +160,17 @@ public class ItemController {
 		}
 	}
 
-    @PostMapping
-    public ResponseEntity<String> createItem(@RequestBody ItemRecord item, @RequestParam("token") String token) {
-    	User user = userService.getUserByToken(token);
+    @PostMapping("/create")
+    public ResponseEntity<String> createItem(@RequestBody ItemRecord itemRecord) {
+    	User user = getAuthenticatedUser();
 		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
-		Item itemEntity = convertToItem(item);
-		itemEntity.setOwner(user.getId());
+		Item item = convertToItem(itemRecord);
+		item.setOwner(user.getId());
 		try {
-			itemService.saveItem(itemEntity);
+			itemService.saveItem(item);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -219,11 +219,10 @@ public class ItemController {
 		item.setDescription(itemRecord.description());
 		item.setCategory(itemRecord.category());
 		item.setImage(itemRecord.imageUrl());
-		item.setStatus(Item.ItemStatus.valueOf(itemRecord.status()));
+		item.setStatus(Item.ItemStatus.valueOf(itemRecord.status().toUpperCase()));
 		item.setPurchaseDate(new java.util.Date());
 		item.setPurchasePrice(0.0);
 		item.setCondition(Item.ItemCondition.NEW);
-		item.setCondition(Item.ItemCondition.valueOf(itemRecord.condition()));
 		return item;
     }
 }
