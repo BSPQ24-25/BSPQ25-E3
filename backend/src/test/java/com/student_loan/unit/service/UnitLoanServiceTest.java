@@ -78,7 +78,7 @@ class UnitLoanServiceTest {
     @Test
     void testGetLoansByBorrower() {
         Loan loan = new Loan(); loan.setId(2L);
-        when(loanRepository.findByLender(2L)).thenReturn(Collections.singletonList(loan));
+        when(loanRepository.findByBorrower(2L)).thenReturn(Collections.singletonList(loan));
 
         List<Loan> result = loanService.getLoansByBorrower(2L);
 
