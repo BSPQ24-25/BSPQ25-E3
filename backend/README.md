@@ -1,4 +1,4 @@
-# Student Loan Management Application (BSPQ25-E3)
+# Student Loan Management Application (BACKEND)
 
 This project is a student loan management application developed with **Spring Boot**. The application provides functionalities to manage loans, users, and associated services.
 
@@ -55,33 +55,6 @@ The project structure follows the standard layout for a **Spring Boot** project 
 - **JUnit**: For unit and integration testing.
 - **Maven**: Build tool for project management and dependency handling.
 
-## Prerequisites
-
-- **JDK 11 or later**
-- **Maven** (for building and running the application)
-
-## Running the Application
-
-To run the application, you can use the following Maven command:
-
-```bash
-mvn spring-boot:run
-```
-
-This will start the Spring Boot application. Once the application is running, you can access it at:
-
-- Default: `http://localhost:8080`
-
-## Tests
-
-The project includes both unit and integration tests. To run the tests, use the following Maven command:
-
-```bash
-mvn test
-```
-
-This will execute all unit and integration tests defined in the `src/test` directory.
-
 ## Configuration
 
 ### Security Configuration
@@ -91,16 +64,6 @@ This application uses Spring Security to manage authentication and authorization
 ### Database Configuration
 
 The project uses an in-memory database (H2) by default for quick development and testing. The connection details and settings are configured in the `src/main/resources/application.properties` file. You can modify these settings to connect to a real database (e.g., MySQL or PostgreSQL) for production use.
-
-## Troubleshooting
-
-If you encounter the following error during testing:
-
-```
-No bean named 'mvcHandlerMappingIntrospector' available: A Bean named mvcHandlerMappingIntrospector of type org.springframework.web.servlet.handler.HandlerMappingIntrospector is required to use MvcRequestMatcher.
-```
-
-This indicates that the Spring Security and Spring MVC configurations are not properly linked in the application context. Ensure that both Spring Security and Spring MVC are configured within the same application context, and that the necessary beans are properly instantiated.
 
 ## Folder Breakdown
 
@@ -123,7 +86,3 @@ This indicates that the Spring Security and Spring MVC configurations are not pr
 ### `target`
 
 This folder contains the compiled classes and the packaged application after building with Maven.
-
-## Authors
-
-Luis Rodriguez, Erkuden Camiruaga, Sabin Luja, Iker Garcia, Adam Kelly, Alex Olazabal

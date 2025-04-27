@@ -187,25 +187,13 @@ class StudentLoanIntegrationTest {
         // Loan updatedLoan = updatedLoanOpt.get();
         // assertEquals(Loan.Status.RETURNED, updatedLoan.getLoanStatus());
 
-        // // Step 9: Cleanup created loan and item
-        // ResponseEntity<Void> deleteLoanResponse = restTemplate.exchange(
-        //     "/loans/" + loanId + "?token=" + tokenB,
-        //     HttpMethod.DELETE,
-        //     null,
-        //     Void.class
-        // );
-        // assertEquals(HttpStatus.NO_CONTENT, deleteLoanResponse.getStatusCode());
+        // 9. Cleanup
+        // restTemplate.exchange("/loans/"+loanId+"?token="+tokenB, HttpMethod.DELETE, null, Void.class);
+        // restTemplate.exchange("/items/"+itemId+"?token="+tokenL, HttpMethod.DELETE, null, Void.class);
 
-        // ResponseEntity<Void> deleteItemResponse = restTemplate.exchange(
-        //     "/items/" + itemId + "?token=" + tokenL,
-        //     HttpMethod.DELETE,
-        //     null,
-        //     Void.class
-        // );
-        // assertEquals(HttpStatus.NO_CONTENT, deleteItemResponse.getStatusCode());
-
-        // // Step 10: Verify loan and item deletion
-        // assertFalse(loanRepository.existsById(loanId));
+        // 10. Verify item and loan deletion
         // assertFalse(itemRepository.existsById(itemId));
+        // assertFalse(userRepository.existsById(loanId));
+
     }
 }
