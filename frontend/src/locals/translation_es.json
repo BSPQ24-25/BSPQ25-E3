@@ -78,6 +78,13 @@
       "confirmReturn": "Confirmar Devolución",
       "cancel": "Cancelar",
       "sureReturn": "¿Estás seguro de que quieres devolver '"
+    },
+    "reminderModal": {
+      "sendReminder": "Enviar Recordatorio",
+      "sureReminder": "¿Estás seguro de que quieres enviar un recordatorio a ",
+      "sureReminder2": " sobre la devolución de '",
+      "cancel": "Cancelar"
     }
+
   }
   

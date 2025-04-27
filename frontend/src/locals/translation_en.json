@@ -78,5 +78,11 @@
     "confirmReturn": "Confirm Return",
     "cancel": "Cancel",
     "sureReturn": "Are you sure you want to return '"
+  },
+  "reminderModal": {
+    "sendReminder": "Send Reminder",
+    "sureReminder": "Are you sure you want to send a reminder to ",
+    "sureReminder2": " about returning '",
+    "cancel": "Cancel"
   }
 }

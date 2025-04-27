@@ -78,6 +78,13 @@
       "confirmReturn": "Rückgabe bestätigen",
       "cancel": "Abbrechen",
       "sureReturn": "Bist du sicher, dass du zurückgeben möchtest '"
+    },
+    "reminderModal": {
+      "sendReminder": "Erinnerung senden",
+      "sureReminder": "Bist du sicher, dass du eine Erinnerung an ",
+      "sureReminder2": " bezüglich der Rückgabe von senden möchtest '",
+      "cancel": "Abbrechen"
     }
+
   }
   
