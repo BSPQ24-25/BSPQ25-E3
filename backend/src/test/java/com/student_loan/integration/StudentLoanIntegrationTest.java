@@ -155,6 +155,59 @@ class StudentLoanIntegrationTest {
         Long loanId = loans[0].getId();
         assertEquals(Loan.Status.IN_USE, loans[0].getLoanStatus());
         assertEquals(loanId, loans[0].getId());
-        System.out.println("6 DONE");
+        System.out.println("INTEGRATION TEST FINISHED");
+
+        // // 7. Return loan
+        // Map<String, String> returnLoanRequest = Map.of(
+        //     "realReturnDate", LocalDate.now().plusDays(5).toString(),
+        //     "loanStatus", Loan.Status.RETURNED.toString(),
+        //     "rating", "4.5",
+        //     "observations", "Good condition"
+        // );
+
+        // HttpHeaders headers = new HttpHeaders();
+        // headers.setContentType(MediaType.APPLICATION_JSON);
+        // headers.setBearerAuth(tokenB);
+
+        // HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(returnLoanRequest, headers);
+
+        // ResponseEntity<String> returnLoanResponse = restTemplate.exchange(
+        //     "/loans/" + loanId,
+        //     HttpMethod.PUT,
+        //     requestEntity,
+        //     String.class
+        // );
+
+        // System.out.println("HOLA" + returnLoanResponse.getBody());
+        // assertEquals(HttpStatus.OK, returnLoanResponse.getStatusCode());
+
+        // // Step 8: Verify loan status is updated
+        // Optional<Loan> updatedLoanOpt = loanRepository.findById(loanId);
+        // assertTrue(updatedLoanOpt.isPresent());
+
+        // Loan updatedLoan = updatedLoanOpt.get();
+        // assertEquals(Loan.Status.RETURNED, updatedLoan.getLoanStatus());
+
+        // // Step 9: Cleanup created loan and item
+        // ResponseEntity<Void> deleteLoanResponse = restTemplate.exchange(
+        //     "/loans/" + loanId + "?token=" + tokenB,
+        //     HttpMethod.DELETE,
+        //     null,
+        //     Void.class
+        // );
+        // assertEquals(HttpStatus.NO_CONTENT, deleteLoanResponse.getStatusCode());
+
+        // ResponseEntity<Void> deleteItemResponse = restTemplate.exchange(
+        //     "/items/" + itemId + "?token=" + tokenL,
+        //     HttpMethod.DELETE,
+        //     null,
+        //     Void.class
+        // );
+        // assertEquals(HttpStatus.NO_CONTENT, deleteItemResponse.getStatusCode());
+
+        // // Step 10: Verify loan and item deletion
+        // assertFalse(loanRepository.existsById(loanId));
+        // assertFalse(itemRepository.existsById(itemId));
+    
     }
 }
