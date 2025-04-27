@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import com.student_loan.dtos.LoanRecord;
 import com.student_loan.model.Loan;
 import com.student_loan.model.User;
@@ -37,17 +38,23 @@ public class LoanController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Loan> getLoanById(@PathVariable Long id, @RequestParam("token") String token) {
+	public ResponseEntity<Loan> getLoanById(@PathVariable Long id, @RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);
-    	if (user == null || user.getAdmin()==false && user.getId()!=loanService.getLoanById(id).get().getLender() && user.getId()!=loanService.getLoanById(id).get().getBorrower()) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
-    	try {
-            return new ResponseEntity<>(loanService.getLoanById(id).get(),HttpStatus.OK);
-        } catch (RuntimeException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	if (user == null || 
+        	(!user.getAdmin() && 
+        	user.getId() != loanService.getLoanById(id).get().getLender() && 
+        	user.getId() != loanService.getLoanById(id).get().getBorrower())) {
+        	return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     	}
-    }
+
+    	Optional<Loan> loanOpt = loanService.getLoanById(id);
+    	if (loanOpt.isEmpty()) {
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    	Loan loan = loanOpt.get();
+    	return new ResponseEntity<>(loan, HttpStatus.OK);
+	}
+
     
     @GetMapping("/lender")
     public ResponseEntity<List<Loan>> getLoansByLender(@RequestParam("token") String token, @RequestParam("lenderId") Long lenderId) {

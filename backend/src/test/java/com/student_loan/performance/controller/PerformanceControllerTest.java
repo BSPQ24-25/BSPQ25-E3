@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,6 +36,7 @@ public class PerformanceControllerTest {
 
     @BeforeAll
     public void setup() throws Exception {
+        System.out.println("Setup executed");
         // Register an admin
         RegistrationRecord admin = new RegistrationRecord(
                 "AdminTest", "User", "admintest@example.com", "password123");
@@ -46,9 +48,13 @@ public class PerformanceControllerTest {
         ResponseEntity<String> loginResponse = restTemplate.postForEntity("/users/login", credentials, String.class);
     
         String body = loginResponse.getBody();
+        System.out.println("Login Response Body: " + body); 
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> map = mapper.readValue(body, new TypeReference<Map<String, String>>() {});
         adminToken = map.get("token");
+        System.out.println("Admin Token: " + adminToken);
+        assertNotNull(adminToken, "Admin token should not be null");
+
     }
     
 
@@ -66,9 +72,14 @@ public class PerformanceControllerTest {
         long end = System.nanoTime();
         long durationMs = (end - start) / 1_000_000;
 
+        // Log del estado y cuerpo de la respuesta para depuración
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody());
+
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
+
 
     @Test
     public void testLogoutPerformance() {
@@ -77,9 +88,15 @@ public class PerformanceControllerTest {
             "/users/logout?token=" + adminToken, null, String.class);
         long end = System.nanoTime();
         long durationMs = (end - start) / 1_000_000;
+
+        // Log del estado y cuerpo de la respuesta para depuración
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody());
+
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
+
 
     @Test
     public void testGetUserByIdPerformance() {
@@ -88,9 +105,15 @@ public class PerformanceControllerTest {
             "/users/{id}?token=" + adminToken, HttpMethod.GET, null, UserDTO.class, 1L);
         long end = System.nanoTime();
         long durationMs = (end - start) / 1_000_000;
+
+    // Log del estado y cuerpo de la respuesta para depuración
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody());
+
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
+
 
 
     @Test
@@ -110,13 +133,18 @@ public class PerformanceControllerTest {
         long end = System.nanoTime();
         long durationMs = (end - start) / 1_000_000;
 
+    
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody());
+
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
 
+
     @Test
     public void testCreateLoanPerformance() {
-        // Primero crear un item necesario para prestar
+    // Crear item necesario para prestar
         Map<String, Object> item = new HashMap<>();
         item.put("title", "Loan Test Item");
         item.put("description", "Loan Test Description");
@@ -124,7 +152,7 @@ public class PerformanceControllerTest {
         HttpEntity<Map<String, Object>> itemRequest = new HttpEntity<>(item);
         restTemplate.postForEntity("/items?token=" + adminToken, itemRequest, String.class);
 
-        // Crear préstamo
+    // Crear préstamo
         Map<String, Object> loan = new HashMap<>();
         loan.put("lender", 1); // ID del admin logueado (en sistemas reales sería dinámico)
         loan.put("borrower", 1);
@@ -141,8 +169,13 @@ public class PerformanceControllerTest {
         long end = System.nanoTime();
         long durationMs = (end - start) / 1_000_000;
 
+        // Log del estado y cuerpo de la respuesta para depuración
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody());
+
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
 
+    
 }

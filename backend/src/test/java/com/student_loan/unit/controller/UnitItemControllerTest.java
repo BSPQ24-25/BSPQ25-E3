@@ -1,4 +1,4 @@
-package com.student_loan.controller;
+package com.student_loan.unit.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+
+import com.student_loan.controller.ItemController;
 import com.student_loan.dtos.ItemRecord;
 import com.student_loan.model.Item;
 import com.student_loan.model.User;
