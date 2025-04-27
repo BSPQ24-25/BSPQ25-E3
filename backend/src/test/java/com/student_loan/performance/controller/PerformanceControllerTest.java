@@ -11,6 +11,7 @@ import com.student_loan.model.Loan;
 import com.student_loan.model.User;
 
 import org.junit.jupiter.api.*;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -24,6 +25,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ActiveProfiles("performance")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PerformanceControllerTest {
@@ -54,11 +56,8 @@ public class PerformanceControllerTest {
         adminToken = map.get("token");
         System.out.println("Admin Token: " + adminToken);
         assertNotNull(adminToken, "Admin token should not be null");
-
     }
     
-
-
     @Test
     public void testGetAllUsersPerformance() {
         long start = System.nanoTime();
@@ -72,14 +71,12 @@ public class PerformanceControllerTest {
         long end = System.nanoTime();
         long durationMs = (end - start) / 1_000_000;
 
-        // Log del estado y cuerpo de la respuesta para depuración
         System.out.println("Response Status Code: " + response.getStatusCode());
         System.out.println("Response Body: " + response.getBody());
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
-
 
     @Test
     public void testLogoutPerformance() {
@@ -89,14 +86,12 @@ public class PerformanceControllerTest {
         long end = System.nanoTime();
         long durationMs = (end - start) / 1_000_000;
 
-        // Log del estado y cuerpo de la respuesta para depuración
         System.out.println("Response Status Code: " + response.getStatusCode());
         System.out.println("Response Body: " + response.getBody());
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
-
 
     @Test
     public void testGetUserByIdPerformance() {
@@ -106,15 +101,12 @@ public class PerformanceControllerTest {
         long end = System.nanoTime();
         long durationMs = (end - start) / 1_000_000;
 
-    // Log del estado y cuerpo de la respuesta para depuración
         System.out.println("Response Status Code: " + response.getStatusCode());
         System.out.println("Response Body: " + response.getBody());
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
     }
-
-
 
     @Test
     public void testCreateItemPerformance() {
@@ -144,7 +136,6 @@ public class PerformanceControllerTest {
 
     @Test
     public void testCreateLoanPerformance() {
-    // Crear item necesario para prestar
         Map<String, Object> item = new HashMap<>();
         item.put("title", "Loan Test Item");
         item.put("description", "Loan Test Description");
@@ -152,9 +143,8 @@ public class PerformanceControllerTest {
         HttpEntity<Map<String, Object>> itemRequest = new HttpEntity<>(item);
         restTemplate.postForEntity("/items?token=" + adminToken, itemRequest, String.class);
 
-    // Crear préstamo
         Map<String, Object> loan = new HashMap<>();
-        loan.put("lender", 1); // ID del admin logueado (en sistemas reales sería dinámico)
+        loan.put("lender", 1);
         loan.put("borrower", 1);
         loan.put("item", 1);
         loan.put("loanDate", "2024-04-01");
@@ -169,13 +159,10 @@ public class PerformanceControllerTest {
         long end = System.nanoTime();
         long durationMs = (end - start) / 1_000_000;
 
-        // Log del estado y cuerpo de la respuesta para depuración
         System.out.println("Response Status Code: " + response.getStatusCode());
         System.out.println("Response Body: " + response.getBody());
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertTrue(durationMs < 500, "Took too long: " + durationMs + "ms");
-    }
-
-    
+    }   
 }
