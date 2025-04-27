@@ -43,7 +43,8 @@
       },
       "actions": {
         "returnItem": "Gegenstand Zurückgeben",
-        "sendReminder": "Erinnerung Senden"
+        "sendReminder": "Erinnerung Senden",
+        "return": "Zurückgeben"
       },
       "status": {
         "borrowed": "Ausgeliehen",
@@ -72,6 +73,11 @@
       "itemImage": "Artikelbild",
       "cancel": "Abbrechen",
       "uploadItem": "Artikel Hochladen"
+    },
+    "returnModal": {
+      "confirmReturn": "Rückgabe bestätigen",
+      "cancel": "Abbrechen",
+      "sureReturn": "Bist du sicher, dass du zurückgeben möchtest '"
     }
   }
   

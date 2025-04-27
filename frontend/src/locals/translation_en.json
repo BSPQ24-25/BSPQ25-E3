@@ -43,7 +43,8 @@
     },
     "actions": {
       "returnItem": "Return Item",
-      "sendReminder": "Send Reminder"
+      "sendReminder": "Send Reminder",
+      "return": "Return"
     },
     "status": {
       "borrowed": "Borrowed",
@@ -72,5 +73,10 @@
     "itemImage": "Item Image",
     "cancel": "Cancel",
     "uploadItem": "Upload Item"
+  },
+  "returnModal": {
+    "confirmReturn": "Confirm Return",
+    "cancel": "Cancel",
+    "sureReturn": "Are you sure you want to return '"
   }
 }

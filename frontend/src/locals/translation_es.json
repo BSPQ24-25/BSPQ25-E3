@@ -43,7 +43,8 @@
       },
       "actions": {
         "returnItem": "Devolver Artículo",
-        "sendReminder": "Enviar Recordatorio"
+        "sendReminder": "Enviar Recordatorio",
+        "return": "Devolver"
       },
       "status": {
         "borrowed": "Prestado",
@@ -72,6 +73,11 @@
       "itemImage": "Imagen del Artículo",
       "cancel": "Cancelar",
       "uploadItem": "Subir Artículo"
+    },
+    "returnModal": {
+      "confirmReturn": "Confirmar Devolución",
+      "cancel": "Cancelar",
+      "sureReturn": "¿Estás seguro de que quieres devolver '"
     }
   }
   
