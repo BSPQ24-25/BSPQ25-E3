@@ -2,14 +2,14 @@ package com.student_loan.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.student_loan.model.Loan;
+import com.student_loan.model.Loan.Status;
 import com.student_loan.repository.ItemRepository;
 import com.student_loan.repository.LoanRepository;
 import com.student_loan.repository.UserRepository;
 
-import com.student_loan.model.Item;
-import com.student_loan.model.Loan.Status;
-
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,8 +79,27 @@ public class LoanService {
 	    	
 	    	return loanRepository.save(loan);
 		}
-    	
-        
+    }
+
+    public boolean returnLoan(Long itemId, Long borrowerId) {
+        // Buscamos el préstamo que cumpla todas las condiciones:
+        Optional<Loan> optionalLoan = loanRepository.findByBorrowerAndItemAndLoanStatus(borrowerId, itemId, Loan.Status.IN_USE);
+    
+        if (optionalLoan.isPresent()) {
+            Loan loan = optionalLoan.get();
+            
+            // Actualizamos el estado de la loan y la fecha de devolución
+            loan.setLoanStatus(Loan.Status.RETURNED);
+            loan.setRealReturnDate(new Date()); // Fecha de devolución actual
+    
+            // Guardamos el cambio en la base de datos
+            loanRepository.save(loan);
+            
+            System.out.println("Saved Loan: " + loan.getLoanStatus());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void deleteLoan(Long id) {

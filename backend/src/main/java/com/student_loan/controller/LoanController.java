@@ -3,6 +3,8 @@ package com.student_loan.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.student_loan.dtos.LoanRecord;
@@ -26,6 +28,12 @@ public class LoanController {
     private UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(ItemController.class);
+
+	private User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userService.getUserByEmail(email);
+    }
 
     @GetMapping
     public ResponseEntity<List<Loan>> getAllLoans(@RequestParam("token") String token) {
@@ -120,6 +128,24 @@ public class LoanController {
 			return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
 		}
 	}
+
+	@PutMapping("/{itemId}/return")
+    public ResponseEntity<Void> returnLoan(@PathVariable Long itemId) {
+		User user = getAuthenticatedUser();
+		if (user == null) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		try {
+			boolean updated = loanService.returnLoan(itemId, user.getId());
+			if (updated) {
+				return new ResponseEntity<>(HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteLoan(@PathVariable Long id, @RequestParam("token") String token) {

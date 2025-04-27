@@ -1,6 +1,7 @@
 package com.student_loan.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,5 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
     List<Loan> findByBorrower(Long borrowerId);
     List<Loan> findByLenderAndLoanStatus(Long lenderId, Status loanStatus);
     List<Loan> findByBorrowerAndLoanStatus(Long borrowerId, Status loanStatus);
+    Optional<Loan> findByBorrowerAndItemAndLoanStatus(Long borrowerId, Long itemId, Status loanStatus);
 }

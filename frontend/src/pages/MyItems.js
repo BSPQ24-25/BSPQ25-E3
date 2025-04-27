@@ -59,40 +59,40 @@ function MyItems() {
   const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
+  const fetchItems = async () => {
+    try {
+      const [borrowedResponse, lentResponse] = await Promise.all([
+        axiosInstance.get('/items/borrowed'), // endpoint de los items que tomaste prestados
+        axiosInstance.get('/items/lent') // endpoint de los items que prestaste
+      ]);
+
+      const borrowed = borrowedResponse.data.map((item) => ({
+        id: item.id,
+        name: item.name,
+        owner: item.owner,
+        dueDate: item.dueDate || '-', // if is NULL show '-'
+        status: item.status.toLowerCase(),
+      }));
+
+      const lent = lentResponse.data.map((item) => ({
+        id: item.id,
+        name: item.name,
+        borrower: item.borrower || '-',
+        dueDate: item.dueDate || '-',
+        status: item.status.toLowerCase(),
+      }));
+
+      setBorrowedItems(borrowed);
+      setLentItems(lent);
+    } catch (err) {
+      console.error('Error fetching items:', err);
+      setError('Failed to load items');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const [borrowedResponse, lentResponse] = await Promise.all([
-          axiosInstance.get('/items/borrowed'), // endpoint de los items que tomaste prestados
-          axiosInstance.get('/items/lent') // endpoint de los items que prestaste
-        ]);
-
-        const borrowed = borrowedResponse.data.map((item) => ({
-          id: item.id,
-          name: item.name,
-          owner: item.owner, // TODO by now id is shown, not the name
-          dueDate: item.dueDate || '-', // if is NULL show '-'
-          status: item.status.toLowerCase(),
-        }));
-  
-        const lent = lentResponse.data.map((item) => ({
-          id: item.id,
-          name: item.name,
-          borrower: item.borrower || '-',
-          dueDate: item.dueDate || '-',
-          status: item.status.toLowerCase(),
-        }));
-
-        setBorrowedItems(borrowed);
-        setLentItems(lent);
-      } catch (err) {
-        console.error('Error fetching items:', err);
-        setError('Failed to load items');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchItems();
   }, []);
 
@@ -101,11 +101,23 @@ function MyItems() {
     setIsReturnModalOpen(true);
   };
 
-  const handleConfirmReturn = () => {
+  const handleConfirmReturn = async () => {
     // TODO: Implement return item functionality
-    console.log('Returning item:', selectedItem.id);
-    setIsReturnModalOpen(false);
-    setSelectedItem(null);
+    try {
+      const response = await axiosInstance.put(`loans/${selectedItem.id}/return`) 
+      if (response.status === 200) {
+        console.log('Item returned successfully:', selectedItem.id);
+        // Update the Borrowed items UI
+        fetchItems();
+      }  else {
+        console.error('Failed to return item');
+      }
+    } catch (error) {
+      console.error('Error returning item:', error);
+    } finally {
+      setIsReturnModalOpen(false);
+      setSelectedItem(null);
+    }
   };
 
   const handleCloseReturnModal = () => {
