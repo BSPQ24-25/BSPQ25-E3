@@ -23,8 +23,10 @@ package com.student_loan.integration;
  import java.util.List;
  
  import static org.junit.jupiter.api.Assertions.*;
+ import org.springframework.test.context.ActiveProfiles;
  
  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+ @ActiveProfiles("test")
  class StudentLoanIntegrationTest {
  
      @Autowired
