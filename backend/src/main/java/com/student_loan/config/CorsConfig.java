@@ -1,5 +1,7 @@
 package com.student_loan.config;
 
+// TODO Esta clase hay que cambiarla
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

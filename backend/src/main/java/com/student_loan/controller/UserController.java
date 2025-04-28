@@ -56,7 +56,22 @@ public class UserController {
 	}
     
     @GetMapping("/{id}")
-	public ResponseEntity<UserDTO> getUserById(@PathVariable Long id, @RequestParam("token") String token) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+    	User user = userService.getUserByEmail(email);
+        if (user == null) {
+        	   return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+		User retrievedUser = userService.getUserById(id).get();
+		UserDTO userDTO = new UserDTO(retrievedUser.getId(), retrievedUser.getName(), retrievedUser.getEmail());
+
+    	return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+	@GetMapping("/{id}/temporal")
+	public ResponseEntity<UserDTO> getUserById2(@PathVariable Long id, @RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);
     	if (user == null) {
         	return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
