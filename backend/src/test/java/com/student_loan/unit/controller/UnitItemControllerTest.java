@@ -96,7 +96,7 @@ class UnitItemControllerTest {
     void testDeleteItem_Unauthorized() {
         User mockUser = new User();
         mockUser.setId(2L);
-        mockUser.setAdmin(false); // Fix: Set admin status explicitly
+        mockUser.setAdmin(false);
         when(userService.getUserByToken("token")).thenReturn(mockUser);
 
         Item mockItem = new Item();

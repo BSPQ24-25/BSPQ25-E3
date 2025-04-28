@@ -86,8 +86,6 @@ class UnitLoanControllerTest {
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
-
-
     @Test
     void testCreateLoan_Success() {
         LoanRecord loanRecord = new LoanRecord(
@@ -110,7 +108,6 @@ class UnitLoanControllerTest {
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
-
 
     @Test
     void testUpdateLoan_Success() {
