@@ -18,7 +18,8 @@
 
 	<properties>
 		<java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
+        <doxygen.config.file>${basedir}/src/main/resources/Doxyfile</doxygen.config.file>
+		<maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
@@ -205,6 +206,25 @@
                 </configuration>
             </plugin>
 
+			<!-- Plugin Doxygen-->
+			<plugin>
+				<groupId>com.soebes.maven.plugins</groupId>
+				<artifactId>doxygen-maven-plugin</artifactId>
+				<version>1.1.0</version>
+				<executions>
+					<execution>
+						<id>generate-doxygen-site</id>
+						<phase>site</phase> <!-- important: run during site phase -->
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<configurationFile>${doxygen.config.file}</configurationFile>
+				</configuration>
+			</plugin>
+
             <!-- JaCoCo plugin for coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -377,6 +397,25 @@
 									</resources>
 								</configuration>
 							</execution>
+
+												<!-- Copy Doxygen content into docs/doxygen/ -->
+							<execution>
+								<id>copy-doxygen-site-to-docs</id>
+								<phase>post-site</phase> <!-- After doxygen generation too -->
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/docs/doxygen</outputDirectory> <!-- 🔥 target doxygen folder -->
+									<resources>
+										<resource>
+											<directory>${project.build.directory}/doxygen/html</directory> <!-- source -->
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							
 						</executions>
 					</plugin>
 
