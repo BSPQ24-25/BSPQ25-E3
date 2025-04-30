@@ -60,7 +60,10 @@ jobs:
       - name: Run DB initialization script
         run: |
           echo "Running DB setup..."
-          mysql -h 127.0.0.1 -uroot -proot < src/main/resources/db-setup-e3.sql
+          mysql -h 127.0.0.1 -uroot -proot < backend/src/main/resources/db-setup-e3.sql
+
+      - name: Get into backend
+        run: cd backend
 
       - name: Run Unit tests and generate converage report
         run: mvn test jacoco:report
