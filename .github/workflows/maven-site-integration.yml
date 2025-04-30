@@ -1,4 +1,4 @@
-name: Maven Site & Integration Tests
+name: Maven Site &n Peformance & Integration Tests & prepares docs file where all project documentation will go
 
 on:
   push:
@@ -7,6 +7,9 @@ on:
   schedule:
     - cron: '0 18-23/2 * * *'  # 20:00–01:00 CET
     - cron: '0 0-6/2 * * *'    # 02:00–08:00 CET
+
+
+    
 
 jobs:
   build-and-test:
@@ -17,7 +20,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: libraryapidb
+          MYSQL_DATABASE: mv
         ports:
           - 3306:3306
         options: >-
@@ -44,20 +47,58 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Install Doxygen
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+
       - name: Wait for MySQL to be ready
         run: |
           echo "Waiting for MySQL..."
           until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do
             sleep 2
           done
-
+        
       - name: Run DB initialization script
         run: |
           echo "Running DB setup..."
-          mysql -h 127.0.0.1 -uroot -proot < src/main/resources/dbsetup.sql
+          mysql -h 127.0.0.1 -uroot -proot < src/main/resources/db-setup-e3.sql
 
+      - name: Run Unit tests and generate converage report
+        run: mvn test jacoco:report
+      
       - name: Run Integration Tests
-        run: mvn -Pintegration integration-test
+        run: mvn test -Pintegration
+
+      - name: Run Performance Tests
+        run: mvn test -Pperformance 
 
       - name: Generate Maven Site
         run: mvn site
+
+      - name: Ensure that the performance reports are also moved into the target\site\reports folder
+        run: mvn -Pperformance resources:copy-resources@copy-perf-report
+      
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: Convert README.md to index.html
+        run: |
+          mkdir -p docs
+          pandoc README.md -o docs/index.html
+
+      - name: Copy site output to docs/site and docs/doxygen folder to docs/doxygen
+        run: |
+          mkdir -p docs
+          mkdir -p docs/site
+          mkdir -p docs/doxygen
+          cp -r target/site/* docs/site/
+          cp -r target/doxygen/* docs/doxygen/
+
+      - name: Commit and push docs
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add -f docs
+          git commit -m "Update Maven site [CI skip]" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
