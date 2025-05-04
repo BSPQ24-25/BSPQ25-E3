@@ -56,6 +56,10 @@ jobs:
           until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do
             sleep 2
           done
+      - name: Create MySQL user 'e3'
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot -e "CREATE USER IF NOT EXISTS 'e3'@'%' IDENTIFIED BY 'e3';"
+          mysql -h 127.0.0.1 -uroot -proot -e "GRANT ALL PRIVILEGES ON mv.* TO 'e3'@'%'; FLUSH PRIVILEGES;"
         
       - name: Run DB initialization script
         run: |
@@ -64,6 +68,14 @@ jobs:
 
       #- name: Get into backend
       #run: cd backend
+
+      # HACEMOS UNA PRUEBA DE CONEXION CON LA BD ANTES DE EJECUTAR LOS TESTS
+      - name: Test MySQL manual connection
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
+          mysql -h 127.0.0.1 -ue3 -pe3 -e "SHOW TABLES IN mv;"
+
+
 
       - name: Run Unit tests and generate converage report
         run: mvn test jacoco:report
