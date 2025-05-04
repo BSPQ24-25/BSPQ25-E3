@@ -93,6 +93,10 @@ jobs:
         run: mvn site
         working-directory: backend
 
+      - name: List files in target directory to verify site generation
+        run: ls -la target/
+        working-directory: backend
+
       - name: Ensure that the performance reports are also moved into the target\site\reports folder
         run: mvn -Pperformance resources:copy-resources@copy-perf-report
         working-directory: backend
@@ -110,8 +114,16 @@ jobs:
           mkdir -p docs
           mkdir -p docs/site
           mkdir -p docs/doxygen
-          cp -r target/site/* docs/site/
-          cp -r target/doxygen/* docs/doxygen/
+          if [ -d "target/site" ]; then
+            cp -r target/site/* docs/site/
+          else
+            echo "No site generated. Skipping copy of site."
+          fi
+          if [ -d "target/doxygen" ]; then
+            cp -r target/doxygen/* docs/doxygen/
+          else
+            echo "No doxygen generated. Skipping copy of doxygen."
+          fi
 
       - name: Commit and push docs
         run: |
