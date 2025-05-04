@@ -62,24 +62,29 @@ jobs:
           echo "Running DB setup..."
           mysql -h 127.0.0.1 -uroot -proot < backend/src/main/resources/db-setup-e3.sql
 
-      - name: Get into backend
-        run: cd backend
+      #- name: Get into backend
+      #run: cd backend
 
       - name: Run Unit tests and generate converage report
         run: mvn test jacoco:report
+        working-directory: backend
       
       - name: Run Integration Tests
         run: mvn test -Pintegration
+        working-directory: backend
 
       - name: Run Performance Tests
         run: mvn test -Pperformance 
+        working-directory: backend
 
       - name: Generate Maven Site
         run: mvn site
+        working-directory: backend
 
       - name: Ensure that the performance reports are also moved into the target\site\reports folder
         run: mvn -Pperformance resources:copy-resources@copy-perf-report
-      
+        working-directory: backend
+
       - name: Install pandoc
         run: sudo apt-get update && sudo apt-get install -y pandoc
 
