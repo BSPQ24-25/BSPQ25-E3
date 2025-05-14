@@ -1,7 +1,6 @@
 version: '3.8'
 services:
   mysql:
-    # use specific version and official server image for compatibility
     image: mysql/mysql-server:8.0
     platform: linux/amd64
     container_name: mysql-container
@@ -16,7 +15,6 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./backend/src/main/resources/db-setup-e3.sql:/docker-entrypoint-initdb.d/db-setup-e3.sql:ro
-    # remove custom command to let official entrypoint handle defaults
 
   spring-app:
     build:
