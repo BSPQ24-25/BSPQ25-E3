@@ -12,6 +12,10 @@ function Register() {
     email: '',
     password: '',
     confirmPassword: '',
+    telephoneNumber: '',
+    address: '',
+    degreeType: '', // Changed from UNIVERSITY_DEGREE to empty for placeholder
+    degreeYear: '',
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -38,10 +42,14 @@ function Register() {
     try {
       // First register the user
       await registerUser({
-        firstName: formData.firstName,
+        name: formData.firstName, // Changed from firstName to name to match RegistrationRecord
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
+        telephoneNumber: formData.telephoneNumber,
+        address: formData.address,
+        degreeType: formData.degreeType,
+        degreeYear: formData.degreeYear ? parseInt(formData.degreeYear, 10) : null,
       });
 
       // Then automatically log them in
@@ -128,6 +136,79 @@ function Register() {
                   onChange={handleChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="telephoneNumber" className="block text-sm font-medium text-gray-700 text-left">
+                {t('register.telephoneNumber', 'Telephone Number')}
+              </label>
+              <div className="mt-1">
+                <input
+                  id="telephoneNumber"
+                  name="telephoneNumber"
+                  type="tel"
+                  autoComplete="tel"
+                  value={formData.telephoneNumber}
+                  onChange={handleChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 text-left">
+                {t('register.address', 'Address')}
+              </label>
+              <div className="mt-1">
+                <input
+                  id="address"
+                  name="address"
+                  type="text"
+                  autoComplete="street-address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label htmlFor="degreeType" className="block text-sm font-medium text-gray-700 text-left">
+                  {t('register.degreeType', 'Degree Type')}
+                </label>
+                <div className="mt-1">
+                  <select
+                    id="degreeType"
+                    name="degreeType"
+                    value={formData.degreeType}
+                    onChange={handleChange}
+                    required
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    <option value="" disabled>{t('register.selectDegreeType', 'Select Degree Type...')}</option>
+                    <option value="UNIVERSITY_DEGREE">{t('degreeType.universityDegree', 'University Degree')}</option>
+                    <option value="MASTER">{t('degreeType.master', 'Master')}</option>
+                    <option value="DOCTORATE">{t('degreeType.doctorate', 'Doctorate')}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="degreeYear" className="block text-sm font-medium text-gray-700 text-left">
+                  {t('register.degreeYear', 'Degree Year')}
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="degreeYear"
+                    name="degreeYear"
+                    type="number"
+                    value={formData.degreeYear}
+                    onChange={handleChange}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                </div>
               </div>
             </div>
 

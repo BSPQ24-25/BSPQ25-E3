@@ -127,10 +127,10 @@ public class UserController {
     	        user.setName(data.name() + " " + data.lastName() );
     	        user.setEmail(data.email());
     	        user.setPassword(data.password());
-    	        user.setTelephoneNumber("");
-    	        user.setAddress("");
-    			user.setDegreeType(User.DegreeType.UNIVERSITY_DEGREE);
-    			user.setDegreeYear(0);
+    	        user.setTelephoneNumber(data.telephoneNumber());
+    	        user.setAddress(data.address());
+    			user.setDegreeType(User.DegreeType.valueOf(data.degreeType()));
+    			user.setDegreeYear(data.degreeYear());
     			user.setPenalties(0);
     			user.setAverageRating(0.0);
     			user.setAdmin(false);
