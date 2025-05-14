@@ -8,6 +8,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import MyItems from './pages/MyItems';
 import Ranking from './pages/Ranking';
+import Users from './pages/Users';
+import UserProfile from './pages/UserProfile';
 import ProtectedRoute from './components/ProtectedRoute';
 import './index.css';
 import './App.css';
@@ -42,6 +44,22 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Ranking />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <Users />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users/:id"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
             </ProtectedRoute>
           }
         />
