@@ -5,7 +5,10 @@ function UploadItemModal({ isOpen, onClose, onConfirm }) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    image: null
+    image: null,
+    category: '',
+    purchaseDate: '',
+    purchasePrice: ''
   });
 
   const handleInputChange = (e) => {
@@ -67,6 +70,50 @@ function UploadItemModal({ isOpen, onClose, onConfirm }) {
               rows="3"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 text-left mb-1">
+              {t('uploadModal.category', 'Category')}
+            </label>
+            <input
+              type="text"
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="purchaseDate" className="block text-sm font-medium text-gray-700 text-left mb-1">
+              {t('uploadModal.purchaseDate', 'Purchase Date')}
+            </label>
+            <input
+              type="date"
+              id="purchaseDate"
+              name="purchaseDate"
+              value={formData.purchaseDate}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="purchasePrice" className="block text-sm font-medium text-gray-700 text-left mb-1">
+              {t('uploadModal.purchasePrice', 'Purchase Price')}
+            </label>
+            <input
+              type="number"
+              id="purchasePrice"
+              name="purchasePrice"
+              value={formData.purchasePrice}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="0.00"
+              step="0.01"
             />
           </div>
 
