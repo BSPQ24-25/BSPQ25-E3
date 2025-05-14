@@ -1,6 +1,9 @@
+version: '3.8'
 services:
   mysql:
-    image: mysql:8.0
+    # use specific version and official server image for compatibility
+    image: mysql/mysql-server:8.0
+    platform: linux/amd64
     container_name: mysql-container
     restart: unless-stopped
     environment:
@@ -10,16 +13,10 @@ services:
       MYSQL_PASSWORD: e3
     ports:
       - "3306:3306"
-    # Montamos únicamente tu script de inicialización
     volumes:
       - mysql_data:/var/lib/mysql
       - ./backend/src/main/resources/db-setup-e3.sql:/docker-entrypoint-initdb.d/db-setup-e3.sql:ro
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
+    # remove custom command to let official entrypoint handle defaults
 
   spring-app:
     build:
@@ -28,8 +25,7 @@ services:
     container_name: spring-boot-app
     restart: unless-stopped
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/mv?allowPublicKeyRetrieval=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: e3
@@ -49,11 +45,6 @@ services:
       - spring-app
     ports:
       - "3000:80"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/"]
-      interval: 10s
-      timeout: 2s
-      retries: 3
 
 volumes:
   mysql_data:
