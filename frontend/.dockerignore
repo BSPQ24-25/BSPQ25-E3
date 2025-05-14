@@ -1,0 +1,14 @@
+# Node modules (se instalan dentro del contenedor)
+node_modules/
+
+# Build output (se genera dentro de la etapa de build)
+build/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# OS / VCS
+.DS_Store
+.git

@@ -1,0 +1,15 @@
+# Maven build output
+target/
+
+# IDE / config
+.settings/
+*.iml
+.idea/
+
+# Logs
+logs/
+*.log
+
+# OS / VCS
+.DS_Store
+.git
