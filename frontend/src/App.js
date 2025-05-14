@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MyItems from './pages/MyItems';
+import Ranking from './pages/Ranking';
 import ProtectedRoute from './components/ProtectedRoute';
 import './index.css';
 import './App.css';
@@ -33,6 +34,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <MyItems />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ranking"
+          element={
+            <ProtectedRoute>
+              <Ranking />
             </ProtectedRoute>
           }
         />
