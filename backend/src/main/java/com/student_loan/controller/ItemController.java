@@ -160,37 +160,39 @@ public class ItemController {
 		}
 	}
 
-    @PostMapping(params = "token")
-    public ResponseEntity<String> createItem(@RequestBody ItemRecord itemRecord, @RequestParam("token") String token) {
-        User user = userService.getUserByToken(token);
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        Item item = convertToItem(itemRecord);
-        item.setOwner(user.getId());
-        try {
-            itemService.saveItem(item);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @PostMapping("/create")
     public ResponseEntity<String> createItem(@RequestBody ItemRecord itemRecord) {
         User user = getAuthenticatedUser();
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        Item item = convertToItem(itemRecord);
-        item.setOwner(user.getId());
-        try {
-            itemService.saveItem(item);
+ 		if (user == null) {
+ 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+ 		}
+ 		
+ 		Item item = convertToItem(itemRecord);
+ 		item.setOwner(user.getId());
+ 		try {
+ 			itemService.saveItem(item);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+         }
+ 		// If the item is created successfully, return a 201 Created response
+ 		return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+	@PostMapping(params = "token")
+     public ResponseEntity<String> createItem(@RequestBody ItemRecord itemRecord, @RequestParam("token") String token) {
+         User user = userService.getUserByToken(token);
+         if (user == null) {
+             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+         }
+         Item item = convertToItem(itemRecord);
+         item.setOwner(user.getId());
+         try {
+             itemService.saveItem(item);
+         } catch (RuntimeException e) {
+             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+         }
+         return new ResponseEntity<>(HttpStatus.CREATED);
+     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteItem(@PathVariable Long id, @RequestParam("token") String token) {

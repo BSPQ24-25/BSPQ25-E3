@@ -56,7 +56,22 @@ public class UserController {
 	}
     
     @GetMapping("/{id}")
-	public ResponseEntity<UserDTO> getUserById(@PathVariable Long id, @RequestParam("token") String token) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+    	User user = userService.getUserByEmail(email);
+        if (user == null) {
+        	   return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+		User retrievedUser = userService.getUserById(id).get();
+		UserDTO userDTO = new UserDTO(retrievedUser.getId(), retrievedUser.getName(), retrievedUser.getEmail());
+
+    	return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+	@GetMapping("/{id}/temporal")
+	public ResponseEntity<UserDTO> getUserById2(@PathVariable Long id, @RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);
     	if (user == null) {
         	return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -112,10 +127,10 @@ public class UserController {
     	        user.setName(data.name() + " " + data.lastName() );
     	        user.setEmail(data.email());
     	        user.setPassword(data.password());
-    	        user.setTelephoneNumber("");
-    	        user.setAddress("");
-    			user.setDegreeType(User.DegreeType.UNIVERSITY_DEGREE);
-    			user.setDegreeYear(0);
+    	        user.setTelephoneNumber(data.telephoneNumber());
+    	        user.setAddress(data.address());
+    			user.setDegreeType(User.DegreeType.valueOf(data.degreeType()));
+    			user.setDegreeYear(data.degreeYear());
     			user.setPenalties(0);
     			user.setAverageRating(0.0);
     			user.setAdmin(false);

@@ -1,16 +1,11 @@
-DROP SCHEMA IF EXISTS mv;
-DROP USER IF EXISTS 'e3'@'localhost';
+-- Script para crear la base de datos y el usuario para la API de biblioteca
+CREATE DATABASE IF NOT EXISTS mv;
 
-CREATE SCHEMA mv;
-CREATE USER IF NOT EXISTS 'e3'@'localhost' IDENTIFIED BY 'e3';
+-- Crear usuario para conexiones remotas
+CREATE USER IF NOT EXISTS 'e3'@'%' IDENTIFIED BY 'e3';
 
-GRANT ALL ON mv.* TO 'e3'@'localhost';
+-- Conceder privilegios al usuario
+GRANT ALL PRIVILEGES ON mv.* TO 'e3'@'%' WITH GRANT OPTION;
+
+-- Aplicar cambios
 FLUSH PRIVILEGES;
-
-
-USE mv;
-
-SHOW TABLES;
-SELECT * FROM users;
-SELECT * FROM items;
-SELECT * FROM loans;

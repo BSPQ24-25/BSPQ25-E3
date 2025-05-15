@@ -1,0 +1,140 @@
+name: Maven Site &n Peformance & Integration Tests & prepares docs file where all project documentation will go
+
+on:
+  push:
+    branches:
+      - '**'
+  schedule:
+    - cron: '0 18-23/2 * * *'  # 20:00–01:00 CET
+    - cron: '0 0-6/2 * * *'    # 02:00–08:00 CET
+
+
+    
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: mv
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Install Doxygen
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+
+      - name: Wait for MySQL to be ready
+        run: |
+          echo "Waiting for MySQL..."
+          until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do
+            sleep 2
+          done
+      - name: Create MySQL user 'e3'
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot -e "CREATE USER IF NOT EXISTS 'e3'@'%' IDENTIFIED BY 'e3';"
+          mysql -h 127.0.0.1 -uroot -proot -e "GRANT ALL PRIVILEGES ON mv.* TO 'e3'@'%'; FLUSH PRIVILEGES;"
+        
+      - name: Run DB initialization script
+        run: |
+          echo "Running DB setup..."
+          mysql -h 127.0.0.1 -uroot -proot < backend/src/main/resources/db-setup-e3.sql
+
+      #- name: Get into backend
+      #run: cd backend
+
+      # HACEMOS UNA PRUEBA DE CONEXION CON LA BD ANTES DE EJECUTAR LOS TESTS
+      - name: Test MySQL manual connection
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
+          mysql -h 127.0.0.1 -ue3 -pe3 -e "SHOW TABLES IN mv;"
+
+
+
+      - name: Run Unit tests and generate converage report
+        run: mvn test jacoco:report
+        working-directory: backend
+      
+      - name: Run Integration Tests
+        run: mvn test -Pintegration
+        working-directory: backend
+
+      - name: Run Performance Tests
+        run: mvn test -Pperformance 
+        working-directory: backend
+
+      - name: Generate Maven Site
+        run: mvn site
+        working-directory: backend
+
+      - name: List files in target directory to verify site generation
+        run: ls -la target/
+        working-directory: backend
+
+      - name: Ensure that the performance reports are also moved into the target\site\reports folder
+        run: mvn -Pperformance resources:copy-resources@copy-perf-report
+        working-directory: backend
+
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: Convert README.md to index.html
+        run: |
+          mkdir -p docs
+          pandoc README.md -o docs/index.html
+
+      - name: Generate Doxygen documentation
+        run: doxygen src/main/resources/Doxyfile
+        working-directory: backend
+        
+      - name: Copy site output to docs/site and docs/doxygen folder to docs/doxygen
+        run: |
+          mkdir -p docs
+          mkdir -p docs/site
+          mkdir -p docs/doxygen
+          if [ -d "target/site" ]; then
+            cp -r target/site/* docs/site/
+          else
+            echo "No site generated. Skipping copy of site."
+          fi
+          if [ -d "target/doxygen" ]; then
+            cp -r target/doxygen/* docs/doxygen/
+          else
+            echo "No doxygen generated. Skipping copy of doxygen."
+          fi
+
+      - name: Commit and push docs
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add -f docs
+          git commit -m "Update Maven site [CI skip]" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

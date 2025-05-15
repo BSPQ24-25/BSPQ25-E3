@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,10 +17,10 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.student_loan.controller.UserController;
-import com.student_loan.model.User;
 import com.student_loan.dtos.CredentialsDTO;
 import com.student_loan.dtos.RegistrationRecord;
 import com.student_loan.dtos.UserDTO;
+import com.student_loan.model.User;
 import com.student_loan.service.UserService;
 
 class UnitUserControllerTest {
@@ -31,26 +33,22 @@ class UnitUserControllerTest {
         userService = mock(UserService.class);
         userController = new UserController(userService);
 
-        // Configurar el contexto de seguridad
         SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
         Authentication authentication = mock(Authentication.class);
+        
         when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getName()).thenReturn("test@example.com");
+        when(authentication.getName()).thenReturn("ana@example.com");
     }
 
     @Test
     @DisplayName("POST /users/register - Successful registration")
     void testRegister_Success() {
-        // Crear un objeto RegistrationRecord con datos válidos
         RegistrationRecord registrationRecord = new RegistrationRecord(
-            "John", "Doe", "john@example.com", "password"
+            "Ana", "Gómez", "ana@example.com", "password", "616238276", "Pancracion Kalea 7", "UNIVERSITY_DEGREE", 3
         );
-
-        // Simulando el comportamiento del servicio para registrar un usuario
         when(userService.register(any(User.class))).thenReturn(true);
 
-        // Simulando el controlador
         ResponseEntity<String> response = userController.register(registrationRecord);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -60,15 +58,11 @@ class UnitUserControllerTest {
     @Test
     @DisplayName("POST /users/register - User already exists")
     void testRegister_UserAlreadyExists() {
-        // Crear un objeto RegistrationRecord con datos válidos
         RegistrationRecord registrationRecord = new RegistrationRecord(
-            "John", "Doe", "john@example.com", "password"
+            "Ana", "Gómez", "ana@example.com", "password", "616238276", "Pancracion Kalea 7", "UNIVERSITY_DEGREE", 3
         );
-
-        // Simulando un usuario ya existente
         when(userService.register(any(User.class))).thenReturn(false);
 
-        // Simulando el controlador
         ResponseEntity<String> response = userController.register(registrationRecord);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -78,10 +72,9 @@ class UnitUserControllerTest {
     @Test
     @DisplayName("POST /users/login - Successful login")
     void testLogin_Success() {
-        CredentialsDTO credentials = new CredentialsDTO("john@example.com", "password");
+        CredentialsDTO credentials = new CredentialsDTO("ana@example.com", "password");
         when(userService.login(any(CredentialsDTO.class))).thenReturn("valid-token");
 
-    
         ResponseEntity<?> response = userController.login(credentials);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -91,43 +84,45 @@ class UnitUserControllerTest {
     @Test
     @DisplayName("POST /users/login - Invalid credentials")
     void testLogin_InvalidCredentials() {
-        CredentialsDTO credentials = new CredentialsDTO("john@example.com", "wrong-password");
+        CredentialsDTO credentials = new CredentialsDTO("ana@example.com", "wrong-password");
         when(userService.login(any(CredentialsDTO.class))).thenReturn("Invalid credentials");
 
-    
         ResponseEntity<?> response = userController.login(credentials);
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertEquals("Invalid credentials", response.getBody());
     }
 
-   
-    
     @Test
-    @DisplayName("GET /users/{id} - Get user details")
+    @DisplayName("GET /users/{id} - Get user details by ID")
     void testGetUserById_Success() {
-        // Mock the User object
-        User mockUser = new User(1L, "John", "john@example.com", "password", "1234567890", "Some Address", User.DegreeType.UNIVERSITY_DEGREE, 3, 0, 4.5, true);
-    
-        // Mock the service methods
-        when(userService.getUserById(1L)).thenReturn(java.util.Optional.of(mockUser));
-        when(userService.getUserByToken("valid-token")).thenReturn(mockUser);
+        User authUser = new User();
+        authUser.setEmail("ana@example.com");
+        authUser.setAdmin(false);
 
-        // Call the controller method
-        ResponseEntity<UserDTO> response = userController.getUserById(1L, "valid-token");
+        User targetUser = new User();
+        targetUser.setId(1L);
+        targetUser.setName("Carlos Pérez");
+        targetUser.setEmail("ana@example.com");
 
-        // Validate the response
+        when(userService.getUserByEmail("ana@example.com")).thenReturn(authUser);
+        when(userService.getUserById(1L)).thenReturn(Optional.of(targetUser));
+
+        ResponseEntity<UserDTO> response = userController.getUserById(1L);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("John", response.getBody().getUsername()); // Corrected method name
-        assertEquals("john@example.com", response.getBody().getEmail()); // Corrected method name
+        UserDTO body = response.getBody();
+        assertEquals(1L, body.getId());
+        assertEquals("Carlos Pérez", body.getUsername());
+        assertEquals("ana@example.com", body.getEmail());
     }
 
     @Test
-    @DisplayName("GET /users/{id} - Unauthorized access")
+    @DisplayName("GET /users/{id} - Unauthorized if no user in context")
     void testGetUserById_Unauthorized() {
-        when(userService.getUserByToken("invalid-token")).thenReturn(null);
+        when(userService.getUserByEmail("ana@example.com")).thenReturn(null);
 
-        ResponseEntity<UserDTO> response = userController.getUserById(1L, "invalid-token");
+        ResponseEntity<UserDTO> response = userController.getUserById(1L);
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
