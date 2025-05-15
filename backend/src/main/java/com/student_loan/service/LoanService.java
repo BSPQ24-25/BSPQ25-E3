@@ -1,7 +1,9 @@
 package com.student_loan.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.student_loan.model.Loan;
 import com.student_loan.model.Loan.Status;
@@ -40,11 +42,8 @@ public class LoanService {
 	}
 	
 	public List<Long> getLentItemsIdByUser(Long userId) {
-
-        // Obtener los préstamos activos donde el usuario es el prestamista
         List<Loan> loans = loanRepository.findByLenderAndLoanStatus(userId, Status.IN_USE);
 
-        // Extraer los items de los préstamos activos
         List<Long> lentItems = new ArrayList<>();
         for (Loan loan : loans) {
             lentItems.add(loan.getItem());
@@ -54,11 +53,8 @@ public class LoanService {
     }
 
 	public List<Long> getBorrowedItemsIdByUser(Long userId) {
-
-        // Obtener los préstamos activos donde el usuario es el prestamista
         List<Loan> loans = loanRepository.findByBorrowerAndLoanStatus(userId, Status.IN_USE);
 
-        // Extraer los items de los préstamos activos
         List<Long> lentItems = new ArrayList<>();
         for (Loan loan : loans) {
             lentItems.add(loan.getItem());
@@ -68,31 +64,39 @@ public class LoanService {
     }
 
     public Loan saveLoan(Loan loan) {
-    	
-    	if(userRepository.findById(loan.getLender()) == null) {
-            throw new RuntimeException("Failed to save loan with id "+ loan.getId()+": Lender not found with id: " + loan.getLender());
+
+        if (loan.getId() == null && loan.getLoanStatus() == Loan.Status.IN_USE) {
+            int activos = loanRepository.countByBorrowerAndLoanStatus(
+                loan.getBorrower(), Loan.Status.IN_USE);
+            if (activos >= 3) {
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Failed to save loan with id " + loan.getId()+ ": You already have 3 items reserved. Return an item before booking another."
+                );
+            }
+        }
+    	else if(userRepository.findById(loan.getLender()) == null) {
+            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Lender not found with id: " + loan.getLender());
 		}else if(userRepository.findById(loan.getBorrower())==null) {
-			throw new RuntimeException("Failed to save loan with id "+ loan.getId()+": Borrower not found with id: " + loan.getBorrower());
+			throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Borrower not found with id: " + loan.getBorrower());
 		}else if (itemRepository.findById(loan.getItem())==null) {
-			throw new RuntimeException("Failed to save loan with id "+ loan.getId()+": Item not found with id: " + loan.getItem());
-		}else {
-	    	
-	    	return loanRepository.save(loan);
-		}
+			throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Item not found with id: " + loan.getItem());
+        }else {
+            
+            return loanRepository.save(loan);
+        }
+        throw new RuntimeException("Unexpected error in saveLoan");
     }
 
     public boolean returnLoan(Long itemId, Long borrowerId) {
-        // Buscamos el préstamo que cumpla todas las condiciones:
         Optional<Loan> optionalLoan = loanRepository.findByBorrowerAndItemAndLoanStatus(borrowerId, itemId, Loan.Status.IN_USE);
     
         if (optionalLoan.isPresent()) {
             Loan loan = optionalLoan.get();
             
-            // Actualizamos el estado de la loan y la fecha de devolución
             loan.setLoanStatus(Loan.Status.RETURNED);
-            loan.setRealReturnDate(new Date()); // Fecha de devolución actual
+            loan.setRealReturnDate(new Date());
     
-            // Guardamos el cambio en la base de datos
             loanRepository.save(loan);
             
             System.out.println("Saved Loan: " + loan.getLoanStatus());
