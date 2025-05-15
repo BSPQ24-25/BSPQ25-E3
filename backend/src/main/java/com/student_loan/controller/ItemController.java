@@ -20,6 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller class for managing items in the system. Handles HTTP requests
+ * related to item operations such as creating, updating, deleting, and
+ * retrieving items.
+ */
 @RestController
 @RequestMapping("/items")
 public class ItemController {
@@ -33,6 +38,13 @@ public class ItemController {
 	@Autowired
     private LoanService loanService;
 
+	/**
+	 * Constructor for ItemController.
+	 *
+	 * @param itemService Service for item operations.
+	 * @param userService Service for user operations.
+	 * @param loanService Service for loan operations.
+	 */
 	@Autowired
 	public ItemController(ItemService itemService, UserService userService, LoanService loanService) {
 		this.itemService = itemService;
@@ -40,12 +52,22 @@ public class ItemController {
 		this.loanService = loanService;
 	}
 
+	/**
+	 * Retrieves the authenticated user from the SecurityContext.
+	 *
+	 * @return The authenticated user.
+	 */
 	private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return userService.getUserByEmail(email);
     }
 
+	/**
+	 * Retrieves all items in the system.
+	 *
+	 * @return List of all items.
+	 */
     @GetMapping
     public ResponseEntity<List<Item>> getAllItems() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -58,6 +80,12 @@ public class ItemController {
     	
     	return new ResponseEntity<>(itemService.getAllItems(),HttpStatus.OK);
     }
+
+    /**
+     * Retrieves all available items in the system.
+     *
+     * @return ResponseEntity containing a list of available items.
+     */
 
 	@GetMapping("/available")
     public ResponseEntity<List<Item>> getAvailableItems() {
@@ -72,6 +100,12 @@ public class ItemController {
     	return new ResponseEntity<>(itemService.getAvailableItems(),HttpStatus.OK);
     }
 
+	 /**
+     * Retrieves all items owned by a specific user.
+     *
+     * @param id The ID of the user.
+     * @return ResponseEntity containing a list of items owned by the user.
+     */
     @GetMapping("/user/{id}")
     public ResponseEntity<List<Item>> getItemsByUser(@PathVariable Long id) {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -91,6 +125,12 @@ public class ItemController {
         }
     }
     
+    /**
+     * Retrieves an item by its ID.
+     *
+     * @param id The ID of the item.
+     * @return ResponseEntity containing the item.
+     */
     @GetMapping("/{id}")
 	public ResponseEntity<Item> getItemById(@PathVariable Long id) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -111,6 +151,12 @@ public class ItemController {
 
 		return new ResponseEntity<>(item, HttpStatus.OK);
 	}
+    
+    /**
+     * Retrieves all items lent by the authenticated user.
+     *
+     * @return ResponseEntity containing a list of lent items.
+     */
 
 	@GetMapping("/lent")
 	public ResponseEntity<List<Item>> getLentItemsByUser() {
@@ -136,6 +182,11 @@ public class ItemController {
 		}
 	}
 
+	/**
+     * Retrieves all items borrowed by the authenticated user.
+     *
+     * @return ResponseEntity containing a list of borrowed items.
+     */
 	@GetMapping("/borrowed")
 	public ResponseEntity<List<Item>> getBorrowedItemsByUser() {
 		// Obtener el usuario autenticado desde el SecurityContext
@@ -160,6 +211,14 @@ public class ItemController {
 		}
 	}
 
+	 /**
+     * Creates a new item.
+     *
+     * @param itemRecord The item data.
+     * @return ResponseEntity indicating the result of the operation.
+     */
+
+
     @PostMapping("/create")
     public ResponseEntity<String> createItem(@RequestBody ItemRecord itemRecord) {
         User user = getAuthenticatedUser();
@@ -178,6 +237,15 @@ public class ItemController {
  		return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+	
+
+    /**
+     * Creates a new item using a token for authentication.
+     *
+     * @param itemRecord The item data.
+     * @param token      The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
 	@PostMapping(params = "token")
      public ResponseEntity<String> createItem(@RequestBody ItemRecord itemRecord, @RequestParam("token") String token) {
          User user = userService.getUserByToken(token);
@@ -194,6 +262,15 @@ public class ItemController {
          return new ResponseEntity<>(HttpStatus.CREATED);
      }
 
+	
+	 /**
+     * Deletes an item by its ID.
+     *
+     * @param id    The ID of the item.
+     * @param token The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
+	
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteItem(@PathVariable Long id, @RequestParam("token") String token) {
         User user = userService.getUserByToken(token);
@@ -206,6 +283,14 @@ public class ItemController {
     	return new ResponseEntity<>(HttpStatus.OK);
     }
     
+    /**
+     * Updates an item by its ID.
+     *
+     * @param id       The ID of the item.
+     * @param item     The updated item data.
+     * @param token    The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
     @PutMapping("/{id}")
 	public ResponseEntity<String> updateItem(@PathVariable Long id, @RequestBody ItemRecord item, @RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);
@@ -228,6 +313,12 @@ public class ItemController {
 		}
 	}
 
+    /**
+     * Converts an ItemRecord to an Item entity.
+     *
+     * @param itemRecord The item record.
+     * @return The converted Item entity.
+     */
     private Item convertToItem(ItemRecord itemRecord) {
 		Item item = new Item();
 		item.setName(itemRecord.name());

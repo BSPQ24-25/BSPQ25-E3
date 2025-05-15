@@ -46,6 +46,7 @@ class UnitUserControllerTest {
     void testRegister_Success() {
         RegistrationRecord registrationRecord = new RegistrationRecord(
             "Ana", "Gómez", "ana@example.com", "password", "616238276", "Pancracion Kalea 7", "UNIVERSITY_DEGREE", 3
+
         );
         when(userService.register(any(User.class))).thenReturn(true);
 
@@ -60,6 +61,7 @@ class UnitUserControllerTest {
     void testRegister_UserAlreadyExists() {
         RegistrationRecord registrationRecord = new RegistrationRecord(
             "Ana", "Gómez", "ana@example.com", "password", "616238276", "Pancracion Kalea 7", "UNIVERSITY_DEGREE", 3
+
         );
         when(userService.register(any(User.class))).thenReturn(false);
 
