@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql/mysql-server:8.0
+    platform: linux/amd64
+    container_name: mysql-container
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mv
+      MYSQL_USER: e3
+      MYSQL_PASSWORD: e3
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/src/main/resources/db-setup-e3.sql:/docker-entrypoint-initdb.d/db-setup-e3.sql:ro
+
+  spring-app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spring-boot-app
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/mv?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: e3
+      SPRING_DATASOURCE_PASSWORD: e3
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend-app
+    restart: unless-stopped
+    depends_on:
+      - spring-app
+    ports:
+      - "3000:80"
+
+volumes:
+  mysql_data:
+    driver: local
