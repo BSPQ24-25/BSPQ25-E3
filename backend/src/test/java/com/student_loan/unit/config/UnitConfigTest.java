@@ -10,12 +10,19 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.student_loan.security.JwtUtil;
 import com.student_loan.config.SecurityConfig;
 import com.student_loan.config.CorsConfig;
+import com.student_loan.config.TestSecurityConfig;
 
 class UnitConfigTest {
 
@@ -26,7 +33,6 @@ class UnitConfigTest {
             return mock(JwtUtil.class);
         }
 
-        // Provide MVC introspector so SecurityConfig's CORS can wire correctly
         @Bean
         public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
             return new HandlerMappingIntrospector();
@@ -41,7 +47,6 @@ class UnitConfigTest {
 
         BCryptPasswordEncoder encoder = ctx.getBean(BCryptPasswordEncoder.class);
         assertNotNull(encoder);
-        ctx.close();
     }
 
     @Test
@@ -52,7 +57,36 @@ class UnitConfigTest {
 
         SecurityFilterChain chain = ctx.getBean(SecurityFilterChain.class);
         assertNotNull(chain);
-        ctx.close();
+    }
+
+    @Test
+    void testCorsConfigurationSourceBeanExists() {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(TestJwtConfig.class, SecurityConfig.class);
+        ctx.refresh();
+
+        CorsConfigurationSource source = ctx.getBean("corsConfigurationSource", CorsConfigurationSource.class);
+        assertNotNull(source);
+    }
+
+    @Test
+    void testCorsConfigurationSourceSettings() {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(TestJwtConfig.class, SecurityConfig.class);
+        ctx.refresh();
+
+        CorsConfigurationSource source = ctx.getBean("corsConfigurationSource", CorsConfigurationSource.class);
+        assertTrue(source instanceof UrlBasedCorsConfigurationSource);
+        UrlBasedCorsConfigurationSource urlSource = (UrlBasedCorsConfigurationSource) source;
+
+        var configs = urlSource.getCorsConfigurations();
+        CorsConfiguration cfg = configs.get("/**");
+
+        assertNotNull(cfg);
+        assertEquals(List.of("http://localhost:3000"), cfg.getAllowedOrigins());
+        assertEquals(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"), cfg.getAllowedMethods());
+        assertEquals(List.of("Authorization", "Content-Type"), cfg.getAllowedHeaders());
+        assertTrue(cfg.getAllowCredentials());
     }
 
     @Test
@@ -60,7 +94,6 @@ class UnitConfigTest {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(CorsConfig.class);
         WebMvcConfigurer configurer = context.getBean(WebMvcConfigurer.class);
         assertNotNull(configurer);
-        context.close();
     }
 
     @Test
@@ -78,5 +111,19 @@ class UnitConfigTest {
         verify(registration).allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
         verify(registration).allowedHeaders("*");
         verify(registration).allowCredentials(true);
+    }
+
+    @Test
+    void testTestSecurityConfigBeans() throws Exception {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.getEnvironment().setActiveProfiles("test");
+        ctx.register(TestSecurityConfig.class);
+        ctx.refresh();
+
+        BCryptPasswordEncoder encoder = ctx.getBean(BCryptPasswordEncoder.class);
+        assertNotNull(encoder);
+
+        SecurityFilterChain chain = ctx.getBean(SecurityFilterChain.class);
+        assertNotNull(chain);
     }
 }

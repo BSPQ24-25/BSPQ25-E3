@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for managing loans between users.
+ * Provides methods for creating, retrieving, updating, and deleting loans.
+ */
 @Service
 public class LoanService {
     @Autowired
@@ -23,21 +27,53 @@ public class LoanService {
     @Autowired
     private ItemRepository itemRepository;
 
+    /**
+     * Retrieves all loans in the system.
+     *
+     * @return List of all loans.
+     */
     public List<Loan> getAllLoans() {
         return loanRepository.findAll();
     }
 
+    /**
+     * Finds a loan by its ID.
+     *
+     * @param id Loan ID.
+     * @return Optional containing the loan if found.
+     */
     public Optional<Loan> getLoanById(Long id) {
         return loanRepository.findById(id);
     }
+    
+    
+    /**
+     * Gets all loans where the given user is the lender.
+     *
+     * @param userId User ID of the lender.
+     * @return List of loans.
+     */
     
 	public List<Loan> getLoansByLender(Long userId) {
 		return loanRepository.findByLender(userId);
 	}
 	
+	/**
+     * Gets all loans where the given user is the borrower.
+     *
+     * @param userId User ID of the borrower.
+     * @return List of loans.
+     */
 	public List<Loan> getLoansByBorrower(Long userId) {
 		return loanRepository.findByBorrower(userId);
 	}
+	
+	  /**
+     * Gets IDs of items currently lent by a user.
+     *
+     * @param userId User ID of the lender.
+     * @return List of item IDs.
+     */
 	
 	public List<Long> getLentItemsIdByUser(Long userId) {
 
@@ -53,6 +89,13 @@ public class LoanService {
         return lentItems;
     }
 
+	/**
+	 * Gets IDs of items currently borrowed by a user.
+	 *
+	 * @param userId User ID of the borrower.
+	 * @return List of item IDs.
+	 */
+	
 	public List<Long> getBorrowedItemsIdByUser(Long userId) {
 
         // Obtener los préstamos activos donde el usuario es el prestamista
@@ -67,6 +110,14 @@ public class LoanService {
         return lentItems;
     }
 
+	/**
+	 * Saves a loan to the repository.
+	 *
+	 * @param loan Loan object to save.
+	 * @return Saved loan object.
+	 * @throws RuntimeException if the lender, borrower, or item is not found.
+	 */
+
     public Loan saveLoan(Loan loan) {
     	
     	if(userRepository.findById(loan.getLender()) == null) {
@@ -80,6 +131,14 @@ public class LoanService {
 	    	return loanRepository.save(loan);
 		}
     }
+
+	/**
+	 * Updates an existing loan.
+	 *
+	 * @param loan Loan object with updated information.
+	 * @return Updated loan object.
+	 * @throws RuntimeException if the loan is not found.
+	 */
 
     public boolean returnLoan(Long itemId, Long borrowerId) {
         // Buscamos el préstamo que cumpla todas las condiciones:
@@ -101,12 +160,24 @@ public class LoanService {
             return false;
         }
     }
+    	
+
+    /**
+     * Deletes a loan by its ID.
+     *
+     * @param id The ID of the loan to delete.
+     */
 
     public void deleteLoan(Long id) {
         loanRepository.deleteById(id);
     }
-    
-    //Create a loan
+    /**
+     * Creates a new loan if it does not already exist.
+     *
+     * @param loan The loan to create.
+     * @return The created loan.
+     * @throws RuntimeException if lender, borrower, or item does not exist.
+     */
 	public Loan createLoan(Loan loan) {
 		
 		Optional<Loan> optionalLoan = loanRepository.findById(loan.getId());

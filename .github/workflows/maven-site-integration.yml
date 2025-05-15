@@ -1,0 +1,63 @@
+name: Maven Site & Integration Tests
+
+on:
+  push:
+    branches:
+      - '**'
+  schedule:
+    - cron: '0 18-23/2 * * *'  # 20:00–01:00 CET
+    - cron: '0 0-6/2 * * *'    # 02:00–08:00 CET
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: libraryapidb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Wait for MySQL to be ready
+        run: |
+          echo "Waiting for MySQL..."
+          until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do
+            sleep 2
+          done
+
+      - name: Run DB initialization script
+        run: |
+          echo "Running DB setup..."
+          mysql -h 127.0.0.1 -uroot -proot < src/main/resources/dbsetup.sql
+
+      - name: Run Integration Tests
+        run: mvn -Pintegration integration-test
+
+      - name: Generate Maven Site
+        run: mvn site

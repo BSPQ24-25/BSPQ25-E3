@@ -23,8 +23,10 @@ package com.student_loan.integration;
  import java.util.List;
  
  import static org.junit.jupiter.api.Assertions.*;
+ import org.springframework.test.context.ActiveProfiles;
  
  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+ @ActiveProfiles("test")
  class StudentLoanIntegrationTest {
  
      @Autowired
@@ -156,21 +158,22 @@ package com.student_loan.integration;
         assertEquals(Loan.Status.IN_USE, loans[0].getLoanStatus());
         assertEquals(loanId, loans[0].getId());
                 
-        System.out.println("INTEGREATION TEST FINISHED");
+        System.out.println("INTEGRATION TEST FINISHED");
 
         // // 7. Return loan
-        // Map<String, String> returnLoanRequest = Map.of(
-        //     "realReturnDate", LocalDate.now().plusDays(5).toString(),
-        //     "loanStatus", Loan.Status.RETURNED.toString(),
-        //     "rating", "4.5",
-        //     "observations", "Good condition"
+        // Map<String,Object> returnLoanRequest = Map.of(
+        //     "realReturnDate",      LocalDate.now().plusDays(5).toString(),
+        //     "loanStatus",          Loan.Status.RETURNED.toString(),
+        //     "rating",              4.5,
+        //     "observations",        "Good condition"
         // );
 
         // HttpHeaders headers = new HttpHeaders();
         // headers.setContentType(MediaType.APPLICATION_JSON);
         // headers.setBearerAuth(tokenB);
 
-        // HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(returnLoanRequest, headers);
+        // HttpEntity<Map<String,Object>> requestEntity =
+        //     new HttpEntity<>(returnLoanRequest, headers);
 
         // ResponseEntity<String> returnLoanResponse = restTemplate.exchange(
         //     "/loans/" + loanId,
@@ -179,7 +182,6 @@ package com.student_loan.integration;
         //     String.class
         // );
 
-        // System.out.println("HOLA" + returnLoanResponse.getBody());
         // assertEquals(HttpStatus.OK, returnLoanResponse.getStatusCode());
 
         // // Step 8: Verify loan status is updated
