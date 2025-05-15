@@ -33,7 +33,8 @@ src/
 │      ├─ application.properties                ← Spring configuration
 |      ├─ application-performance.properties    ← Performance Test configuration (optional)
 |      ├─ log4j2.properties                     ← Log4J2 configuration
-│      └─ dbsetup.sql                           ← MySQL setup script (optional)
+|      ├─ db-guide-e3.sql                       ← MySQL guide script (optional)
+│      └─ db-setup-e3.sql                       ← MySQL setup script (optional)
 └─ test/
    ├─ unit/                      ← Unit tests
    ├─ integration/               ← Integration tests
