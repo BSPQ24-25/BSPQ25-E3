@@ -1,4 +1,4 @@
-# Student Loan Management Application (BSPQ25-E3) — README
+# Student Loan Management Application (BSPQ25-E3) 
 
 ## 1. Project Description
 Student Loan Management is a platform for managing student loans that allows students to apply for and manage loans to finance their education, while lenders can offer their loan products and track them. The system is designed to simplify the management of loans, ensuring that students can access the financial resources they need, while lenders can manage and oversee the status of their loans.
@@ -149,3 +149,6 @@ mvn verify -Pperformance
 
 **Authors**  
 Luis Rodriguez, Erkuden Camiruaga, Sabin Luja, Iker Garcia, Adam Kelly, Alex Olazabal
+
+
+**This is the basic setup and usage guide for the Student Loan Management System.**
