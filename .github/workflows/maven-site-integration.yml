@@ -109,6 +109,10 @@ jobs:
           mkdir -p docs
           pandoc README.md -o docs/index.html
 
+      - name: Generate Doxygen documentation
+        run: doxygen src/main/resources/Doxyfile
+        working-directory: backend
+        
       - name: Copy site output to docs/site and docs/doxygen folder to docs/doxygen
         run: |
           mkdir -p docs
