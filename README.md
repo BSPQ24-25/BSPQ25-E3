@@ -53,8 +53,8 @@ src/
 
 2. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-username/StudentLoanManagement.git
-   cd StudentLoanManagement
+   git clone https://github.com/BSPQ24-25/BSPQ25-E3.git
+   cd BSPQ25-E3
    ```
 
 3. **Database & Application Configuration**
