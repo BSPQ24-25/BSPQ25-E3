@@ -1,6 +1,6 @@
 <h1 id="student-loan-management-application-bspq25-e3">Student Loan
 Management Application (BSPQ25-E3)</h1>
-<h2 id="project-description">Project Description</h2>
+<h2 id="project-description">1. Project Description</h2>
 <p>Student Loan Management is a platform for managing student loans that
 allows students to apply for and manage loans to finance their
 education, while lenders can offer their loan products and track them.
@@ -11,101 +11,148 @@ lenders can manage and oversee the status of their loans.</p>
 unit testing, Mockito for mocking, and JaCoCo for test coverage. The
 application also utilizes JPA (Hibernate) for entity management and
 database handling.</p>
-<h2 id="key-features">Key Features</h2>
+<h2 id="generated-documentation">2. Generated Documentation</h2>
 <ul>
-<li><p>User Management: Users can register, log in, and update their
-personal information.</p></li>
-<li><p>Item Management: Users can add, update, delete, and query items
-they want to lend or rent.</p></li>
-<li><p>Loan Management: Loans can be requested, approved, and tracked by
-both lenders and borrowers.</p></li>
-<li><p>Status Notifications: Users receive status updates on loans,
-items, and payments.</p></li>
-<li><p>Unit Tests and Mocking: Unit tests are implemented to ensure code
-quality, using Mockito for simulating external dependencies and JaCoCo
-for measuring test coverage.</p></li>
-</ul>
-<h2 id="technologies-used">Technologies Used</h2>
+<li><strong>Technical documentation (Doxygen)</strong>: package, class
+and method details.<br />
+</li>
+<li><strong>Test reports</strong>:
 <ul>
-<li><p>Java 17: The primary programming language used in the
-project.</p></li>
-<li><p>Spring Boot: Framework for backend application development with
-automatic and minimal configuration.</p></li>
-<li><p>Spring Data JPA: For persistence and database management using
-Hibernate.</p></li>
-<li><p>Unit 5: For running unit tests.</p></li>
-<li><p>Mockito: For unit testing with mock objects simulating behavior
-of external dependencies.</p></li>
-<li><p>JaCoCo: For test coverage and code analysis.</p></li>
+<li>Code coverage (JaCoCo)<br />
+</li>
+<li>Unit tests (JUnit 5 + Mockito)<br />
+</li>
+<li>Integration tests<br />
+</li>
+<li>Performance tests (JUnitPerf)<br />
+</li>
+</ul></li>
+<li><strong>Architecture overview</strong>: MVC diagram and
+explanations.</li>
 </ul>
-<h2 id="installation-and-setup">Installation and Setup</h2>
-<p>Follow these steps to set up and run the project on your local
-machine:</p>
-<h3 id="prerequisites">Prerequisites</h3>
+<h3 id="architecture-folder-structure">3. Architecture &amp; Folder
+Structure</h3>
+<p>Built with <strong>Spring Boot</strong> and Java 17, following
+MVC:</p>
+<pre class="plaintext"><code>src/
+├─ main/
+│  ├─ java/com/student_loan/     ← Source code
+│  │   ├─ config/                ← Application configurations
+│  │   ├─ controller/            ← REST controllers
+│  │   ├─ dtos/                  ← Data transfer objects
+│  │   ├─ model/                 ← JPA entities
+│  │   ├─ repository/            ← JPA repositories
+│  │   ├─ security/              ← Security configurations
+│  │   └─ service/               ← Business logic
+│  └─ resources/
+│      ├─ application.properties                ← Spring configuration
+|      ├─ application-performance.properties    ← Performance Test configuration (optional)
+|      ├─ log4j2.properties                     ← Log4J2 configuration
+│      └─ dbsetup.sql                           ← MySQL setup script (optional)
+└─ test/
+   ├─ unit/                      ← Unit tests
+   ├─ integration/               ← Integration tests
+   └─ performance/               ← Performance tests</code></pre>
 <ul>
-<li><p>Java 17 or higher.</p></li>
-<li><p>Maven for managing dependencies and building the
-project.</p></li>
-<li><p>An IDE such as IntelliJ IDEA or Eclipse is recommended for
-working with the project.</p></li>
-</ul>
-<h4 id="clone-the-repository">Clone the Repository</h4>
-<p>Clone the repository to your local machine: - git clone
-https://github.com/your-username/StudentLoanManagement.git</p>
-<p>Navigate to the project folder: - cd StudentLoanManagement</p>
-<h3 id="configure-the-database">Configure the Database</h3>
-<p>The project uses H2 Database by default for data persistence. Make
-sure to configure H2 or any other database you want to use in the
-application.properties file of Spring Boot.</p>
-<p>If you want to use H2 as an in-memory database, you can keep the
-default configuration:</p>
-<pre><code>spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect</code></pre>
-<h3 id="install-dependencies">Install Dependencies</h3>
-<p>Run the following command to install the necessary dependencies:</p>
-<pre><code>mvn install</code></pre>
-<h3 id="running-the-project">Running the Project</h3>
-<p>To run the project, simply use the following Maven command:</p>
-<pre><code>mvn spring-boot:run</code></pre>
-<p>This will start the server, and you can access the application at
-http://localhost:8080.</p>
-<h2 id="maven-commands">Maven Commands</h2>
-<p>Here are some useful Maven commands for maintaining and managing the
-project:</p>
+<li><strong>Swagger / OpenAPI</strong>:
 <ul>
-<li>Clean the Project: To remove the target/ directory and any compiled
-files, run:</li>
+<li>JSON: <code>http://localhost:8080/api-docs</code><br />
+</li>
+<li>UI: <code>http://localhost:8080/swagger-ui.html</code></li>
+</ul></li>
 </ul>
-<pre><code>mvn clean</code></pre>
+<h2 id="installation-setup">4. Installation &amp; Setup</h2>
+<ol type="1">
+<li><p><strong>Prerequisites</strong></p>
 <ul>
-<li>Compile the Project: To compile the source code, run:</li>
-</ul>
-<pre><code>mvn compile</code></pre>
+<li>Java 17+<br />
+</li>
+<li>Maven<br />
+</li>
+<li>Docker &amp; Docker Compose</li>
+</ul></li>
+<li><p><strong>Clone the Repository</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/BSPQ24-25/BSPQ25-E3.git</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> BSPQ25-E3</span></code></pre></div></li>
+<li><p><strong>Database &amp; Application Configuration</strong> Edit
+<code>src/main/resources/application.properties</code> (example for
+MySQL + Swagger + Log4j2):</p>
+<pre class="properties"><code># MySQL (default)
+spring.datasource.url=jdbc:mysql://localhost:3306/mv
+spring.datasource.username=e3
+spring.datasource.password=e3
+
+# Springdoc Swagger API Config
+spring.jpa.hibernate.ddl-auto=update
+springdoc.swagger-ui.path=/swagger-ui.html
+logging.config=classpath:log4j2.xml
+
+# Logging (Log4j2)
+logging.config=classpath:log4j2.xml
+logging.level.org.hibernate=INFO
+logging.level.org.springframework.security=DEBUG
+logging.level.com.student_loan.security=TRACE</code></pre></li>
+<li><p><strong>Install Dependencies</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> clean install</span></code></pre></div></li>
+<li><p><strong>Running the Application</strong></p></li>
+</ol>
 <ul>
-<li>Package the Project: To create a packaged .jar file:</li>
+<li><p><strong>Locally via Maven</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> spring-boot:run</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Or skip tests:</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> <span class="at">-DskipTests</span> spring-boot:run</span></code></pre></div>
+<p>Access at: <code>http://localhost:8080</code></p></li>
+<li><p><strong>With Docker Compose</strong><br />
+You can launch the application and its dependencies (e.g., MySQL) using
+Docker:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start containers without rebuilding</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker-compose</span> up</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Rebuild images if Dockerfile or dependencies changed</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker-compose</span> up <span class="at">--build</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Stop containers</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ex">docker-compose</span> down</span></code></pre></div></li>
 </ul>
-<pre><code>mvn package</code></pre>
-<p>Install the Project: To install the project artifacts in the local
-Maven repository:</p>
-<pre><code>mvn install</code></pre>
-<h3 id="running-tests">Running Tests</h3>
-<h4 id="unit-tests">Unit Tests</h4>
-<p>The project uses JUnit 5 for unit testing. To run all the tests, use
-the following command:</p>
-<pre><code>mvn test</code></pre>
-<p>This will execute all unit tests and display the results in the
-terminal.</p>
-<h4 id="code-coverage-tests">Code Coverage Tests</h4>
-<p>To generate a report of test coverage using JaCoCo, run the following
-command:</p>
-<pre><code>mvn verify</code></pre>
-<p>This command generates a report in the target/site/jacoco/index.html
-directory where you can view detailed coverage of your code.</p>
-<h2 id="authors">Authors</h2>
-<p>Luis Rodriguez, Erkuden Camiruaga, Sabin Luja, Iker Garcia, Adam
-Kelly, Alex Olazabal</p>
-<p><strong>This concludes the basic setup and usage guide for the
-Student Loan Management system.</strong></p>
+<h2 id="testing">5. Testing</h2>
+<blockquote>
+<p><strong>Note</strong>: Ensure MySQL is running.</p>
+</blockquote>
+<h4 id="unit-tests">5.1 Unit Tests</h4>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> test</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Run specific tests:</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> <span class="at">-Dtest</span><span class="op">=</span>UserServiceTest,LoanServiceTest test</span></code></pre></div>
+<h4 id="integration-tests">5.2 Integration Tests</h4>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> verify <span class="at">-Pintegration</span></span></code></pre></div>
+<h4 id="performance-tests">5.3 Performance Tests</h4>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> verify <span class="at">-Pperformance</span></span></code></pre></div>
+<h4 id="coverage-jacoco">5.4 Coverage (JaCoCo)</h4>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> clean test jacoco:report      <span class="co"># Generates report</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> clean verify jacoco:report    <span class="co"># Enforces thresholds</span></span></code></pre></div>
+<ul>
+<li>Report at: <code>target/site/jacoco/index.html</code></li>
+</ul>
+<h4 id="full-site-reports">5.5 Full Site Reports</h4>
+<p>Includes JaCoCo, PMD, Checkstyle, and performance:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> site</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> clean verify site</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># To include performance results:</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> verify <span class="at">-Pperformance</span></span></code></pre></div>
+<ul>
+<li>Browse at: <code>target/site/index.html</code></li>
+</ul>
+<hr />
+<p><strong>Authors</strong><br />
+Luis Rodriguez, Erkuden Camiruaga, Sabin Luja, Iker Garcia, Adam Kelly,
+Alex Olazabal</p>
+<p><strong>This is the basic setup and usage guide for the Student Loan
+Management System.</strong></p>
