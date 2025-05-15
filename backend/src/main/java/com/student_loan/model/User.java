@@ -113,4 +113,8 @@ public class User {
                 ", admin=" + admin +
                 '}';
     }
+
+    public boolean hasPenalty() {
+        return penalties != null && penalties > 0;
+    }
 }

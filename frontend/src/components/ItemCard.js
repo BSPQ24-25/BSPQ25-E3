@@ -33,14 +33,16 @@ function ItemCard({ item, onClick }) {
       if (!response.ok) {
         const errorText = await response.text();
 
-        if (errorText.includes('3 items reserved')) {
+        if (errorText.includes('penalty')) {
+          alert('You cannot borrow items while under penalty.');
+        } else if (errorText.includes('3 items reserved')) {
           alert('You already have 3 active loans. Please return one before borrowing another.');
         } else if (errorText.includes('Lender not found')) {
-          alert('Lender not found.');
+          alert('Lender not found. Please check the item details.');
         } else if (errorText.includes('Borrower not found')) {
-          alert('Borrower not found.');
+          alert('Your user data could not be found. Please log in again.');
         } else if (errorText.includes('Item not found')) {
-          alert('Item not found.');
+          alert('The item you are trying to borrow does not exist.');
         } else {
           alert(`Failed to create loan: ${errorText}`);
         }
@@ -54,6 +56,7 @@ function ItemCard({ item, onClick }) {
       alert(`Unexpected error while creating the loan: ${error.message}`);
     }
   };
+
 
   const handleCardClick = () => {
     if (onClick) {

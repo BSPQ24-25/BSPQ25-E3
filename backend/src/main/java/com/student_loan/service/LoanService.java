@@ -7,6 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.student_loan.model.Loan;
 import com.student_loan.model.Loan.Status;
+import com.student_loan.model.User;
 import com.student_loan.repository.ItemRepository;
 import com.student_loan.repository.LoanRepository;
 import com.student_loan.repository.UserRepository;
@@ -64,6 +65,27 @@ public class LoanService {
     }
 
     public Loan saveLoan(Loan loan) {
+        Optional<User> borrowerOpt = userRepository.findById(loan.getBorrower());
+        if (borrowerOpt.isEmpty()) {
+            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Borrower not found with id: " + loan.getBorrower());
+        }
+
+        User borrower = borrowerOpt.get();
+
+        if (borrower.hasPenalty()) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Cannot borrow items while under penalty."
+            );
+        }
+
+        if (userRepository.findById(loan.getLender()).isEmpty()) {
+            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Lender not found with id: " + loan.getLender());
+        }
+
+        if (itemRepository.findById(loan.getItem()).isEmpty()) {
+            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Item not found with id: " + loan.getItem());
+        }
 
         if (loan.getId() == null && loan.getLoanStatus() == Loan.Status.IN_USE) {
             int activos = loanRepository.countByBorrowerAndLoanStatus(
@@ -71,22 +93,14 @@ public class LoanService {
             if (activos >= 3) {
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Failed to save loan with id " + loan.getId()+ ": You already have 3 items reserved. Return an item before booking another."
+                    "Failed to save loan with id " + loan.getId() + ": You already have 3 items reserved. Return an item before booking another."
                 );
             }
         }
-    	else if(userRepository.findById(loan.getLender()) == null) {
-            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Lender not found with id: " + loan.getLender());
-		}else if(userRepository.findById(loan.getBorrower())==null) {
-			throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Borrower not found with id: " + loan.getBorrower());
-		}else if (itemRepository.findById(loan.getItem())==null) {
-			throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Item not found with id: " + loan.getItem());
-        }else {
-            
-            return loanRepository.save(loan);
-        }
-        throw new RuntimeException("Unexpected error in saveLoan");
+
+        return loanRepository.save(loan);
     }
+
 
     public boolean returnLoan(Long itemId, Long borrowerId) {
         Optional<Loan> optionalLoan = loanRepository.findByBorrowerAndItemAndLoanStatus(borrowerId, itemId, Loan.Status.IN_USE);
