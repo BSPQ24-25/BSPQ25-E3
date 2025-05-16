@@ -12,6 +12,7 @@ import com.student_loan.repository.UserRepository;
 import com.student_loan.service.LoanService;
 import com.student_loan.repository.ItemRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -216,35 +217,197 @@ class UnitLoanServiceTest {
     }
 
     @Test
-void testSaveLoanBorrowerUnderPenaltyThrows() {
-    Loan loan = new Loan();
-    loan.setId(1L);
-    loan.setLender(10L);
-    loan.setBorrower(20L);
-    loan.setItem(30L);
-    loan.setLoanStatus(Loan.Status.IN_USE);
+    void testSaveLoanBorrowerUnderPenaltyThrows() {
+        Loan loan = new Loan();
+        loan.setId(1L);
+        loan.setLender(10L);
+        loan.setBorrower(20L);
+        loan.setItem(30L);
+        loan.setLoanStatus(Loan.Status.IN_USE);
 
-    User lender = new User();
-    lender.setId(10L);
-    User borrower = mock(User.class);
-    when(borrower.getId()).thenReturn(20L);
-    when(borrower.hasPenalty()).thenReturn(true);
+        User lender = new User();
+        lender.setId(10L);
+        User borrower = mock(User.class);
+        when(borrower.getId()).thenReturn(20L);
+        when(borrower.hasPenalty()).thenReturn(true);
 
-    when(userRepository.findById(10L)).thenReturn(Optional.of(lender));
-    when(userRepository.findById(20L)).thenReturn(Optional.of(borrower));
+        when(userRepository.findById(10L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(20L)).thenReturn(Optional.of(borrower));
 
-    ResponseStatusException ex = assertThrows(
-        ResponseStatusException.class,
-        () -> loanService.saveLoan(loan)
-    );
+        ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> loanService.saveLoan(loan)
+        );
 
-    assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
-    assertEquals("Cannot borrow items while under penalty.", ex.getReason());
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        assertEquals("Cannot borrow items while under penalty.", ex.getReason());
 
-    verify(itemRepository, never()).findById(any());
-    verify(loanRepository, never()).save(any());
-}
+        verify(itemRepository, never()).findById(any());
+        verify(loanRepository, never()).save(any());
+    }
 
+    @Test
+    @DisplayName("saveLoan - null Optional from userRepository.findById(lender)")
+    void testSaveLoanLenderOptNull() {
+        Loan loan = new Loan();
+        loan.setId(1L);
+        loan.setLender(10L);
+
+        when(userRepository.findById(10L)).thenReturn(null);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.saveLoan(loan));
+        assertTrue(ex.getMessage().contains("Lender not found with id: 10"));
+    }
+
+    @Test
+    @DisplayName("saveLoan - null Optional from userRepository.findById(borrower)")
+    void testSaveLoanBorrowerOptNull() {
+        Loan loan = new Loan();
+        loan.setId(2L);
+        loan.setLender(11L);
+        loan.setBorrower(21L);
+
+        User lender = new User(); lender.setId(11L);
+        when(userRepository.findById(11L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(21L)).thenReturn(null);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.saveLoan(loan));
+        assertTrue(ex.getMessage().contains("Borrower not found with id: 21"));
+    }
+
+    @Test
+    @DisplayName("saveLoan - null Optional from itemRepository.findById")
+    void testSaveLoanItemOptNull() {
+        Loan loan = new Loan();
+        loan.setId(3L);
+        loan.setLender(12L);
+        loan.setBorrower(22L);
+        loan.setItem(32L);
+
+        User lender = new User();   lender.setId(12L);
+        User borrower = new User(); borrower.setId(22L);
+
+        when(userRepository.findById(12L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(22L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(32L)).thenReturn(null);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.saveLoan(loan));
+        assertTrue(ex.getMessage().contains("Item not found with id: 32"));
+    }
+
+    
+        @Test
+    @DisplayName("saveLoan - lenderOpt empty Optional throws RuntimeException")
+    void testSaveLoanLenderOptEmpty() {
+        Loan loan = new Loan();
+        loan.setId(5L);
+        loan.setLender(50L);
+
+        when(userRepository.findById(50L)).thenReturn(Optional.empty());
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.saveLoan(loan));
+        assertTrue(ex.getMessage().contains("Failed to save loan with id 5: Lender not found with id: 50"));
+    }
+
+    @Test
+    @DisplayName("saveLoan - borrowerOpt empty Optional throws RuntimeException")
+    void testSaveLoanBorrowerOptEmpty() {
+        Loan loan = new Loan();
+        loan.setId(6L);
+        loan.setLender(51L);
+        loan.setBorrower(61L);
+
+        User lender = new User(); lender.setId(51L);
+        when(userRepository.findById(51L)).thenReturn(Optional.of(lender));
+
+        when(userRepository.findById(61L)).thenReturn(Optional.empty());
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.saveLoan(loan));
+        assertTrue(ex.getMessage().contains("Failed to save loan with id 6: Borrower not found with id: 61"));
+    }
+
+    @Test
+    @DisplayName("saveLoan - itemOpt empty Optional throws RuntimeException")
+    void testSaveLoanItemOptEmpty() {
+        Loan loan = new Loan();
+        loan.setId(7L);
+        loan.setLender(52L);
+        loan.setBorrower(62L);
+        loan.setItem(72L);
+
+        User lender = new User();   lender.setId(52L);
+        User borrower = new User(); borrower.setId(62L);
+
+        when(userRepository.findById(52L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(62L)).thenReturn(Optional.of(borrower));
+
+        when(itemRepository.findById(72L)).thenReturn(Optional.empty());
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.saveLoan(loan));
+        assertTrue(ex.getMessage().contains("Failed to save loan with id 7: Item not found with id: 72"));
+    }
+
+    @Test
+    @DisplayName("saveLoan - updating existing loan should skip active loan limit check")
+    void testSaveLoanUpdateExistingLoanSkipsLimitCheck() {
+        Loan loan = new Loan();
+        loan.setId(99L);
+        loan.setLender(10L);
+        loan.setBorrower(20L);
+        loan.setItem(30L);
+        loan.setLoanStatus(Loan.Status.IN_USE);
+
+        User lender = new User();   lender.setId(10L);
+        User borrower = new User(); borrower.setId(20L);
+        Item item = new Item();     item.setId(30L);
+
+        when(userRepository.findById(10L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(20L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(30L)).thenReturn(Optional.of(item));
+        when(loanRepository.save(any(Loan.class))).thenReturn(loan);
+
+        when(loanRepository.countByBorrowerAndLoanStatus(20L, Loan.Status.IN_USE)).thenReturn(5);
+
+        Loan result = loanService.saveLoan(loan);
+
+        assertNotNull(result);
+        assertEquals(99L, result.getId());
+
+        verify(loanRepository).save(loan);
+    }
+
+    @Test
+    @DisplayName("saveLoan - new loan with status ≠ IN_USE skips active-loan limit check")
+    void testSaveLoanNewLoanWithDifferentStatusSkipsLimit() {
+        Loan loan = new Loan();
+        loan.setId(null);
+        loan.setLender(10L);
+        loan.setBorrower(20L);
+        loan.setItem(30L);
+        loan.setLoanStatus(Loan.Status.RETURNED);
+
+        User lender   = new User(); lender.setId(10L);
+        User borrower = new User(); borrower.setId(20L);
+        Item item     = new Item(); item.setId(30L);
+
+        when(userRepository.findById(10L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(20L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(30L)).thenReturn(Optional.of(item));
+
+        when(loanRepository.countByBorrowerAndLoanStatus(20L, Loan.Status.IN_USE))
+            .thenReturn(999);
+
+        Loan saved = new Loan();
+        saved.setId(123L);
+        when(loanRepository.save(any(Loan.class))).thenReturn(saved);
+
+        Loan result = loanService.saveLoan(loan);
+
+        assertNotNull(result);
+        assertEquals(123L, result.getId());
+
+        verify(loanRepository).save(loan);
+    }
 
     @Test
     void testCreateLoanSuccess() {
@@ -333,6 +496,185 @@ void testSaveLoanBorrowerUnderPenaltyThrows() {
     }
 
     @Test
+    @DisplayName("createLoan - null from findById skips existing check")
+    void testCreateLoanFindByIdNull() {
+        Loan loan = new Loan();
+        loan.setLender(13L);
+        loan.setBorrower(23L);
+        loan.setItem(33L);
+
+        User lender = new User();   lender.setId(13L);
+        User borrower = new User(); borrower.setId(23L);
+        Item item = new Item();     item.setId(33L);
+
+        when(loanRepository.findById(null)).thenReturn(null);
+        when(userRepository.findById(13L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(23L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(33L)).thenReturn(Optional.of(item));
+        when(loanRepository.save(any(Loan.class))).thenAnswer(inv -> {
+            Loan l = inv.getArgument(0);
+            l.setId(123L);
+            return l;
+        });
+
+        Loan created = loanService.createLoan(loan);
+        assertNotNull(created);
+        assertEquals(Loan.Status.IN_USE, created.getLoanStatus());
+        assertEquals(123L, created.getId());
+    }
+
+        @Test
+    @DisplayName("createLoan - findById(id) devuelve Optional.empty() → crea sin excepción")
+    void testCreateLoanFindByIdEmptySkipsExistingCheck() {
+        Loan loan = new Loan();
+        loan.setId(42L);
+        loan.setLender(14L);
+        loan.setBorrower(24L);
+        loan.setItem(34L);
+
+        User lender   = new User(); lender.setId(14L);
+        User borrower = new User(); borrower.setId(24L);
+        Item item     = new Item(); item.setId(34L);
+
+        when(loanRepository.findById(42L)).thenReturn(Optional.empty());
+        when(userRepository.findById(14L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(24L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(34L)).thenReturn(Optional.of(item));
+        when(loanRepository.save(any(Loan.class))).thenAnswer(inv -> {
+            Loan l = inv.getArgument(0);
+            l.setId(4242L);
+            return l;
+        });
+
+        Loan created = loanService.createLoan(loan);
+
+        assertNotNull(created);
+        assertEquals(4242L, created.getId());
+        assertEquals(Loan.Status.IN_USE, created.getLoanStatus());
+        verify(loanRepository).save(loan);
+    }
+
+    @Test
+    @DisplayName("createLoan - findById(id) devuelve null → crea sin excepción")
+    void testCreateLoanFindByIdNullSkipsExistingCheck() {
+        Loan loan = new Loan();
+        loan.setId(null);
+        loan.setLender(15L);
+        loan.setBorrower(25L);
+        loan.setItem(35L);
+
+        User lender   = new User(); lender.setId(15L);
+        User borrower = new User(); borrower.setId(25L);
+        Item item     = new Item(); item.setId(35L);
+
+        when(loanRepository.findById(null)).thenReturn(null);
+        when(userRepository.findById(15L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(25L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(35L)).thenReturn(Optional.of(item));
+        when(loanRepository.save(any(Loan.class))).thenAnswer(inv -> {
+            Loan l = inv.getArgument(0);
+            l.setId(2525L);
+            return l;
+        });
+
+        Loan created = loanService.createLoan(loan);
+
+        assertNotNull(created);
+        assertEquals(2525L, created.getId());
+        assertEquals(Loan.Status.IN_USE, created.getLoanStatus());
+        verify(loanRepository).save(loan);
+    }
+
+    @Test
+    @DisplayName("createLoan - lender findById devuelve null → RuntimeException y sin save()")
+    void testCreateLoanLenderFindByIdNull() {
+        Loan loan = new Loan();
+        loan.setId(7L);
+        loan.setLender(17L);
+        loan.setBorrower(27L);
+        loan.setItem(37L);
+
+        when(loanRepository.findById(7L)).thenReturn(Optional.empty());
+        when(userRepository.findById(17L)).thenReturn(null);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.createLoan(loan));
+        assertTrue(ex.getMessage().contains("Lender not found"));
+
+        verify(loanRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("createLoan - borrower findById devuelve null → RuntimeException y sin save()")
+    void testCreateLoanBorrowerFindByIdNull() {
+        Loan loan = new Loan();
+        loan.setId(8L);
+        loan.setLender(18L);
+        loan.setBorrower(28L);
+        loan.setItem(38L);
+
+        User lender = new User(); lender.setId(18L);
+
+        when(loanRepository.findById(8L)).thenReturn(Optional.empty());
+        when(userRepository.findById(18L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(28L)).thenReturn(null);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.createLoan(loan));
+        assertTrue(ex.getMessage().contains("Borrower not found"));
+
+        verify(loanRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("createLoan - item findById devuelve null → RuntimeException y sin save()")
+    void testCreateLoanItemFindByIdNull() {
+        Loan loan = new Loan();
+        loan.setId(9L);
+        loan.setLender(19L);
+        loan.setBorrower(29L);
+        loan.setItem(39L);
+
+        User lender   = new User(); lender.setId(19L);
+        User borrower = new User(); borrower.setId(29L);
+
+        when(loanRepository.findById(9L)).thenReturn(Optional.empty());
+        when(userRepository.findById(19L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(29L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(39L)).thenReturn(null);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.createLoan(loan));
+        assertTrue(ex.getMessage().contains("Item not found with id: 39"));
+
+        verify(loanRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("createLoan - ignora estado preestablecido y lo fuerza a IN_USE")
+    void testCreateLoanOverridesProvidedStatus() {
+        Loan loan = new Loan();
+        loan.setId(null);
+        loan.setLender(21L);
+        loan.setBorrower(31L);
+        loan.setItem(41L);
+        loan.setLoanStatus(Loan.Status.RETURNED);
+
+        User lender   = new User(); lender.setId(21L);
+        User borrower = new User(); borrower.setId(31L);
+        Item item     = new Item(); item.setId(41L);
+
+        when(loanRepository.findById(null)).thenReturn(Optional.empty());
+        when(userRepository.findById(21L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(31L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(41L)).thenReturn(Optional.of(item));
+        when(loanRepository.save(any(Loan.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Loan created = loanService.createLoan(loan);
+
+        assertNotNull(created);
+        assertEquals(Loan.Status.IN_USE, created.getLoanStatus(), 
+                     "Debe forzar siempre el estado IN_USE al crear");
+    }
+
+    @Test
     void testGetLentItemsIdByUser() {
         Loan l1 = new Loan(); l1.setId(1L); l1.setLender(100L); l1.setItem(10L); l1.setLoanStatus(Loan.Status.IN_USE);
         Loan l2 = new Loan(); l2.setId(2L); l2.setLender(100L); l2.setItem(20L); l2.setLoanStatus(Loan.Status.IN_USE);
@@ -392,6 +734,35 @@ void testSaveLoanBorrowerUnderPenaltyThrows() {
 
         boolean result = loanService.returnLoan(itemId, borrowerId);
 
+        assertFalse(result);
+    }
+
+    @Test
+    void testReturnLoanSaveThrowsException() {
+        Long itemId = 7L;
+        Long borrowerId = 8L;
+        Loan loan = new Loan();
+        loan.setBorrower(borrowerId);
+        loan.setItem(itemId);
+        loan.setLoanStatus(Loan.Status.IN_USE);
+
+        when(loanRepository.findByBorrowerAndItemAndLoanStatus(borrowerId, itemId, Loan.Status.IN_USE))
+            .thenReturn(Optional.of(loan));
+        when(loanRepository.save(any(Loan.class))).thenThrow(new RuntimeException("DB failure"));
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+            () -> loanService.returnLoan(itemId, borrowerId));
+        assertEquals("DB failure", ex.getMessage());
+    }
+
+    @Test
+    @DisplayName("returnLoan - null Optional from findByBorrowerAndItemAndLoanStatus")
+    void testReturnLoanOptionalNull() {
+        Long itemId = 5L, borrowerId = 6L;
+        when(loanRepository.findByBorrowerAndItemAndLoanStatus(borrowerId, itemId, Loan.Status.IN_USE))
+            .thenReturn(null);
+
+        boolean result = loanService.returnLoan(itemId, borrowerId);
         assertFalse(result);
     }
 

@@ -262,7 +262,7 @@
 							<limit>
 								<counter>LINE</counter>
 								<value>COVEREDRATIO</value>
-								<minimum>0.5</minimum>
+								<minimum>0.7</minimum>
 							</limit>
 							</limits>
 						</rule>
@@ -398,7 +398,7 @@
 								</configuration>
 							</execution>
 
-												<!-- Copy Doxygen content into docs/doxygen/ -->
+							<!-- Copy Doxygen content into docs/doxygen/ -->
 							<execution>
 								<id>copy-doxygen-site-to-docs</id>
 								<phase>post-site</phase> <!-- After doxygen generation too -->
@@ -406,7 +406,7 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${basedir}/docs/doxygen</outputDirectory> <!-- 🔥 target doxygen folder -->
+									<outputDirectory>${basedir}/docs/doxygen</outputDirectory> <!--  target doxygen folder -->
 									<resources>
 										<resource>
 											<directory>${project.build.directory}/doxygen/html</directory> <!-- source -->
