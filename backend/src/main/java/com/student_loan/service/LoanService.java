@@ -62,6 +62,12 @@ public class LoanService {
     }
 
     public Loan saveLoan(Loan loan) {
+        // Validate lender first to satisfy tests
+        Optional<User> lenderOpt = userRepository.findById(loan.getLender());
+        if (lenderOpt == null || lenderOpt.isEmpty()) {
+            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Lender not found with id: " + loan.getLender());
+        }
+
         // Validate borrower
         Optional<User> borrowerOpt = userRepository.findById(loan.getBorrower());
         if (borrowerOpt == null || borrowerOpt.isEmpty()) {
@@ -76,18 +82,13 @@ public class LoanService {
             );
         }
 
-        // Validate lender
-        Optional<User> lenderOpt = userRepository.findById(loan.getLender());
-        if (lenderOpt == null || lenderOpt.isEmpty()) {
-            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Lender not found with id: " + loan.getLender());
-        }
-
         // Validate item
         Optional<Item> itemOpt = itemRepository.findById(loan.getItem());
         if (itemOpt == null || itemOpt.isEmpty()) {
             throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Item not found with id: " + loan.getItem());
         }
 
+        // Check active loans limit on new loans
         if (loan.getId() == null && loan.getLoanStatus() == Loan.Status.IN_USE) {
             int activos = loanRepository.countByBorrowerAndLoanStatus(
                 loan.getBorrower(), Loan.Status.IN_USE);
