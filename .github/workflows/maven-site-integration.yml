@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-name: Maven Site &n Peformance & Integration Tests & prepares docs file where all project documentation will go
+name: Maven Site & Peformance & Integration Tests & prepares docs file where all project documentation will go
 
 on:
   push:
@@ -9,8 +8,9 @@ on:
     - cron: '0 18-23/2 * * *'  # 20:00–01:00 CET
     - cron: '0 0-6/2 * * *'    # 02:00–08:00 CET
 
-
-    
+permissions:
+  contents: write   
+  packages: write
 
 jobs:
   build-and-test:
@@ -76,8 +76,6 @@ jobs:
           mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
           mysql -h 127.0.0.1 -ue3 -pe3 -e "SHOW TABLES IN mv;"
 
-
-
       - name: Run Unit tests and generate converage report
         run: mvn test jacoco:report
         working-directory: backend
@@ -110,9 +108,13 @@ jobs:
           mkdir -p docs
           pandoc README.md -o docs/index.html
 
-      - name: Generate Doxygen documentation
-        run: doxygen src/main/resources/Doxyfile
-        working-directory: backend
+      - name: Create Doxygen output folder
+        run: mkdir -p ../../../target/doxygen
+        working-directory: backend/src/main/resources
+      
+      - name: Run Doxygen
+        run: doxygen Doxyfile
+        working-directory: backend/src/main/resources
         
       - name: Copy site output to docs/site and docs/doxygen folder to docs/doxygen
         run: |
@@ -139,68 +141,33 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-=======
-name: Maven Site & Integration Tests
-
-on:
-  push:
-    branches:
-      - '**'
-  schedule:
-    - cron: '0 18-23/2 * * *'  # 20:00–01:00 CET
-    - cron: '0 0-6/2 * * *'    # 02:00–08:00 CET
-
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: libraryapidb
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
+      - name: Build & push Frontend image
+        uses: docker/build-push-action@v3
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/bspq24-25/frontend:latest
+            ghcr.io/bspq24-25/frontend:${{ github.sha }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Wait for MySQL to be ready
-        run: |
-          echo "Waiting for MySQL..."
-          until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do
-            sleep 2
-          done
 
-      - name: Run DB initialization script
-        run: |
-          echo "Running DB setup..."
-          mysql -h 127.0.0.1 -uroot -proot < src/main/resources/dbsetup.sql
-
-      - name: Run Integration Tests
-        run: mvn -Pintegration integration-test
-
-      - name: Generate Maven Site
-        run: mvn site
->>>>>>> refs/remotes/origin/documentation
+      - name: Build & push Backend image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/bspq24-25/backend:latest
+            ghcr.io/bspq24-25/backend:${{ github.sha }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
