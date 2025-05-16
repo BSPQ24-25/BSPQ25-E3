@@ -149,8 +149,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.IMAGE_BACKEND }}:latest
-            ${{ github.repository_owner }}/${{ github.repository }}-backend:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend:latest
+            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend:${{ github.sha }}
 
       - name: Build & push frontend image
         uses: docker/build-push-action@v4
@@ -160,8 +160,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.IMAGE_FRONTEND }}:latest
-            ${{ github.repository_owner }}/${{ github.repository }}-frontend:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend:${{ github.sha }}
 
   compose-integration-test:
     needs: docker-build-and-push
@@ -169,7 +169,8 @@ jobs:
     services:
       docker:
         image: docker:24.0.5-dind
-        privileged: true
+        options: >-
+          --privileged
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -179,11 +180,12 @@ jobs:
 
       - name: Pull images
         run: |
-          docker pull ${{ env.IMAGE_BACKEND }}:latest
-          docker pull ${{ env.IMAGE_FRONTEND }}:latest
+          docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend:latest
+          docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend:latest
 
       - name: Bring up services with docker-compose
-        run: docker-compose up -d --build
+        run: |
+          docker-compose up -d --build
 
       - name: Wait for services
         run: sleep 20
