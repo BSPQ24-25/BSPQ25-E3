@@ -15,10 +15,48 @@ function ItemCard({ item, onClick }) {
     setIsModalOpen(false);
   };
 
-  const handleConfirmBorrow = (endDate) => {
-    console.log(`Borrowing ${item.name} until ${endDate}`);
-    setIsModalOpen(false);
+  const handleConfirmBorrow = async (endDate) => {
+    try {
+      const response = await fetch('/api/loans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          item: item.id,
+          lender: item.lenderId,
+          borrower: localStorage.getItem('userId'),
+          endDate: endDate,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+
+        if (errorText.includes('penalty')) {
+          alert('You cannot borrow items while under penalty.');
+        } else if (errorText.includes('3 items reserved')) {
+          alert('You already have 3 active loans. Please return one before borrowing another.');
+        } else if (errorText.includes('Lender not found')) {
+          alert('Lender not found. Please check the item details.');
+        } else if (errorText.includes('Borrower not found')) {
+          alert('Your user data could not be found. Please log in again.');
+        } else if (errorText.includes('Item not found')) {
+          alert('The item you are trying to borrow does not exist.');
+        } else {
+          alert(`Failed to create loan: ${errorText}`);
+        }
+
+        return;
+      }
+
+      alert('Loan created successfully!');
+      setIsModalOpen(false);
+    } catch (error) {
+      alert(`Unexpected error while creating the loan: ${error.message}`);
+    }
   };
+
 
   const handleCardClick = () => {
     if (onClick) {
