@@ -1,8 +1,10 @@
 package com.student_loan.unit.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -133,5 +135,31 @@ class UnitUserTest {
 
         verify(repository, times(1)).save(user);
         assertEquals("123 456 789", result.getTelephoneNumber());
+    }
+
+    @Test
+    @DisplayName("hasPenalty returns true when penalties > 0 and false otherwise")
+    void testHasPenalty() {
+        user.setPenalties(5);
+        assertTrue(user.hasPenalty());
+        user.setPenalties(0);
+        assertFalse(user.hasPenalty());
+    }
+
+    @Test
+    @DisplayName("toString includes all user fields and values")
+    void testToStringIncludesAllFields() {
+        String str = user.toString();
+        assertTrue(str.contains("id=" + user.getId()));
+        assertTrue(str.contains("name='" + user.getName() + "'"));
+        assertTrue(str.contains("email='" + user.getEmail() + "'"));
+        assertTrue(str.contains("password='" + user.getPassword() + "'"));
+        assertTrue(str.contains("telephoneNumber='" + user.getTelephoneNumber() + "'"));
+        assertTrue(str.contains("address='" + user.getAddress() + "'"));
+        assertTrue(str.contains("degreeType=" + user.getDegreeType()));
+        assertTrue(str.contains("degreeYear=" + user.getDegreeYear()));
+        assertTrue(str.contains("penalties=" + user.getPenalties()));
+        assertTrue(str.contains("averageRating=" + user.getAverageRating()));
+        assertTrue(str.contains("admin=" + user.getAdmin()));
     }
 }

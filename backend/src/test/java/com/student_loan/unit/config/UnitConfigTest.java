@@ -1,5 +1,6 @@
 package com.student_loan.unit.config;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +26,19 @@ import com.student_loan.config.SecurityConfig;
 import com.student_loan.config.CorsConfig;
 import com.student_loan.config.TestSecurityConfig;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
+
 class UnitConfigTest {
+
+    private JwtUtil jwtUtil;
+
+    @BeforeEach
+    void setupJwtUtil() {
+        jwtUtil = new JwtUtil();
+    }
 
     @Configuration
     static class TestJwtConfig {
@@ -37,6 +51,22 @@ class UnitConfigTest {
         public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
             return new HandlerMappingIntrospector();
         }
+    }
+
+    @Test
+    void testGenerateTokenAndExtractEmail() {
+        String email = "user@example.com";
+        String token = jwtUtil.generateToken(email);
+
+        assertNotNull(token, "El token no debe ser null");
+        assertTrue(jwtUtil.validateToken(token), "El token generado debe ser válido");
+        assertEquals(email, jwtUtil.extractEmail(token), "El email extraído debe coincidir con el original");
+    }
+
+    @Test
+    void testValidateInvalidToken() {
+        String invalidToken = "invalid.token.example";
+        assertFalse(jwtUtil.validateToken(invalidToken), "Un token malformado debe considerarse inválido");
     }
 
     @Test

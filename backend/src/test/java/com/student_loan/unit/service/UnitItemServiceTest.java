@@ -1,5 +1,6 @@
 package com.student_loan.unit.service;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -165,6 +167,52 @@ class UnitItemServiceTest {
         });
 
         assertTrue(ex.getMessage().contains("Owner not found with id: 8"));
+    }
+    
+    @Test
+    void testGetItemsById_MixedFoundAndNotFound() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+
+        Item item1 = new Item(1L, "Pen", "Bic", "Office", ItemStatus.AVAILABLE, 1L, new Date(), 1.0, ItemCondition.NEW, "pen.jpg");
+        Item item3 = new Item(3L, "Notebook", "Moleskine", "Office", ItemStatus.AVAILABLE, 1L, new Date(), 15.0, ItemCondition.NEW, "notebook.jpg");
+
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(item1));
+        when(itemRepository.findById(2L)).thenReturn(Optional.empty());
+        when(itemRepository.findById(3L)).thenReturn(Optional.of(item3));
+
+        List<Item> result = itemService.getItemsById(ids);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(item1));
+        assertTrue(result.contains(item3));
+
+        verify(itemRepository, times(1)).findById(1L);
+        verify(itemRepository, times(1)).findById(2L);
+        verify(itemRepository, times(1)).findById(3L);
+    }
+
+    @Test
+    void testGetItemsById_EmptyInput() {
+        List<Item> result = itemService.getItemsById(Collections.emptyList());
+        assertTrue(result.isEmpty());
+        verify(itemRepository, never()).findById(anyLong());
+    }
+
+    @Test
+    void testGetAvailableItems() {
+        Item a = new Item(5L, "Chair", "Ikea", "Furniture", ItemStatus.AVAILABLE, 2L, new Date(), 20.0, ItemCondition.GOOD, "chair.jpg");
+        Item b = new Item(6L, "Table", "Ikea", "Furniture", ItemStatus.AVAILABLE, 2L, new Date(), 50.0, ItemCondition.GOOD, "table.jpg");
+
+        when(itemRepository.findByStatus(ItemStatus.AVAILABLE))
+            .thenReturn(List.of(a, b));
+
+        List<Item> available = itemService.getAvailableItems();
+
+        assertEquals(2, available.size());
+        assertEquals(a, available.get(0));
+        assertEquals(b, available.get(1));
+
+        verify(itemRepository, times(1)).findByStatus(ItemStatus.AVAILABLE);
     }
 
     @Test

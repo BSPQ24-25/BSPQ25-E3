@@ -135,4 +135,28 @@ class UnitItemTest {
         verify(repository, times(1)).save(item);
         assertEquals("Computers", result.getCategory());
     }
+
+    @Test
+    @DisplayName("Should Get and Set Purchase Date Correctly")
+    void testGetSetPurchaseDate() {
+        Date date = new Date(123456789L);
+        item.setPurchaseDate(date);
+        assertEquals(date, item.getPurchaseDate());
+    }
+
+    @Test
+    @DisplayName("toString Should Include All Fields")
+    void testToStringIncludesAllFields() {
+        String result = item.toString();
+        assertTrue(result.contains("id=" + item.getId()));
+        assertTrue(result.contains("name='" + item.getName() + "'"));
+        assertTrue(result.contains("description='" + item.getDescription() + "'"));
+        assertTrue(result.contains("category='" + item.getCategory() + "'"));
+        assertTrue(result.contains("status=" + item.getStatus()));
+        assertTrue(result.contains("owner=" + item.getOwner()));
+        assertTrue(result.contains("purchaseDate=" + item.getPurchaseDate()));
+        assertTrue(result.contains("purchasePrice=" + item.getPurchasePrice()));
+        assertTrue(result.contains("condition=" + item.getCondition()));
+        assertTrue(result.contains("image='" + item.getImage() + "'"));
+    }
 }

@@ -118,10 +118,6 @@ public class LoanService {
         }
     }
 
-    public void deleteLoan(Long id) {
-        loanRepository.deleteById(id);
-    }
-
     public Loan createLoan(Loan loan) {
         // Check existing loan
         Optional<Loan> existing = loanRepository.findById(loan.getId());
@@ -149,5 +145,9 @@ public class LoanService {
 
         loan.setLoanStatus(Loan.Status.IN_USE);
         return loanRepository.save(loan);
+    }
+
+    public void deleteLoan(Long id) {
+        loanRepository.deleteById(id);
     }
 }
