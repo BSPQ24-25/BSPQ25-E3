@@ -16,7 +16,6 @@ env:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     services:
       mysql:
         image: mysql:8.0
@@ -77,7 +76,7 @@ jobs:
       - name: Run Unit tests and generate coverage report
         run: mvn test jacoco:report
         working-directory: backend
-      
+
       - name: Run Integration Tests
         run: mvn test -Pintegration
         working-directory: backend
@@ -108,10 +107,9 @@ jobs:
 
       - name: Generate Doxygen documentation
         run: |
-          cd backend
-          # Ensure Doxygen input and output directories exist
-          mkdir -p target/doxygen
-          doxygen src/main/resources/Doxyfile
+          # Ensure output directory matches corrected Doxyfile
+          mkdir -p backend/target/doxygen
+          doxygen backend/src/main/resources/Doxyfile
 
       - name: Copy site & doxygen to docs/
         run: |
