@@ -42,11 +42,7 @@ function Register() {
     try {
       // First register the user
       await registerUser({
-<<<<<<< HEAD
         name: formData.firstName, // Changed from firstName to name to match RegistrationRecord
-=======
-        firstName: formData.firstName,
->>>>>>> refs/remotes/origin/documentation
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
