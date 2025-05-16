@@ -85,8 +85,8 @@ jobs:
         run: mvn test -Pperformance
         working-directory: backend
 
-      - name: Generate Maven Site
-        run: mvn site
+      - name: Generate Maven Site (excluding Doxygen report)
+        run: mvn site -Ddoxygen.skip=true
         working-directory: backend
 
       - name: List files in target directory to verify site generation
