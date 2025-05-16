@@ -1,4 +1,4 @@
-name: Maven Site &n Peformance & Integration Tests & prepares docs file where all project documentation will go
+name: Maven Site & Peformance & Integration Tests & prepares docs file where all project documentation will go
 
 on:
   push:
@@ -8,8 +8,9 @@ on:
     - cron: '0 18-23/2 * * *'  # 20:00–01:00 CET
     - cron: '0 0-6/2 * * *'    # 02:00–08:00 CET
 
-
-    
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build-and-test:
