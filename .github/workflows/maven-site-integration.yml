@@ -9,7 +9,7 @@ on:
     - cron: '0 0-6/2 * * *'    # 02:00–08:00 CET
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
