@@ -151,7 +151,7 @@ jobs:
           tags: |
             ghcr.io/tu-org/frontend:latest
             ghcr.io/tu-org/frontend:${{ github.sha }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build & push Backend image
         uses: docker/build-push-action@v3
@@ -162,4 +162,4 @@ jobs:
           tags: |
             ghcr.io/tu-org/backend:latest
             ghcr.io/tu-org/backend:${{ github.sha }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
