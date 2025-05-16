@@ -107,14 +107,17 @@ jobs:
           pandoc README.md -o docs/index.html
 
       - name: Generate Doxygen documentation
-        run: doxygen src/main/resources/Doxyfile
-        working-directory: backend
-        
+        run: |
+          cd backend
+          # Ensure Doxygen input and output directories exist
+          mkdir -p target/doxygen
+          doxygen src/main/resources/Doxyfile
+
       - name: Copy site & doxygen to docs/
         run: |
           mkdir -p docs/site docs/doxygen
-          cp -r target/site/* docs/site/ || echo "No site generated."
-          cp -r target/doxygen/* docs/doxygen/ || echo "No doxygen generated."
+          cp -r backend/target/site/* docs/site/ || echo "No site generated."
+          cp -r backend/target/doxygen/* docs/doxygen/ || echo "No doxygen generated."
 
       - name: Commit and push docs
         run: |
@@ -184,8 +187,7 @@ jobs:
           docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend:latest
 
       - name: Bring up services with docker-compose
-        run: |
-          docker-compose up -d --build
+        run: docker-compose up -d --build
 
       - name: Wait for services
         run: sleep 20
