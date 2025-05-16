@@ -22,7 +22,6 @@
         <doxygen.config.file>${basedir}/src/main/resources/Doxyfile</doxygen.config.file>
 		<maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <doxygen.config.file>${basedir}/src/main/resources/Doxyfile</doxygen.config.file>
   
 	</properties>
 
@@ -193,41 +192,33 @@
     <build>
         <plugins>
 
-            <!-- Doxygen plugin -->
-
-			<plugin>
-				 <groupId>com.soebes.maven.plugins</groupId>
-				 <artifactId>doxygen-maven-plugin</artifactId>
-				 <version>1.1.0</version>
-				 <configuration>
-					 <configurationFile>${doxygen.config.file}</configurationFile>
-				 </configuration>
-			 </plugin>
             <!-- Spring Boot plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-			<!-- Plugin Doxygen-->
 			<plugin>
-				<groupId>com.soebes.maven.plugins</groupId>
-				<artifactId>doxygen-maven-plugin</artifactId>
-				<version>1.1.0</version>
-				<executions>
-					<execution>
-						<id>generate-doxygen-site</id>
-						<phase>site</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<configurationFile>${doxygen.config.file}</configurationFile>
-				</configuration>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>exec-maven-plugin</artifactId>
+			    <version>3.1.0</version>
+			    <executions>
+			        <execution>
+			            <id>generate-doxygen</id>
+			            <phase>site</phase>
+			            <goals>
+			                <goal>exec</goal>
+			            </goals>
+			            <configuration>
+			                <executable>doxygen</executable>
+			                <workingDirectory>src/main/resources</workingDirectory>
+			                <arguments>
+			                    <argument>Doxyfile</argument>
+			                </arguments>
+			            </configuration>
+			        </execution>
+			    </executions>
 			</plugin>
-
             <!-- JaCoCo plugin for coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
