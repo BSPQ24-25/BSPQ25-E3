@@ -10,8 +10,8 @@ on:
 
 env:
   REGISTRY: ghcr.io/${{ github.repository_owner }}
-  IMAGE_BACKEND: ${{ env.REGISTRY }}/${{ github.repository }}-backend
-  IMAGE_FRONTEND: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
+  IMAGE_BACKEND: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend
+  IMAGE_FRONTEND: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend
 
 jobs:
   build-and-test:
@@ -150,7 +150,7 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_BACKEND }}:latest
-            ${{ env.IMAGE_BACKEND }}:${{ github.sha }}
+            ${{ github.repository_owner }}/${{ github.repository }}-backend:${{ github.sha }}
 
       - name: Build & push frontend image
         uses: docker/build-push-action@v4
@@ -161,7 +161,7 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_FRONTEND }}:latest
-            ${{ env.IMAGE_FRONTEND }}:${{ github.sha }}
+            ${{ github.repository_owner }}/${{ github.repository }}-frontend:${{ github.sha }}
 
   compose-integration-test:
     needs: docker-build-and-push
@@ -183,8 +183,7 @@ jobs:
           docker pull ${{ env.IMAGE_FRONTEND }}:latest
 
       - name: Bring up services with docker-compose
-        run: |
-          docker-compose up -d --build
+        run: docker-compose up -d --build
 
       - name: Wait for services
         run: sleep 20
