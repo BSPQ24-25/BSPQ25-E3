@@ -152,21 +152,22 @@ jobs:
       - name: Build & push Frontend image
         uses: docker/build-push-action@v3
         with:
-          context: ./frontend               
+          context: ./frontend
           file: ./frontend/Dockerfile
           push: true
           tags: |
-            ghcr.io/tu-org/frontend:latest
-            ghcr.io/tu-org/frontend:${{ github.sha }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ghcr.io/${{ github.repository_owner }}/frontend:latest
+            ghcr.io/${{ github.repository_owner }}/frontend:${{ github.sha }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: Build & push Backend image
         uses: docker/build-push-action@v3
         with:
-          context: ./backend                
+          context: ./backend
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/tu-org/backend:latest
-            ghcr.io/tu-org/backend:${{ github.sha }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ghcr.io/${{ github.repository_owner }}/backend:latest
+            ghcr.io/${{ github.repository_owner }}/backend:${{ github.sha }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
