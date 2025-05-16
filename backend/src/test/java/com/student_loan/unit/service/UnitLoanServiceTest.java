@@ -216,35 +216,34 @@ class UnitLoanServiceTest {
     }
 
     @Test
-void testSaveLoanBorrowerUnderPenaltyThrows() {
-    Loan loan = new Loan();
-    loan.setId(1L);
-    loan.setLender(10L);
-    loan.setBorrower(20L);
-    loan.setItem(30L);
-    loan.setLoanStatus(Loan.Status.IN_USE);
+    void testSaveLoanBorrowerUnderPenaltyThrows() {
+        Loan loan = new Loan();
+        loan.setId(1L);
+        loan.setLender(10L);
+        loan.setBorrower(20L);
+        loan.setItem(30L);
+        loan.setLoanStatus(Loan.Status.IN_USE);
 
-    User lender = new User();
-    lender.setId(10L);
-    User borrower = mock(User.class);
-    when(borrower.getId()).thenReturn(20L);
-    when(borrower.hasPenalty()).thenReturn(true);
+        User lender = new User();
+        lender.setId(10L);
+        User borrower = mock(User.class);
+        when(borrower.getId()).thenReturn(20L);
+        when(borrower.hasPenalty()).thenReturn(true);
 
-    when(userRepository.findById(10L)).thenReturn(Optional.of(lender));
-    when(userRepository.findById(20L)).thenReturn(Optional.of(borrower));
+        when(userRepository.findById(10L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(20L)).thenReturn(Optional.of(borrower));
 
-    ResponseStatusException ex = assertThrows(
-        ResponseStatusException.class,
-        () -> loanService.saveLoan(loan)
-    );
+        ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> loanService.saveLoan(loan)
+        );
 
-    assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
-    assertEquals("Cannot borrow items while under penalty.", ex.getReason());
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        assertEquals("Cannot borrow items while under penalty.", ex.getReason());
 
-    verify(itemRepository, never()).findById(any());
-    verify(loanRepository, never()).save(any());
-}
-
+        verify(itemRepository, never()).findById(any());
+        verify(loanRepository, never()).save(any());
+    }
 
     @Test
     void testCreateLoanSuccess() {
@@ -393,6 +392,24 @@ void testSaveLoanBorrowerUnderPenaltyThrows() {
         boolean result = loanService.returnLoan(itemId, borrowerId);
 
         assertFalse(result);
+    }
+
+    @Test
+    void testReturnLoanSaveThrowsException() {
+        Long itemId = 7L;
+        Long borrowerId = 8L;
+        Loan loan = new Loan();
+        loan.setBorrower(borrowerId);
+        loan.setItem(itemId);
+        loan.setLoanStatus(Loan.Status.IN_USE);
+
+        when(loanRepository.findByBorrowerAndItemAndLoanStatus(borrowerId, itemId, Loan.Status.IN_USE))
+            .thenReturn(Optional.of(loan));
+        when(loanRepository.save(any(Loan.class))).thenThrow(new RuntimeException("DB failure"));
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+            () -> loanService.returnLoan(itemId, borrowerId));
+        assertEquals("DB failure", ex.getMessage());
     }
 
     @Test

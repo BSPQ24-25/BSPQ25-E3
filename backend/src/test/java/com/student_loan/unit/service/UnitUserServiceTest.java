@@ -130,6 +130,35 @@ public class UnitUserServiceTest {
     }
 
     @Test
+    public void testLogin_InvalidPassword() {
+        CredentialsDTO cred = new CredentialsDTO(user1.getEmail(), "wrongPass");
+        when(userRepository.findByEmail(user1.getEmail())).thenReturn(user1);
+        when(passwordEncoder.matches("wrongPass", user1.getPassword())).thenReturn(false);
+
+        String out = userService.login(cred);
+        assertEquals("Invalid credentials", out);
+        verify(jwtUtil, never()).generateToken(any());
+    }
+
+    @Test
+    public void testLogin_StoresTokenOnSuccess() throws Exception {
+        CredentialsDTO cred = new CredentialsDTO(user2.getEmail(), "plain456");
+        when(userRepository.findByEmail(user2.getEmail())).thenReturn(user2);
+        when(passwordEncoder.matches("plain456", user2.getPassword())).thenReturn(true);
+        when(jwtUtil.generateToken(user2.getEmail())).thenReturn("newToken");
+
+        String out = userService.login(cred);
+        assertEquals("newToken", out);
+
+        Field tokensField = UserService.class.getDeclaredField("tokens");
+        tokensField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        Map<String, User> tokens = (Map<String, User>) tokensField.get(userService);
+        assertTrue(tokens.containsKey("newToken"));
+        assertSame(user2, tokens.get("newToken"));
+    }
+
+    @Test
     public void testLogoutSuccess() throws Exception {
         Field tokensField = UserService.class.getDeclaredField("tokens");
         tokensField.setAccessible(true);
