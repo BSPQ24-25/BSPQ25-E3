@@ -159,10 +159,8 @@ class UnitConfigTest {
         assertNotNull(chain);
     }
 
-    // Nuevo test para JwtFilter.doFilterInternal
     @Test
     void testDoFilterInternal_withValidToken_setsAuthentication() throws ServletException, IOException {
-        // Mock dependencies
         JwtUtil mockJwtUtil = mock(JwtUtil.class);
         JwtFilter filter = new JwtFilter(mockJwtUtil);
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -176,15 +174,12 @@ class UnitConfigTest {
         when(mockJwtUtil.validateToken(token)).thenReturn(true);
         when(mockJwtUtil.extractEmail(token)).thenReturn(email);
 
-        // Ejecutar filtro
         filter.doFilterInternal(request, response, chain);
 
-        // Verificar que la autenticación se haya establecido
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
         assertTrue(SecurityContextHolder.getContext().getAuthentication() instanceof UsernamePasswordAuthenticationToken);
         assertEquals(email, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
-        // Verificar que continúe la cadena de filtros
         verify(chain).doFilter(request, response);
     }
 
@@ -215,6 +210,22 @@ class UnitConfigTest {
         String token = "invalid.token";
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         when(mockJwtUtil.validateToken(token)).thenReturn(false);
+
+        filter.doFilterInternal(request, response, chain);
+
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verify(chain).doFilter(request, response);
+    }
+
+    @Test
+    void testDoFilterInternal_withNonBearerHeader_skipsAuthentication() throws ServletException, IOException {
+        JwtUtil mockJwtUtil = mock(JwtUtil.class);
+        JwtFilter filter = new JwtFilter(mockJwtUtil);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        when(request.getHeader("Authorization")).thenReturn("Token abc.def.ghi");
 
         filter.doFilterInternal(request, response, chain);
 

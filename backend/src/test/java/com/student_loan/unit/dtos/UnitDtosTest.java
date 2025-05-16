@@ -41,7 +41,6 @@ class DtoTests {
         assertEquals("Available", item.status());
         assertEquals("New", item.condition());
 
-        // equals and hashCode
         ItemRecord same = new ItemRecord(
             "Item1", "Desc", "Cat", "http://img", "Available", "New"
         );

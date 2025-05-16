@@ -23,6 +23,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,11 +67,19 @@ class UnitLoanControllerTest {
     }
 
     @Test
+    @DisplayName("GET /loans - Null user unauthorized")
+    void getAllLoans_noUser_unauthorized() {
+        when(userService.getUserByToken("token")).thenReturn(null);
+        ResponseEntity<List<Loan>> resp = loanController.getAllLoans("token");
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
+        assertTrue(resp.getBody().isEmpty());
+    }
+
+    @Test
     @DisplayName("GET /loans - Admin retrieves all loans")
     void getAllLoans_admin_returnsLoans() {
         when(userService.getUserByToken("token")).thenReturn(admin);
         when(loanService.getAllLoans()).thenReturn(Arrays.asList(sampleLoan));
-
         ResponseEntity<List<Loan>> resp = loanController.getAllLoans("token");
         assertEquals(HttpStatus.OK, resp.getStatusCode());
         assertEquals(1, resp.getBody().size());
@@ -80,7 +89,6 @@ class UnitLoanControllerTest {
     @DisplayName("GET /loans - Unauthorized for non-admin")
     void getAllLoans_nonAdmin_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(borrower);
-
         ResponseEntity<List<Loan>> resp = loanController.getAllLoans("token");
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
         assertTrue(resp.getBody().isEmpty());
@@ -137,6 +145,14 @@ class UnitLoanControllerTest {
     }
 
     @Test
+    @DisplayName("GET /loans/{id} - Null user unauthorized")
+    void getLoanById_noUser_unauthorized() {
+        when(userService.getUserByToken("token")).thenReturn(null);
+        ResponseEntity<Loan> resp = loanController.getLoanById(10L, "token");
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
+    }
+
+    @Test
     @DisplayName("GET /loans/lender?lenderId={id} - Lender retrieves own loans")
     void getLoansByLender_self_success() {
         when(userService.getUserByToken("token")).thenReturn(lender);
@@ -176,6 +192,14 @@ class UnitLoanControllerTest {
     }
 
     @Test
+    @DisplayName("GET /loans/lender - Null user unauthorized")
+    void getLoansByLender_noUser_unauthorized() {
+        when(userService.getUserByToken("token")).thenReturn(null);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender("token", 2L);
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
+    }
+
+    @Test
     @DisplayName("GET /loans/borrower?borrowerId={id} - Borrower retrieves own loans")
     void getLoansByBorrower_self_success() {
         when(userService.getUserByToken("token")).thenReturn(borrower);
@@ -200,6 +224,14 @@ class UnitLoanControllerTest {
     void getLoansByBorrower_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(lender);
 
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower("token", 3L);
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("GET /loans/borrower - Null user unauthorized")
+    void getLoansByBorrower_noUser_unauthorized() {
+        when(userService.getUserByToken("token")).thenReturn(null);
         ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower("token", 3L);
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
@@ -239,7 +271,7 @@ class UnitLoanControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /loans/{id} - Update loan success")
+    @DisplayName("PUT /loans/{id} - Update loan success (lender)")
     void updateLoan_success() {
         LoanRecord rec = new LoanRecord(10L, lender.getId(), borrower.getId(), 100L,
                 "2025-01-01", "2025-02-01", "2025-03-01", "RETURNED", "5", "obs2");
@@ -249,6 +281,30 @@ class UnitLoanControllerTest {
 
         ResponseEntity<String> resp = loanController.updateLoan(10L, rec, "Bearer token");
         assertEquals(HttpStatus.OK, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("PUT /loans/{id} - Update loan success (borrower)")
+    void updateLoan_borrower_success() {
+        LoanRecord rec = new LoanRecord(10L, null, null, null, null, null, null, null, null, null);
+        when(userService.getUserByToken("token")).thenReturn(borrower);
+        when(loanService.getLoanById(10L)).thenReturn(Optional.of(sampleLoan));
+        when(loanService.saveLoan(any())).thenReturn(sampleLoan);
+
+        ResponseEntity<String> resp = loanController.updateLoan(10L, rec, "Bearer token");
+        assertEquals(HttpStatus.OK, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("PUT /loans/{id} - Not found for missing loan throws exception")
+    void updateLoan_notFoundMissing() {
+        LoanRecord rec = new LoanRecord(null, null, null, null, null, null, null, null, null, null);
+        when(userService.getUserByToken("token")).thenReturn(admin);
+        when(loanService.getLoanById(10L)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () ->
+            loanController.updateLoan(10L, rec, "Bearer token")
+        );
     }
 
     @Test
@@ -279,6 +335,60 @@ class UnitLoanControllerTest {
 
         ResponseEntity<String> resp = loanController.updateLoan(10L, rec, "Bearer token");
         assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("PUT /loans/{id} - Missing auth header unauthorized")
+    void updateLoan_missingHeader_unauthorized() {
+        ResponseEntity<String> resp = loanController.updateLoan(10L, new LoanRecord(null,null,null,null,null,null,null,null,null,null), null);
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("PUT /loans/{id} - Invalid auth header unauthorized")
+    void updateLoan_invalidHeader_unauthorized() {
+        ResponseEntity<String> resp = loanController.updateLoan(10L, new LoanRecord(null,null,null,null,null,null,null,null,null,null), "Invalid token");
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("PUT /loans/{id} - Null user unauthorized")
+    void updateLoan_noUser_unauthorized() {
+        when(userService.getUserByToken("token")).thenReturn(null);
+        when(loanService.getLoanById(10L)).thenReturn(Optional.of(sampleLoan));
+
+        ResponseEntity<String> resp = loanController.updateLoan(
+            10L,
+            new LoanRecord(null, null, null, null, null, null, null, null, null, null),
+            "Bearer token"
+        );
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("PUT /loans/{id} - Admin updates any loan")
+    void updateLoan_admin_success() {
+        LoanRecord rec = new LoanRecord(10L, borrower.getId(), lender.getId(), 200L,
+                "2025-04-01", "2025-05-01", "2025-06-01", "RETURNED", "4", "adminObs");
+        when(userService.getUserByToken("token")).thenReturn(admin);
+        when(loanService.getLoanById(10L)).thenReturn(Optional.of(sampleLoan));
+        when(loanService.saveLoan(any())).thenReturn(sampleLoan);
+
+        ResponseEntity<String> resp = loanController.updateLoan(10L, rec, "Bearer token");
+        assertEquals(HttpStatus.OK, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("PUT /loans/{id} - Service error returns message and NOT_FOUND")
+    void updateLoan_serviceError_returnsMessage() {
+        LoanRecord rec = new LoanRecord(10L, null, null, null, null, null, null, null, null, null);
+        when(userService.getUserByToken("token")).thenReturn(lender);
+        when(loanService.getLoanById(10L)).thenReturn(Optional.of(sampleLoan));
+        doThrow(new RuntimeException("save failed")).when(loanService).saveLoan(any());
+
+        ResponseEntity<String> resp = loanController.updateLoan(10L, rec, "Bearer token");
+        assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
+        assertEquals("save failed", resp.getBody());
     }
 
     @Test
@@ -339,6 +449,28 @@ class UnitLoanControllerTest {
     }
 
     @Test
+    @DisplayName("DELETE /loans/{id} - Borrower deletes own loan")
+    void deleteLoan_borrower_success() {
+        when(userService.getUserByToken("token")).thenReturn(borrower);
+        when(loanService.getLoanById(10L)).thenReturn(Optional.of(sampleLoan));
+
+        ResponseEntity<String> resp = loanController.deleteLoan(10L, "token");
+        assertEquals(HttpStatus.OK, resp.getStatusCode());
+        verify(loanService).deleteLoan(10L);
+    }
+
+    @Test
+    @DisplayName("DELETE /loans/{id} - Admin deletes any loan")
+    void deleteLoan_admin_success() {
+        when(userService.getUserByToken("token")).thenReturn(admin);
+        when(loanService.getLoanById(10L)).thenReturn(Optional.of(sampleLoan));
+
+        ResponseEntity<String> resp = loanController.deleteLoan(10L, "token");
+        assertEquals(HttpStatus.OK, resp.getStatusCode());
+        verify(loanService).deleteLoan(10L);
+    }
+
+    @Test
     @DisplayName("DELETE /loans/{id} - Unauthorized for other user")
     void deleteLoan_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(otherUser);
@@ -357,6 +489,22 @@ class UnitLoanControllerTest {
 
         ResponseEntity<String> resp = loanController.deleteLoan(10L, "token");
         assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("DELETE /loans/{id} - Null user unauthorized")
+    void deleteLoan_noUser_unauthorized() {
+        when(userService.getUserByToken("token")).thenReturn(null);
+        ResponseEntity<String> resp = loanController.deleteLoan(10L, "token");
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("DELETE /loans/{id} - Missing loan throws exception")
+    void deleteLoan_missingLoan_exception() {
+        when(userService.getUserByToken("token")).thenReturn(admin);
+        when(loanService.getLoanById(10L)).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> loanController.deleteLoan(10L, "token"));
     }
 
     private void setSecurityContext(User user) {

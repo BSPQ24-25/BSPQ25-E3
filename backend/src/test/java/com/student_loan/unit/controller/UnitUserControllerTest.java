@@ -2,8 +2,10 @@ package com.student_loan.unit.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -67,7 +69,20 @@ class UnitUserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /users - Non-admin or invalid token returns UNAUTHORIZED and empty list")
+    @DisplayName("GET /users - Non-admin valid token returns UNAUTHORIZED and empty list")
+    void testGetAllUsers_NonAdminUnauthorized() {
+        User nonAdmin = new User();
+        nonAdmin.setAdmin(false);
+        when(userService.getUserByToken(USER_TOKEN)).thenReturn(nonAdmin);
+
+        ResponseEntity<List<User>> response = userController.getAllUsers(USER_TOKEN);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals(0, response.getBody().size());
+    }
+
+    @Test
+    @DisplayName("GET /users - Invalid token returns UNAUTHORIZED and empty list")
     void testGetAllUsers_Unauthorized() {
         when(userService.getUserByToken(USER_TOKEN)).thenReturn(null);
 
@@ -129,6 +144,18 @@ class UnitUserControllerTest {
         ResponseEntity<User> response = userController.updateUser(3L, record, USER_TOKEN);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expected, response.getBody());
+    }
+
+    @Test
+    @DisplayName("PUT /users/{id} - Invalid token returns UNAUTHORIZED without calling service")
+    void testUpdateUser_InvalidToken() {
+        when(userService.getUserByToken(USER_TOKEN)).thenReturn(null);
+        UserRecord record = mock(UserRecord.class);
+
+        ResponseEntity<User> response = userController.updateUser(1L, record, USER_TOKEN);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        verify(userService, never()).updateUser(anyLong(), any());
     }
 
     @Test
@@ -239,7 +266,6 @@ class UnitUserControllerTest {
         assertEquals("a@b.com", dto.getEmail());
     }
 
-
     @Test
     @DisplayName("GET /users/{id} - Unauthorized if no principal")
     void testGetUserById_Unauthorized() {
@@ -266,6 +292,17 @@ class UnitUserControllerTest {
 
         ResponseEntity<String> response = userController.deleteUser(7L, USER_TOKEN);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("DELETE /users/{id} - Invalid token returns UNAUTHORIZED without calling service")
+    void testDeleteUser_InvalidToken() {
+        when(userService.getUserByToken(USER_TOKEN)).thenReturn(null);
+
+        ResponseEntity<String> response = userController.deleteUser(1L, USER_TOKEN);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        verify(userService, never()).deleteUser(anyLong());
     }
 
     @Test
