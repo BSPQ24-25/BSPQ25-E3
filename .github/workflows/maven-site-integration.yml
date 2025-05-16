@@ -9,7 +9,7 @@ on:
     - cron: '0 0-6/2 * * *'    # 02:00–08:00 CET
 
 permissions:
-  contents: write
+  contents: write   
   packages: write
 
 jobs:
@@ -75,8 +75,6 @@ jobs:
         run: |
           mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
           mysql -h 127.0.0.1 -ue3 -pe3 -e "SHOW TABLES IN mv;"
-
-
 
       - name: Run Unit tests and generate converage report
         run: mvn test jacoco:report
