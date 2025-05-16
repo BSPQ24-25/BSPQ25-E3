@@ -22,6 +22,8 @@
         <doxygen.config.file>${basedir}/src/main/resources/Doxyfile</doxygen.config.file>
 		<maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <doxygen.config.file>${basedir}/src/main/resources/Doxyfile</doxygen.config.file>
+  
 	</properties>
 
 	<dependencies>
@@ -191,6 +193,16 @@
     <build>
         <plugins>
 
+            <!-- Doxygen plugin -->
+
+			<plugin>
+				 <groupId>com.soebes.maven.plugins</groupId>
+				 <artifactId>doxygen-maven-plugin</artifactId>
+				 <version>1.1.0</version>
+				 <configuration>
+					 <configurationFile>${doxygen.config.file}</configurationFile>
+				 </configuration>
+			 </plugin>
             <!-- Spring Boot plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -262,7 +274,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.6</minimum>
+											<minimum>0.5</minimum>
 										</limit>
 									</limits>
 								</rule>

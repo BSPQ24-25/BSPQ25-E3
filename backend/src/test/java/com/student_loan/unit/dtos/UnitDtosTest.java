@@ -82,15 +82,19 @@ class DtoTests {
     @DisplayName("RegistrationRecord should return correct values and support equals")
     void testRegistrationRecord() {
         RegistrationRecord reg = new RegistrationRecord(
-            "John", "Doe", "john@d.com", "pwd"
+            "John", "Doe", "john@d.com", "pwd","616238276", "Pancracion Kalea 7", "UNIVERSITY_DEGREE", 3
         );
         assertEquals("John", reg.name());
         assertEquals("Doe", reg.lastName());
         assertEquals("john@d.com", reg.email());
         assertEquals("pwd", reg.password());
+        assertEquals("616238276", reg.telephoneNumber());
+        assertEquals("Pancracion Kalea 7", reg.address());
+        assertEquals("UNIVERSITY_DEGREE", reg.degreeType());
+        assertEquals(3, reg.degreeYear());
 
         RegistrationRecord sameReg = new RegistrationRecord(
-            "John", "Doe", "john@d.com", "pwd"
+            "John", "Doe", "john@d.com", "pwd","616238276", "Pancracion Kalea 7", "UNIVERSITY_DEGREE", 3
         );
         assertEquals(reg, sameReg);
         assertEquals(reg.hashCode(), sameReg.hashCode());

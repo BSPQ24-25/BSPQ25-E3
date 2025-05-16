@@ -21,6 +21,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Controller class for managing loans in the system. Handles HTTP requests
+ * related to loan operations such as creating, updating, deleting, and
+ * retrieving loans.
+ */
 @RestController
 @RequestMapping("/loans")
 public class LoanController {
@@ -31,12 +36,23 @@ public class LoanController {
 
     private static final Logger logger = LoggerFactory.getLogger(ItemController.class);
 
+    /**
+     * Retrieves the authenticated user from the SecurityContext.
+     *
+     * @return The authenticated user.
+     */
 	private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return userService.getUserByEmail(email);
     }
 
+	 /**
+     * Retrieves all loans in the system.
+     *
+     * @param token The authentication token.
+     * @return ResponseEntity containing a list of all loans.
+     */
     @GetMapping
     public ResponseEntity<List<Loan>> getAllLoans(@RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);
@@ -45,7 +61,14 @@ public class LoanController {
         }
         return  new ResponseEntity<>(loanService.getAllLoans(),HttpStatus.OK);
     }
-
+    /**
+     * Retrieves a loan by its ID.
+     *
+     * @param id    The ID of the loan.
+     * @param token The authentication token.
+     * @return ResponseEntity containing the loan.
+     */
+    
     @GetMapping("/{id}")
 	public ResponseEntity<Loan> getLoanById(@PathVariable Long id, @RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);
@@ -64,6 +87,13 @@ public class LoanController {
     	return new ResponseEntity<>(loan, HttpStatus.OK);
 	}
 
+    /**
+     * Retrieves loans by lender ID.
+     *
+     * @param token    The authentication token.
+     * @param lenderId The ID of the lender.
+     * @return ResponseEntity containing a list of loans by the lender.
+     */
     @GetMapping("/lender")
     public ResponseEntity<List<Loan>> getLoansByLender(@RequestParam("token") String token, @RequestParam("lenderId") Long lenderId) {
     	User user = userService.getUserByToken(token);
@@ -79,6 +109,13 @@ public class LoanController {
         }
 	}
     
+    /**
+     * Retrieves loans by borrower ID.
+     *
+     * @param token       The authentication token.
+     * @param borrowerId  The ID of the borrower.
+     * @return ResponseEntity containing a list of loans by the borrower.
+     */
     @GetMapping("/borrower")
 	public ResponseEntity<List<Loan>> getLoansByBorrower(
 			@RequestParam("token") String token,
@@ -96,6 +133,13 @@ public class LoanController {
 		return new ResponseEntity<>(loans, HttpStatus.OK);
 	}
 
+    /**
+     * Creates a new loan.
+     *
+     * @param loan  The loan data.
+     * @param token The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
     @PostMapping
     public ResponseEntity<String> createLoan(@RequestBody LoanRecord loan, @RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);
@@ -112,6 +156,15 @@ public class LoanController {
 		// If the loan is created successfully, return a 201 Created response
 		return new ResponseEntity<>(HttpStatus.CREATED);
     }
+    
+    /**
+     * Updates a loan by its ID.
+     *
+     * @param id        The ID of the loan.
+     * @param loan      The updated loan data.
+     * @param authHeader The authorization header containing the token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
     
     @PutMapping("/{id}")
 	public ResponseEntity<String> updateLoan(@PathVariable Long id, @RequestBody LoanRecord loan, @RequestHeader("Authorization") String authHeader) {
@@ -144,6 +197,12 @@ public class LoanController {
 		}
 	}
 
+    /**
+     * Marks a loan as returned by its item ID.
+     *
+     * @param itemId The ID of the item.
+     * @return ResponseEntity indicating the result of the operation.
+     */
 	@PutMapping("/{itemId}/return")
     public ResponseEntity<Void> returnLoan(@PathVariable Long itemId) {
 		User user = getAuthenticatedUser();
@@ -162,6 +221,14 @@ public class LoanController {
 		}
     }
 
+	
+	 /**
+     * Deletes a loan by its ID.
+     *
+     * @param id    The ID of the loan.
+     * @param token The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteLoan(@PathVariable Long id, @RequestParam("token") String token) {
     	User user = userService.getUserByToken(token);
@@ -177,6 +244,12 @@ public class LoanController {
       
     }
     
+    /**
+     * Converts a LoanRecord to a Loan entity.
+     *
+     * @param loanRecord The loan record.
+     * @return The converted Loan entity.
+     */
 	private Loan convertToLoan(LoanRecord loanRecord) {
         return new Loan(
         	null,
