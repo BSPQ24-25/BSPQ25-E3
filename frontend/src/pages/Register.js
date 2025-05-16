@@ -14,7 +14,7 @@ function Register() {
     confirmPassword: '',
     telephoneNumber: '',
     address: '',
-    degreeType: '', // Changed from UNIVERSITY_DEGREE to empty for placeholder
+    degreeType: '',
     degreeYear: '',
   });
   const [error, setError] = useState('');
@@ -23,26 +23,20 @@ function Register() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-    // Clear error when user starts typing
+    setFormData(prev => ({ ...prev, [name]: value }));
     setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setError(t('register.passwordMismatch'));
       return;
     }
-    // Registration logic
+
     try {
-      // First register the user
       await registerUser({
-        name: formData.firstName, // Changed from firstName to name to match RegistrationRecord
+        name: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
@@ -52,18 +46,17 @@ function Register() {
         degreeYear: formData.degreeYear ? parseInt(formData.degreeYear, 10) : null,
       });
 
-      // Then automatically log them in
       const loginResponse = await loginUser({
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       });
 
-      // Set the authentication state
       login(loginResponse.token, loginResponse.user);
       navigate('/');
-    } catch (error) {
-      setError(error.response?.data?.message || error.message || t('register.error'));
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || t('register.error'));
     }
+
     console.log('Registration attempt:', formData);
   };
 
@@ -71,7 +64,7 @@ function Register() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-start pt-20 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-center text-3xl font-extrabold text-gray-900">
-        {t('register.createAccount')}
+          {t('register.createAccount')}
         </h2>
       </div>
 
@@ -86,7 +79,7 @@ function Register() {
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 text-left">
-                {t('register.firstName')}
+                  {t('register.firstName')}
                 </label>
                 <div className="mt-1">
                   <input
@@ -137,7 +130,6 @@ function Register() {
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
               </div>
-<<<<<<< HEAD
             </div>
 
             <div>
@@ -173,7 +165,7 @@ function Register() {
                 />
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label htmlFor="degreeType" className="block text-sm font-medium text-gray-700 text-left">
@@ -211,8 +203,6 @@ function Register() {
                   />
                 </div>
               </div>
-=======
->>>>>>> refs/remotes/origin/documentation
             </div>
 
             <div>
@@ -262,15 +252,13 @@ function Register() {
           </form>
 
           <div className="mt-6">
-            <div className="relative">
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  {t('register.alreadyHaveAccount')}{' '}
-                  <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                    {t('register.signIn')}
-                  </Link>
-                </span>
-              </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">
+                {t('register.alreadyHaveAccount')}{' '}
+                <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
+                  {t('register.signIn')}
+                </Link>
+              </span>
             </div>
           </div>
         </div>
