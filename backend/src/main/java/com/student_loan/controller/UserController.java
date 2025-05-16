@@ -163,7 +163,7 @@ public class UserController {
      * @return The converted User entity.
      */
 
-    private User registerRecordToUser(RegistrationRecord data) {
+    public User registerRecordToUser(RegistrationRecord data) {
     	        User user = new User();
     	        user.setName(data.name() + " " + data.lastName() );
     	        user.setEmail(data.email());
@@ -184,7 +184,7 @@ public class UserController {
      * @return The converted User entity.
      */
     
-	private User userRecordToUser(UserRecord userDTO) {
+	public User userRecordToUser(UserRecord userDTO) {
 		User user = new User();
 		user.setName(userDTO.name()+" "+userDTO.lastName());
 		user.setEmail(userDTO.email());

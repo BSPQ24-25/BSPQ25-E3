@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DataInitializer {
    @Bean
-    CommandLineRunner initData(UserRepository userRepository, ItemRepository itemRepository, LoanRepository loanRepository) {
+    public CommandLineRunner initData(UserRepository userRepository, ItemRepository itemRepository, LoanRepository loanRepository) {
       return args -> {
          System.out.println("Initializing data...");
          List<User> users = createUsers();
@@ -60,7 +60,7 @@ public class DataInitializer {
       return users;
    }
 
-   private void saveUsers(List<User> users, UserRepository userRepository) {
+   public void saveUsers(List<User> users, UserRepository userRepository) {
       for (User user : users) {
          if (userRepository.findByEmail(user.getEmail()) == null) {
                userRepository.save(user);
@@ -146,7 +146,7 @@ public class DataInitializer {
       return items;
    }
 
-   private void saveItems(List<Item> items, ItemRepository itemRepository) {
+   public void saveItems(List<Item> items, ItemRepository itemRepository) {
       for (Item item : items) {
          if (itemRepository.findByName(item.getName()) == null) {
                itemRepository.save(item);
@@ -215,7 +215,7 @@ public class DataInitializer {
       return loans;
    }
 
-   private void saveLoans(List<Loan> loans, LoanRepository loanRepository) {
+   public void saveLoans(List<Loan> loans, LoanRepository loanRepository) {
       for (Loan loan : loans) {
          List<Loan> itemLoans = loanRepository.findByItem(loan.getItem());
           
