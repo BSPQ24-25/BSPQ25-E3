@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Service class for managing users in the system. Handles operations such as
+ * retrieving, creating, saving, and deleting users.
+ */
 @Service
 @Transactional
 public class UserService {
@@ -29,14 +33,32 @@ public class UserService {
 
     private Map<String, User> tokens = new HashMap<>();
 
+	/**
+	 * Retrieves all users from the repository.
+	 *
+	 * @return List of all users.
+	 */
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+        /**
+         * Finds a user by their ID.	
+         * @param id
+         * @return
+         */
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
+    /**
+     * Updates a user's information.
+     *
+     * @param id The ID of the user to update.
+     * @param updatedUserData Object containing updated fields.
+     * @return The updated user.
+     * @throws RuntimeException if user is not found.
+     */
     public User updateUser(Long id, User updatedUserData) {
         Optional<User> existingUserOptional = userRepository.findById(id);
 
@@ -75,6 +97,12 @@ public class UserService {
         }
     }
 
+    /**
+     * Registers a new user after checking for email uniqueness.
+     *
+     * @param user The user to register.
+     * @return true if registration is successful, false if email already exists.
+     */
     public boolean register(User user) {
         if(userRepository.findByEmail(user.getEmail())!=null) {
     		return false;
@@ -85,6 +113,13 @@ public class UserService {
     	}
     }
 
+    
+    /**
+     * Authenticates a user using email and password.
+     *
+     * @param credentials Login credentials.
+     * @return JWT token if successful, or error message.
+     */
     public String login(CredentialsDTO credentials) {
         User user = userRepository.findByEmail(credentials.getEmail());
         if (tokens.containsValue(user)) {
@@ -97,6 +132,13 @@ public class UserService {
             return "Invalid credentials";
         }
     }
+    
+    /**
+     * Logs out a user by invalidating their token.
+     *
+     * @param token The user's token.
+     * @return true if logout is successful, false otherwise.
+     */
 
 	public boolean logout(String token) {
 		if(tokens.containsKey(token)) {
@@ -106,6 +148,12 @@ public class UserService {
         	return false;}
 	}
     
+	 /**
+     * Deletes a user by ID.
+     *
+     * @param id User ID.
+     * @throws RuntimeException if the user is not found.
+     */
     public void deleteUser(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
@@ -114,11 +162,22 @@ public class UserService {
             throw new RuntimeException("User not found");
         }
     }
-    
+    /**
+     * Retrieves a user based on a valid JWT token.
+     *
+     * @param token JWT token.
+     * @return The user associated with the token.
+     */
 	public User getUserByToken(String token) {
 		return tokens.get(token);
 	}
 
+	  /**
+     * Finds a user by their email address.
+     *
+     * @param email The user's email.
+     * @return The user if found, or null otherwise.
+     */
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }

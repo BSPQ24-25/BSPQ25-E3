@@ -15,17 +15,31 @@ import com.student_loan.dtos.UserDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller class for managing users in the system. Handles HTTP requests
+ * related to user operations such as creating, updating, deleting, and
+ * retrieving users.
+ */
 @RestController
 @RequestMapping("/users")
 public class UserController {
     
 
     private UserService userService;
-
+    /**
+     * Constructor for UserController.
+     *
+     * @param userService Service for user operations.
+     */
 	public UserController(UserService userService) {
         this.userService = userService;
     }
-
+	  /**
+     * Retrieves all users in the system.
+     *
+     * @param token The authentication token.
+     * @return ResponseEntity containing a list of all users.
+     */
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers(@RequestParam("token") String token) {
     	 User user = userService.getUserByToken(token);
@@ -34,7 +48,12 @@ public class UserController {
         }
     	return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
-
+    /**
+     * Authenticates a user and generates a token.
+     *
+     * @param credentials The user's credentials.
+     * @return ResponseEntity containing the authentication token or an error message.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody CredentialsDTO credentials) {
         String token = userService.login(credentials);
@@ -44,7 +63,12 @@ public class UserController {
         }
         return ResponseEntity.ok().body("{\"token\": \"" + token + "\"}");
     }
-    
+    /**
+     * Logs out a user by invalidating their token.
+     *
+     * @param token The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
     @PostMapping("/logout")
 	public ResponseEntity<String> logout(@RequestParam("token") String token) {
 		if (userService.logout(token)) {
@@ -53,7 +77,12 @@ public class UserController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 	}
-    
+    /**
+     * Retrieves a user by their ID.
+     *
+     * @param id The ID of the user.
+     * @return ResponseEntity containing the user data.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -69,21 +98,14 @@ public class UserController {
     	return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
-	@GetMapping("/{id}/temporal")
-	public ResponseEntity<UserDTO> getUserById2(@PathVariable Long id, @RequestParam("token") String token) {
-    	User user = userService.getUserByToken(token);
-    	if (user == null) {
-        	return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    	}
-    	User retrievedUser = userService.getUserById(id).orElse(null);
-    	if (retrievedUser == null) {
-        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    	}
-    	UserDTO userDTO = new UserDTO(retrievedUser.getId(), retrievedUser.getName(), retrievedUser.getEmail());
-
-    	return new ResponseEntity<>(userDTO, HttpStatus.OK);
-	}
-
+	/**
+     * Updates a user by their ID.
+     *
+     * @param id       The ID of the user.
+     * @param userData The updated user data.
+     * @param token    The authentication token.
+     * @return ResponseEntity containing the updated user or an error status.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserRecord userData, @RequestParam("token") String token) {
         User user = userService.getUserByToken(token);
@@ -99,7 +121,12 @@ public class UserController {
         }
     }
 
-
+    /**
+     * Registers a new user.
+     *
+     * @param userDTO The registration data.
+     * @return ResponseEntity indicating the result of the operation.
+     */
     //Register 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistrationRecord userDTO) {
@@ -109,6 +136,13 @@ public class UserController {
             return ResponseEntity.badRequest().body("The user already exists");
         }
     }
+    /**
+     * Deletes a user by their ID.
+     *
+     * @param id    The ID of the user.
+     * @param token The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id, @RequestParam("token") String token) {
@@ -120,6 +154,14 @@ public class UserController {
 
     	return new ResponseEntity<>(HttpStatus.OK);
     }
+    
+
+    /**
+     * Converts a RegistrationRecord to a User entity.
+     *
+     * @param data The registration record.
+     * @return The converted User entity.
+     */
 
     private User registerRecordToUser(RegistrationRecord data) {
     	        User user = new User();
@@ -135,6 +177,12 @@ public class UserController {
     			user.setAdmin(false);
     			return user;           
     }
+    /**
+     * Converts a UserRecord to a User entity.
+     *
+     * @param userDTO The user record.
+     * @return The converted User entity.
+     */
     
 	private User userRecordToUser(UserRecord userDTO) {
 		User user = new User();

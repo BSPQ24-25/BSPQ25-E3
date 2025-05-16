@@ -8,6 +8,7 @@ import com.student_loan.model.User;
 import com.student_loan.model.Item;
 import com.student_loan.repository.LoanRepository;
 import com.student_loan.repository.UserRepository;
+import com.student_loan.service.LoanService;
 import com.student_loan.repository.ItemRepository;
 import com.student_loan.service.LoanService;
 
