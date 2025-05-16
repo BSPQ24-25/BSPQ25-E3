@@ -1,4 +1,4 @@
-name: Maven Site & Performance & Integration Tests & Docker
+name: Maven Site &n Peformance & Integration Tests & prepares docs file where all project documentation will go
 
 on:
   push:
@@ -8,14 +8,13 @@ on:
     - cron: '0 18-23/2 * * *'  # 20:00–01:00 CET
     - cron: '0 0-6/2 * * *'    # 02:00–08:00 CET
 
-env:
-  REGISTRY: ghcr.io/${{ github.repository_owner }}
-  IMAGE_BACKEND: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend
-  IMAGE_FRONTEND: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend
+
+    
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     services:
       mysql:
         image: mysql:8.0
@@ -48,7 +47,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Install Doxygen & Graphviz
+      - name: Install Doxygen
         run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
 
       - name: Wait for MySQL to be ready
@@ -57,43 +56,48 @@ jobs:
           until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do
             sleep 2
           done
-
       - name: Create MySQL user 'e3'
         run: |
           mysql -h 127.0.0.1 -uroot -proot -e "CREATE USER IF NOT EXISTS 'e3'@'%' IDENTIFIED BY 'e3';"
           mysql -h 127.0.0.1 -uroot -proot -e "GRANT ALL PRIVILEGES ON mv.* TO 'e3'@'%'; FLUSH PRIVILEGES;"
-
+        
       - name: Run DB initialization script
         run: |
           echo "Running DB setup..."
           mysql -h 127.0.0.1 -uroot -proot < backend/src/main/resources/db-setup-e3.sql
 
+      #- name: Get into backend
+      #run: cd backend
+
+      # HACEMOS UNA PRUEBA DE CONEXION CON LA BD ANTES DE EJECUTAR LOS TESTS
       - name: Test MySQL manual connection
         run: |
           mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
           mysql -h 127.0.0.1 -ue3 -pe3 -e "SHOW TABLES IN mv;"
 
-      - name: Run Unit tests and generate coverage report
+
+
+      - name: Run Unit tests and generate converage report
         run: mvn test jacoco:report
         working-directory: backend
-
+      
       - name: Run Integration Tests
         run: mvn test -Pintegration
         working-directory: backend
 
       - name: Run Performance Tests
-        run: mvn test -Pperformance
+        run: mvn test -Pperformance 
         working-directory: backend
 
-      - name: Generate Maven Site (excluding Doxygen report)
-        run: mvn site -Ddoxygen.skip=true
+      - name: Generate Maven Site
+        run: mvn site
         working-directory: backend
 
       - name: List files in target directory to verify site generation
         run: ls -la target/
         working-directory: backend
 
-      - name: Ensure performance reports in site folder
+      - name: Ensure that the performance reports are also moved into the target\site\reports folder
         run: mvn -Pperformance resources:copy-resources@copy-perf-report
         working-directory: backend
 
@@ -105,96 +109,36 @@ jobs:
           mkdir -p docs
           pandoc README.md -o docs/index.html
 
-      - name: Generate Doxygen documentation
+      - name: Create Doxygen output folder
+        run: mkdir -p ../../../target/doxygen
+        working-directory: backend/src/main/resources
+      
+      - name: Run Doxygen
+        run: doxygen Doxyfile
+        working-directory: backend/src/main/resources
+        
+      - name: Copy site output to docs/site and docs/doxygen folder to docs/doxygen
         run: |
-          # Ensure output directory matches corrected Doxyfile
-          mkdir -p backend/target/doxygen
-          doxygen backend/src/main/resources/Doxyfile
-
-      - name: Copy site & doxygen to docs/
-        run: |
-          mkdir -p docs/site docs/doxygen
-          cp -r backend/target/site/* docs/site/ || echo "No site generated."
-          cp -r backend/target/doxygen/* docs/doxygen/ || echo "No doxygen generated."
+          mkdir -p docs
+          mkdir -p docs/site
+          mkdir -p docs/doxygen
+          if [ -d "target/site" ]; then
+            cp -r target/site/* docs/site/
+          else
+            echo "No site generated. Skipping copy of site."
+          fi
+          if [ -d "target/doxygen" ]; then
+            cp -r target/doxygen/* docs/doxygen/
+          else
+            echo "No doxygen generated. Skipping copy of doxygen."
+          fi
 
       - name: Commit and push docs
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add -f docs
-          git commit -m "Update Maven site & docs [CI skip]" || echo "No changes to commit"
+          git commit -m "Update Maven site [CI skip]" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  docker-build-and-push:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build & push backend image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./backend
-          file: ./backend/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend:latest
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend:${{ github.sha }}
-
-      - name: Build & push frontend image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend:latest
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend:${{ github.sha }}
-
-  compose-integration-test:
-    needs: docker-build-and-push
-    runs-on: ubuntu-latest
-    services:
-      docker:
-        image: docker:24.0.5-dind
-        options: >-
-          --privileged
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Pull images
-        run: |
-          docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend:latest
-          docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend:latest
-
-      - name: Bring up services with docker-compose
-        run: docker-compose up -d --build
-
-      - name: Wait for services
-        run: sleep 20
-
-      - name: Health check backend API
-        run: curl --fail http://localhost:8080/actuator/health
-
-      - name: Health check frontend
-        run: curl --fail http://localhost:3000
-
-      - name: Tear down
-        run: docker-compose down --volumes
