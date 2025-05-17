@@ -12,8 +12,8 @@ This project is implemented using Spring Boot, Java 17, JUnit 5 for unit testing
   - Unit tests (JUnit 5 + Mockito)  
   - Integration tests  
   - Performance tests (JUnitPerf)
-        - ![Duration Test](https://github.com/BSPQ24-25/BSPQ25-E3/blob/main/snapshots-reports/Duration%20Test.png)
-        - ![Throughput Test](https://github.com/BSPQ24-25/BSPQ25-E3/blob/main/snapshots-reports/Throughput%20Test.png)
+    - [Duration Test](https://github.com/BSPQ24-25/BSPQ25-E3/blob/main/snapshots-reports/Duration%20Test.png)
+    - [Throughput Test](https://github.com/BSPQ24-25/BSPQ25-E3/blob/main/snapshots-reports/Throughput%20Test.png)
 - **Architecture overview**: MVC diagram and explanations.  
 
 
