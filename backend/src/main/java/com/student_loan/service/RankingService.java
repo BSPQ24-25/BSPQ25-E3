@@ -7,6 +7,7 @@ import com.student_loan.repository.UserRepository;
 
 @Service
 public class RankingService {
+
     private final UserRepository userRepo;
 
     public RankingService(UserRepository userRepo) {
@@ -17,4 +18,3 @@ public class RankingService {
         return userRepo.findAllRanked();
     }
 }
-

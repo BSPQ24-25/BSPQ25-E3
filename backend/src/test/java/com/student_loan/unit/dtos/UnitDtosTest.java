@@ -3,6 +3,7 @@ package com.student_loan.unit.dtos;
 import com.student_loan.dtos.CredentialsDTO;
 import com.student_loan.dtos.ItemRecord;
 import com.student_loan.dtos.LoanRecord;
+import com.student_loan.dtos.RankingDTO;
 import com.student_loan.dtos.RegistrationRecord;
 import com.student_loan.dtos.UserRecord;
 import org.junit.jupiter.api.DisplayName;
@@ -123,5 +124,15 @@ class DtoTests {
             "12345", "Addr", "MASTER", 2024, 1, 4.0, false
         );
         assertEquals(user, sameUser);
+    }
+
+    @Test
+    @DisplayName("RankingDTO getters should return correct values")
+    void testRankingDTO() {
+        RankingDTO ranking = new RankingDTO(10L, "TestUser", 4.75, 2);
+        assertEquals(10L, ranking.getUserId());
+        assertEquals("TestUser", ranking.getName());
+        assertEquals(4.75, ranking.getAverageRating());
+        assertEquals(2, ranking.getPenalties());
     }
 }
