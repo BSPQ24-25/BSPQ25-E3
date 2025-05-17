@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataInitializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">StudentLoanManagement</a> &gt; <a href="index.source.html" class="el_package">com.student_loan</a> &gt; <span class="el_source">DataInitializer.java</span></div><h1>DataInitializer.java</h1><pre class="source lang-java linenums">package com.student_loan;
+
+import com.student_loan.model.Item;
+import com.student_loan.model.Loan;
+import com.student_loan.model.User;
+import com.student_loan.repository.ItemRepository;
+import com.student_loan.repository.LoanRepository;
+import com.student_loan.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+<span class="nc" id="L19">public class DataInitializer {</span>
+   @Bean
+    public CommandLineRunner initData(UserRepository userRepository, ItemRepository itemRepository, LoanRepository loanRepository) {
+<span class="nc" id="L22">      return args -&gt; {</span>
+<span class="nc" id="L23">         System.out.println(&quot;Initializing data...&quot;);</span>
+<span class="nc" id="L24">         List&lt;User&gt; users = createUsers();</span>
+<span class="nc" id="L25">         saveUsers(users, userRepository);</span>
+         
+<span class="nc" id="L27">         List&lt;Item&gt; items = createItems(userRepository);</span>
+<span class="nc" id="L28">         saveItems(items, itemRepository);</span>
+
+<span class="nc" id="L30">         List&lt;Loan&gt; loans = createLoans(userRepository, itemRepository);</span>
+<span class="nc" id="L31">         saveLoans(loans, loanRepository);</span>
+
+<span class="nc" id="L33">         System.out.println(&quot;Data initialized successfully.&quot;);</span>
+<span class="nc" id="L34">      };</span>
+   }
+
+   private List&lt;User&gt; createUsers() {
+<span class="nc" id="L38">      List &lt;User&gt; users = new ArrayList&lt;&gt;();</span>
+   
+      // Set of users to insert
+<span class="nc" id="L41">      users.add(new User(null, &quot;Ana García&quot;, &quot;ana.garcia@email.com&quot;, &quot;dF!94vH*2kQ#bR&quot;, &quot;612 345 678&quot;, &quot;Calle de Gran Vía, 23, 28013 Madrid&quot;, User.DegreeType.UNIVERSITY_DEGREE, 3, 0, 4.5, false));</span>
+<span class="nc" id="L42">      users.add(new User(null, &quot;Carlos Pérez&quot;, &quot;carlos.perez@email.com&quot;, &quot;mA3!9bL2zR@xZ0&quot;, &quot;633 111 222&quot;, &quot;Carrer de Pau Claris, 46, 08010 Barcelona&quot;, User.DegreeType.MASTER, 2, 1, 4.2, false));</span>
+<span class="nc" id="L43">      users.add(new User(null, &quot;Laura Fernández&quot;, &quot;laura.fernandez@email.com&quot;, &quot;lauraFSevilla&quot;, &quot;622 333 444&quot;, &quot;Avenida de la Constitución, 8, 41001 Sevilla&quot;, User.DegreeType.UNIVERSITY_DEGREE, 1, 0, 4.8, false));</span>
+<span class="nc" id="L44">      users.add(new User(null, &quot;David López&quot;, &quot;david.lopez@email.com&quot;, &quot;qZ6!L@j*0eD9fT&quot;, &quot;678 555 666&quot;, &quot;Calle de Alcalá, 180, 28009 Madrid&quot;, User.DegreeType.DOCTORATE, 4, 0, 4.9, false));</span>
+<span class="nc" id="L45">      users.add(new User(null, &quot;Marta Rodríguez&quot;, &quot;marta.rodriguez@email.com&quot;, &quot;yX5!8OqR2jW9hZ&quot;, &quot;655 431 549&quot;, &quot;Carrer de Roger de Llúria, 24, 08037 Barcelona&quot;, User.DegreeType.MASTER, 1, 0, 4.7, false));</span>
+<span class="nc" id="L46">      users.add(new User(null, &quot;José Martínez&quot;, &quot;jose.martinez@email.com&quot;, &quot;deusto#00&quot;, &quot;690 234 567&quot;, &quot;Calle de Fuentecilla, 5, 14010 Córdoba&quot;, User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.3, false));</span>
+<span class="nc" id="L47">      users.add(new User(null, &quot;Raquel Sánchez&quot;, &quot;raquel.sanchez@email.com&quot;, &quot;rG5uT$7vI2gO#p1&quot;, &quot;677 123 456&quot;, &quot;Calle de la Paz, 34, 15001 A Coruña&quot;, User.DegreeType.UNIVERSITY_DEGREE, 3, 2, 3.8, false));</span>
+<span class="nc" id="L48">      users.add(new User(null, &quot;José Antonio Torres&quot;, &quot;jose.antonio@email.com&quot;, &quot;uZ0!W6tP#3rV!fL&quot;, &quot;616 741 982&quot;, &quot;Calle San Fernando, 18, 41004 Sevilla&quot;, User.DegreeType.MASTER, 1, 0, 4.6, false));</span>
+<span class="nc" id="L49">      users.add(new User(null, &quot;Beatriz García&quot;, &quot;beatriz.garcia@email.com&quot;, &quot;wQ2bF!xL5tCj9Z&quot;, &quot;636 984 211&quot;, &quot;Carrer de Valencia, 35, 08015 Barcelona&quot;, User.DegreeType.DOCTORATE, 3, 1, 4.4, false));</span>
+<span class="nc" id="L50">      users.add(new User(null, &quot;Pedro Gómez&quot;, &quot;pedro.gomez@email.com&quot;, &quot;micontraseña&quot;, &quot;688 234 123&quot;, &quot;Calle Mayor, 12, 28013 Madrid&quot;, User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.6, false));</span>
+<span class="nc" id="L51">      users.add(new User(null, &quot;Carmen Martínez&quot;, &quot;carmen.martinez@email.com&quot;, &quot;vX0nP9!fS3zT1dQ&quot;, &quot;676 453 782&quot;, &quot;Avenida de la Paz, 40, 29012 Málaga&quot;, User.DegreeType.MASTER, 2, 1, 4.5, false));</span>
+<span class="nc" id="L52">      users.add(new User(null, &quot;Antonio Fernández&quot;, &quot;antonio.fernandez@email.com&quot;, &quot;antoFernan01&quot;, &quot;645 876 543&quot;, &quot;Calle de Núñez de Balboa, 45, 28001 Madrid&quot;, User.DegreeType.UNIVERSITY_DEGREE, 3, 2, 4.7, false));</span>
+<span class="nc" id="L53">      users.add(new User(null, &quot;Elena López&quot;, &quot;elena.lopez@email.com&quot;, &quot;qZ5#V7tJ3kL2A*1&quot;, &quot;659 321 987&quot;, &quot;Carrer de Sants, 58, 08014 Barcelona&quot;, User.DegreeType.MASTER, 1, 0, 4.8, false));</span>
+<span class="nc" id="L54">      users.add(new User(null, &quot;Juan Pérez&quot;, &quot;juan.perez@email.com&quot;, &quot;kF3uT0hS7!pVbD2&quot;, &quot;656 789 432&quot;, &quot;Calle de Santiago, 14, 37001 Salamanca&quot;, User.DegreeType.DOCTORATE, 4, 0, 5.0, false));</span>
+<span class="nc" id="L55">      users.add(new User(null, &quot;Sara García&quot;, &quot;sara.garcia@email.com&quot;, &quot;contra123&quot;, &quot;602 123 654&quot;, &quot;Calle del Sol, 22, 46001 Valencia&quot;, User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));</span>
+
+      // Admin users
+<span class="nc" id="L58">      users.add(new User(null, &quot;Sabin Luja&quot;, &quot;sabin.luja@opendeusto.es&quot;, &quot;sabin&quot;, &quot;602 123 654&quot;, &quot;Hermanos Aguirre Kalea, 2, 48014 Bilbao&quot;, User.DegreeType.UNIVERSITY_DEGREE, 4, 0, 5.0, true));</span>
+      
+<span class="nc" id="L60">      return users;</span>
+   }
+
+   public void saveUsers(List&lt;User&gt; users, UserRepository userRepository) {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">      for (User user : users) {</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">         if (userRepository.findByEmail(user.getEmail()) == null) {</span>
+<span class="nc" id="L66">               userRepository.save(user);</span>
+         }
+<span class="nc" id="L68">      }</span>
+<span class="nc" id="L69">   }</span>
+
+   private List&lt;Item&gt; createItems(UserRepository userRepository) {
+      // Get the ID of the User
+<span class="nc" id="L73">      Long owner1Id = userRepository.findById(1L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L74">      Long owner2Id = userRepository.findById(2L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L75">      Long owner3Id = userRepository.findById(3L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L76">      Long owner4Id = userRepository.findById(4L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L77">      Long owner5Id = userRepository.findById(5L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L78">      Long owner6Id = userRepository.findById(6L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L79">      Long owner7Id = userRepository.findById(7L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L80">      Long owner8Id = userRepository.findById(8L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L81">      Long owner9Id = userRepository.findById(9L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L82">      Long owner10Id = userRepository.findById(10L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L83">      Long owner11Id = userRepository.findById(11L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L84">      Long owner12Id = userRepository.findById(12L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L85">      Long owner13Id = userRepository.findById(13L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+   
+<span class="nc" id="L87">      Long owner14Id = userRepository.findById(14L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L88">      Long owner15Id = userRepository.findById(15L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+
+      // Admins user ID
+<span class="nc" id="L91">      Long admin00Id = userRepository.findById(16L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+
+      // Set of items to insert
+<span class="nc" id="L94">      List &lt;Item&gt; items = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L95">      items.add(new Item(null, &quot;Artificial Intelligence Book&quot;, &quot;Book on Artificial Intelligence for university students&quot;, &quot;Books&quot;, Item.ItemStatus.BORROWED, owner1Id, new Date(122, 6, 15), 29.99, Item.ItemCondition.NEW, &quot;/images/ArticialIntelligenceBook.jpg&quot;));</span>
+<span class="nc" id="L96">      items.add(new Item(null, &quot;HDMI 2.0 Cable&quot;, &quot;Premium quality HDMI 2.0 cable for video and audio transmission&quot;, &quot;Electronics&quot;, Item.ItemStatus.BORROWED, owner2Id, new Date(122, 9, 10), 15.00, Item.ItemCondition.VERY_USED, &quot;/images/HDMI20Cable.jpg&quot;));</span>
+<span class="nc" id="L97">      items.add(new Item(null, &quot;Academic Planner&quot;, &quot;A planner for organizing academic work and deadlines&quot;, &quot;Stationery&quot;, Item.ItemStatus.BORROWED, owner3Id, new Date(122, 3, 5), 12.99, Item.ItemCondition.VERY_USED, &quot;/images/AcademicPlanner.jpg&quot;));</span>
+<span class="nc" id="L98">      items.add(new Item(null, &quot;Graphing Scientific Calculator&quot;, &quot;Advanced scientific calculator with graphing capabilities&quot;, &quot;Calculators&quot;, Item.ItemStatus.AVAILABLE, owner4Id, new Date(122, 1, 20), 50.00, Item.ItemCondition.LIKE_NEW, &quot;/images/GraphingScientificCalculator.jpg&quot;));</span>
+<span class="nc" id="L99">      items.add(new Item(null, &quot;Ergonomic Wireless Keyboard&quot;, &quot;Ergonomically designed wireless keyboard for comfortable typing&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner5Id, new Date(122, 44, 12), 28.00, Item.ItemCondition.GOOD, &quot;/images/ErgonomicWirelessKeyboard.jpg&quot;));</span>
+<span class="nc" id="L100">      items.add(new Item(null, &quot;Portable Bluetooth Speaker&quot;, &quot;Compact Bluetooth speaker for clear sound anywhere&quot;, &quot;Electronics&quot;, Item.ItemStatus.BORROWED, owner6Id, new Date(122, 5, 30), 40.00, Item.ItemCondition.NEW, &quot;/images/PortableBluetoothSpeaker.jpg&quot;));</span>
+<span class="nc" id="L101">      items.add(new Item(null, &quot;Adjustable Smartphone Stand&quot;, &quot;Multi-functional adjustable stand for smartphones and tablets&quot;, &quot;Accessories&quot;, Item.ItemStatus.BORROWED, owner7Id, new Date(122, 10, 18), 12.00, Item.ItemCondition.USED, &quot;/images/AdjustableSmartphoneStand.jpg&quot;));</span>
+<span class="nc" id="L102">      items.add(new Item(null, &quot;32GB USB Flash Drive&quot;, &quot;USB flash drive with 32GB capacity for fast data transfer&quot;, &quot;Electronics&quot;, Item.ItemStatus.UNAVAILABLE, owner8Id, new Date(122, 12, 22), 10.00, Item.ItemCondition.LIKE_NEW, &quot;/images/32GBUSBFlashDrive.jpg&quot;));</span>
+<span class="nc" id="L103">      items.add(new Item(null, &quot;Compact Tool Kit&quot;, &quot;Multi-purpose tool kit for small repairs and DIY projects&quot;, &quot;Tools&quot;, Item.ItemStatus.AVAILABLE, owner9Id, new Date(123, 2, 8), 20.00, Item.ItemCondition.GOOD, &quot;/images/CompactToolKit.jpg&quot;));</span>
+<span class="nc" id="L104">      items.add(new Item(null, &quot;Digital Drawing Tablet&quot;, &quot;Graphics tablet with high precision for digital art and design&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner10Id, new Date(123, 12, 14), 150.00, Item.ItemCondition.VERY_USED, &quot;/images/DigitalDrawingTablet.jpg&quot;));</span>
+<span class="nc" id="L105">      items.add(new Item(null, &quot;Introduction to Deep Learning&quot;, &quot;Comprehensive textbook on Deep Learning concepts and applications for beginners and advanced students&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, owner11Id, new Date(123, 6, 3), 25.99, Item.ItemCondition.USED, &quot;/images/IntroductiontoDeepLearning.jpg&quot;));</span>
+<span class="nc" id="L106">      items.add(new Item(null, &quot;Fast USB-C Charging Cable&quot;, &quot;High-speed USB-C charger for fast charging of mobile devices&quot;, &quot;Chargers&quot;, Item.ItemStatus.AVAILABLE, owner12Id, new Date(123, 6, 17), 10.50, Item.ItemCondition.VERY_USED, &quot;/images/FastUSB-CChargingCable.jpg&quot;));</span>
+<span class="nc" id="L107">      items.add(new Item(null, &quot;Advanced Scientific Calculator&quot;, &quot;Scientific calculator with advanced functions for university-level students&quot;, &quot;Calculators&quot;, Item.ItemStatus.AVAILABLE, owner13Id, new Date(123, 9, 25), 15.00, Item.ItemCondition.GOOD, &quot;/images/AdvancedScientificCalculator.jpg&quot;));</span>
+<span class="nc" id="L108">      items.add(new Item(null, &quot;Academic Student Notebook&quot;, &quot;100-page notebook for note-taking and academic purposes&quot;, &quot;Stationery&quot;, Item.ItemStatus.AVAILABLE, owner14Id, new Date(123, 10, 9), 2.50, Item.ItemCondition.NEW, &quot;/images/AcademicStudentNotebook.jpg&quot;));</span>
+<span class="nc" id="L109">      items.add(new Item(null, &quot;Ergonomic Wireless Mouse&quot;, &quot;Wireless ergonomic mouse designed for extended computer use&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner15Id, new Date(123, 1, 30), 12.00, Item.ItemCondition.LIKE_NEW, &quot;/images/ErgonomicWirelessMouse.jpg&quot;));</span>
+<span class="nc" id="L110">      items.add(new Item(null, &quot;MSI Crosshair 16 HX Laptop&quot;, &quot;Laptop with powerful specs for academic purposes, programming, and research&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, admin00Id, new Date(123, 4, 12), 500.00, Item.ItemCondition.NEW, &quot;/images/MSICrosshair16HXLaptop.jpg&quot;));</span>
+<span class="nc" id="L111">      items.add(new Item(null, &quot;White-Out Correction Fluid&quot;, &quot;High-quality white-out correction fluid for error-free corrections&quot;, &quot;Stationery&quot;, Item.ItemStatus.AVAILABLE, owner2Id, new Date(123, 5, 20), 1.50, Item.ItemCondition.NEW, &quot;/images/White-OutCorrectionFluid.jpg&quot;));</span>
+<span class="nc" id="L112">      items.add(new Item(null, &quot;Noise-Cancelling Headphones&quot;, &quot;Over-ear headphones with noise-cancelling technology for immersive sound&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner3Id, new Date(124, 7, 11), 40.00, Item.ItemCondition.NEW, &quot;/images/Noise-CancellingHeadphones.jpg&quot;));</span>
+<span class="nc" id="L113">      items.add(new Item(null, &quot;Precision Eraser&quot;, &quot;Precision eraser for fine pencil erasures and clean work&quot;, &quot;Stationery&quot;, Item.ItemStatus.AVAILABLE, owner4Id, new Date(1234, 12, 28), 0.50, Item.ItemCondition.NEW, &quot;/images/PrecisionEraser.jpg&quot;));</span>
+<span class="nc" id="L114">      items.add(new Item(null, &quot;Algorithms Textbook&quot;, &quot;In-depth textbook covering algorithms for computer science students&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, owner5Id, new Date(123, 1, 7), 35.00, Item.ItemCondition.USED, &quot;/images/AlgorithmsTextbook.jpg&quot;));</span>
+<span class="nc" id="L115">      items.add(new Item(null, &quot;Arduino Development Kit&quot;, &quot;Kit with Arduino board, sensors, and cables for electronics projects&quot;, &quot;Electronics&quot;, Item.ItemStatus.BORROWED, owner6Id, new Date(123, 9, 15), 45.00, Item.ItemCondition.NEW, &quot;/images/ArduinoDevelopmentKit.jpg&quot;));</span>
+<span class="nc" id="L116">      items.add(new Item(null, &quot;Full HD Webcam&quot;, &quot;High-definition webcam ideal for video conferences and recordings&quot;, &quot;Electronics&quot;, Item.ItemStatus.BORROWED, owner7Id, new Date(123, 8, 4), 35.00, Item.ItemCondition.LIKE_NEW, &quot;/images/FullHDWebcam.jpg&quot;));</span>
+<span class="nc" id="L117">      items.add(new Item(null, &quot;1TB External Hard Drive&quot;, &quot;Portable external hard drive for backups and data storage&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner8Id, new Date(124, 6, 19), 60.00, Item.ItemCondition.USED, &quot;/images/1TBExternalHardDrive.jpg&quot;));</span>
+<span class="nc" id="L118">      items.add(new Item(null, &quot;Digital Multimeter&quot;, &quot;Digital multimeter for measuring voltage, current, and resistance&quot;, &quot;Tools&quot;, Item.ItemStatus.AVAILABLE, owner9Id, new Date(124, 1, 5), 25.00, Item.ItemCondition.NEW, &quot;/images/DigitalMultimeter.jpg&quot;));</span>
+<span class="nc" id="L119">      items.add(new Item(null, &quot;Portable Printer&quot;, &quot;Wireless portable printer for printing documents anywhere&quot;, &quot;Electronics&quot;, Item.ItemStatus.BORROWED, owner10Id, new Date(124, 10, 22), 80.00, Item.ItemCondition.GOOD, &quot;/images/PortablePrinter.jpg&quot;));</span>
+<span class="nc" id="L120">      items.add(new Item(null, &quot;Portable WiFi Router&quot;, &quot;Portable WiFi router for creating wireless networks in areas without connection&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner11Id, new Date(124, 4, 14), 55.00, Item.ItemCondition.GOOD, &quot;/images/PortableWiFiRouter.jpg&quot;));</span>
+<span class="nc" id="L121">      items.add(new Item(null, &quot;Rechargeable LED Desk Lamp&quot;, &quot;LED desk lamp with rechargeable battery for studying at night&quot;, &quot;Accessories&quot;, Item.ItemStatus.AVAILABLE, owner12Id, new Date(124, 6, 30), 20.00, Item.ItemCondition.USED, &quot;/images/RechargeableLEDDeskLamp.jpg&quot;));</span>
+<span class="nc" id="L122">      items.add(new Item(null, &quot;Universal Laptop Charger&quot;, &quot;Universal charger compatible with multiple laptop models&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner13Id, new Date(124, 8, 8), 30.00, Item.ItemCondition.LIKE_NEW, &quot;/images/UniversalLaptopCharger.jpg&quot;));</span>
+<span class="nc" id="L123">      items.add(new Item(null, &quot;Raspberry Pi Board&quot;, &quot;Raspberry Pi development board for programming and electronics projects&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner14Id, new Date(124, 3, 16), 35.00, Item.ItemCondition.USED, &quot;/images/RaspberryPiBoard.jpg&quot;));</span>
+<span class="nc" id="L124">      items.add(new Item(null, &quot;USB Digital Microscope&quot;, &quot;Portable USB digital microscope for detailed analysis and studies&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner15Id, new Date(124, 11, 27), 70.00, Item.ItemCondition.GOOD, &quot;/images/USBDigitalMicroscope.jpg&quot;));</span>
+<span class="nc" id="L125">      items.add(new Item(null, &quot;Calculus Textbook&quot;, &quot;A comprehensive textbook covering calculus concepts for university students&quot;, &quot;Books&quot;, Item.ItemStatus.UNAVAILABLE, owner1Id, new Date(124, 0, 12), 55.00, Item.ItemCondition.USED, &quot;/images/CalculusTextbook.jpg&quot;));</span>
+<span class="nc" id="L126">      items.add(new Item(null, &quot;Campus Umbrella&quot;, &quot;Durable umbrella to shield students from rain on campus&quot;, &quot;Accessories&quot;, Item.ItemStatus.BORROWED, owner2Id, new Date(124, 1, 20), 20.00, Item.ItemCondition.GOOD, &quot;/images/CampusUmbrella.jpg&quot;));</span>
+<span class="nc" id="L127">      items.add(new Item(null, &quot;Wireless Earbuds&quot;, &quot;Compact and high-quality wireless earbuds for everyday use&quot;, &quot;Electronics&quot;, Item.ItemStatus.BORROWED, owner3Id, new Date(124, 7, 5), 35.00, Item.ItemCondition.GOOD, &quot;/images/WirelessEarbuds.jpg&quot;));</span>
+<span class="nc" id="L128">      items.add(new Item(null, &quot;Laptop Cooling Pad&quot;, &quot;Cooling pad to enhance laptop performance during heavy use&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner4Id, new Date(124, 3, 18), 25.00, Item.ItemCondition.VERY_USED, &quot;/images/LaptopCoolingPad.jpg&quot;));</span>
+<span class="nc" id="L129">      items.add(new Item(null, &quot;Multiport USB Hub&quot;, &quot;USB hub with multiple ports to connect several devices simultaneously&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner5Id, new Date(124, 11, 2), 18.00, Item.ItemCondition.NEW, &quot;/images/MultiportUSBHub.jpg&quot;));</span>
+<span class="nc" id="L130">      items.add(new Item(null, &quot;Stainless Steel Thermos&quot;, &quot;Insulated thermos to keep beverages hot or cold for long hours&quot;, &quot;Accessories&quot;, Item.ItemStatus.AVAILABLE, owner6Id, new Date(124, 10, 25), 30.00, Item.ItemCondition.VERY_USED, &quot;/images/StainlessSteelThermos.jpg&quot;));</span>
+<span class="nc" id="L131">      items.add(new Item(null, &quot;Bluetooth Presenter Remote&quot;, &quot;Remote control for presentations with Bluetooth connectivity&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner7Id, new Date(124, 8, 14), 22.00, Item.ItemCondition.USED, &quot;/images/BluetoothPresenterRemote.jpg&quot;));</span>
+<span class="nc" id="L132">      items.add(new Item(null, &quot;Desk Lamp&quot;, &quot;LED desk lamp with adjustable brightness for late-night studies&quot;, &quot;Furniture&quot;, Item.ItemStatus.AVAILABLE, owner8Id, new Date(124, 5, 30), 40.00, Item.ItemCondition.NEW, &quot;/images/DeskLamp.jpg&quot;));</span>
+<span class="nc" id="L133">      items.add(new Item(null, &quot;USB 16GB&quot;, &quot;portable USB for quick data transfer storage or presentations&quot;, &quot;Electronics&quot;, Item.ItemStatus.AVAILABLE, owner9Id, new Date(124, 4, 7), 90.00, Item.ItemCondition.USED, &quot;/images/USB16GB.jpg&quot;));</span>
+<span class="nc" id="L134">      items.add(new Item(null, &quot;Advanced English Dictionary&quot;, &quot;Comprehensive dictionary for academic writing and research&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, admin00Id, new Date(124, 2, 3), 40.00, Item.ItemCondition.NEW, &quot;/images/AdvancedEnglishDictionary.jpg&quot;));</span>
+<span class="nc" id="L135">      items.add(new Item(null, &quot;Basic Pencil Case&quot;, &quot;Durable pencil case to store pens and pencils&quot;, &quot;Stationery&quot;, Item.ItemStatus.AVAILABLE, owner1Id, new Date(125, 2, 14), 8.50, Item.ItemCondition.NEW, &quot;/images/BasicPencilCase.jpg&quot;));</span>
+<span class="nc" id="L136">      items.add(new Item(null, &quot;Ballpoint Pens Set&quot;, &quot;Set of high-quality ballpoint pens for everyday writing&quot;, &quot;Stationery&quot;, Item.ItemStatus.AVAILABLE, owner2Id, new Date(125, 0, 10), 5.00, Item.ItemCondition.VERY_USED, &quot;/images/BallpointPensSet.jpg&quot;));</span>
+<span class="nc" id="L137">      items.add(new Item(null, &quot;Scientific Calculator&quot;, &quot;Reliable scientific calculator for complex calculations&quot;, &quot;Calculators&quot;, Item.ItemStatus.AVAILABLE, owner3Id, new Date(125, 1, 25), 25.00, Item.ItemCondition.USED, &quot;/images/ScientificCalculator.jpg&quot;));</span>
+<span class="nc" id="L138">      items.add(new Item(null, &quot;Artificial Intelligence: A Modern Approach&quot;, &quot;Comprehensive textbook covering modern AI concepts&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, owner4Id, new Date(125, 3, 5), 60.00, Item.ItemCondition.NEW, &quot;/images/ArtificialIntelligenceAModernApproach.jpg&quot;));</span>
+<span class="nc" id="L139">      items.add(new Item(null, &quot;Introduction to Computer Science&quot;, &quot;Fundamental textbook on computer science principles&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, owner5Id, new Date(125, 2, 15), 55.00, Item.ItemCondition.NEW, &quot;/images/IntroductiontoComputerScience.jpg&quot;));</span>
+<span class="nc" id="L140">      items.add(new Item(null, &quot;Introduction to Business Administration (ADE)&quot;, &quot;Fundamentals of Business Administration for university students&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, owner1Id, new Date(125, 0, 15), 40.00, Item.ItemCondition.USED, &quot;/images/IntroductiontoBusinessAdministration.jpg&quot;));</span>
+<span class="nc" id="L141">      items.add(new Item(null, &quot;Natural Language Processing with Python&quot;, &quot;Comprehensive guide to NLP techniques using Python for text analysis&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, owner2Id, new Date(125,2, 2), 45.00, Item.ItemCondition.NEW, &quot;/images/NaturalLanguageProcessingwithPython.jpg&quot;));</span>
+<span class="nc" id="L142">      items.add(new Item(null, &quot;Reinforcement Learning: An Introduction&quot;, &quot;A detailed introduction to reinforcement learning algorithms and applications&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, owner3Id, new Date(125, 1, 14), 50.00, Item.ItemCondition.NEW, &quot;/images/ReinforcementLearningAnIntroduction.jpg&quot;));</span>
+<span class="nc" id="L143">      items.add(new Item(null, &quot;Ethical Hacking: Practical Guide&quot;, &quot;A practical guide to ethical hacking and penetration testing&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, owner4Id, new Date(125, 2, 9), 38.00, Item.ItemCondition.NEW, &quot;/images/EthicalHackingPracticalGuide.jpg&quot;));</span>
+<span class="nc" id="L144">      items.add(new Item(null, &quot;Information Systems: Theory and Practice&quot;, &quot;Comprehensive textbook covering information systems concepts and applications&quot;, &quot;Books&quot;, Item.ItemStatus.AVAILABLE, owner5Id, new Date(125, 3, 1), 42.00, Item.ItemCondition.NEW, &quot;/images/InformationSystemsTheoryandPractice.jpg&quot;));</span>
+      
+<span class="nc" id="L146">      return items;</span>
+   }
+
+   public void saveItems(List&lt;Item&gt; items, ItemRepository itemRepository) {
+<span class="nc bnc" id="L150" title="All 2 branches missed.">      for (Item item : items) {</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">         if (itemRepository.findByName(item.getName()) == null) {</span>
+<span class="nc" id="L152">               itemRepository.save(item);</span>
+         }
+<span class="nc" id="L154">      }</span>
+<span class="nc" id="L155">   }</span>
+
+   private List&lt;Loan&gt; createLoans(UserRepository userRepository, ItemRepository itemRepository) {
+      // Get the ID of the User
+<span class="nc" id="L159">      Long user_loan1 = userRepository.findById(1L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L160">      Long user_loan2 = userRepository.findById(2L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L161">      Long user_loan3 = userRepository.findById(3L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L162">      Long user_loan4 = userRepository.findById(4L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L163">      Long user_loan5 = userRepository.findById(5L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L164">      Long user_loan6 = userRepository.findById(6L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L165">      Long user_loan7 = userRepository.findById(7L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L166">      Long user_loan8 = userRepository.findById(8L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L167">      Long user_loan9 = userRepository.findById(9L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+<span class="nc" id="L168">      Long user_loan10 = userRepository.findById(10L).map(User::getId).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+
+      // Get the ID of the Item
+<span class="nc" id="L171">      Long item_loan1 = itemRepository.findById(1L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L172">      Long item_loan2 = itemRepository.findById(2L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L173">      Long item_loan3 = itemRepository.findById(3L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L174">      Long item_loan4 = itemRepository.findById(4L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L175">      Long item_loan5 = itemRepository.findById(5L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L176">      Long item_loan6 = itemRepository.findById(6L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L177">      Long item_loan7 = itemRepository.findById(7L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L178">      Long item_loan8 = itemRepository.findById(8L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L179">      Long item_loan9 = itemRepository.findById(9L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L180">      Long item_loan20 = itemRepository.findById(10L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L181">      Long item_loan21 = itemRepository.findById(21L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L182">      Long item_loan22 = itemRepository.findById(22L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L183">      Long item_loan23 = itemRepository.findById(23L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L184">      Long item_loan24 = itemRepository.findById(24L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L185">      Long item_loan25 = itemRepository.findById(25L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L186">      Long item_loan31 = itemRepository.findById(31L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L187">      Long item_loan32 = itemRepository.findById(32L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L188">      Long item_loan33 = itemRepository.findById(33L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L189">      Long item_loan34 = itemRepository.findById(34L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+<span class="nc" id="L190">      Long item_loan35 = itemRepository.findById(35L).map(Item::getId).orElseThrow(() -&gt; new RuntimeException(&quot;Item not found&quot;));</span>
+
+      // Set of loans to insert
+<span class="nc" id="L193">      List &lt;Loan&gt; loans = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L194">      loans.add(new Loan(null, user_loan1, user_loan2, item_loan1, new Date(125, 1, 5), new Date(125, 43, 19), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L195">      loans.add(new Loan(null, user_loan2, user_loan4, item_loan2, new Date(125, 2, 8), new Date(125, 4, 15), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L196">      loans.add(new Loan(null, user_loan3, user_loan6, item_loan3, new Date(125, 0, 18), new Date(125, 3, 30), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L197">      loans.add(new Loan(null, user_loan4, user_loan8, item_loan4, new Date(125, 1, 12), new Date(125, 1, 20), new Date(125, 1, 20), Loan.Status.RETURNED, 5.0, &quot;Excellent&quot;));</span>
+<span class="nc" id="L198">      loans.add(new Loan(null, user_loan5, user_loan10, item_loan5, new Date(125, 1, 28), new Date(125, 2, 7), new Date(125, 2, 6), Loan.Status.RETURNED, 4.8, &quot;Returned early&quot;));</span>
+<span class="nc" id="L199">      loans.add(new Loan(null, user_loan6, user_loan9, item_loan6, new Date(125, 3, 1), new Date(125, 4, 15), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L200">      loans.add(new Loan(null, user_loan7, user_loan7, item_loan7, new Date(125, 3, 10), new Date(125, 5, 17), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L201">      loans.add(new Loan(null, user_loan8, user_loan6, item_loan8, new Date(125, 2, 8), new Date(125, 2, 22), null, Loan.Status.LOST, null, &quot;Item lost during loan&quot;));</span>
+<span class="nc" id="L202">      loans.add(new Loan(null, user_loan9, user_loan1, item_loan9, new Date(125, 0, 10), new Date(125, 0, 18), new Date(125, 0, 19), Loan.Status.RETURNED, 4.9, &quot;Returned with care&quot;));</span>
+<span class="nc" id="L203">      loans.add(new Loan(null, user_loan5, user_loan3, item_loan20, new Date(125, 2, 3), new Date(125, 2, 10), new Date(125, 2, 12), Loan.Status.RETURNED, 4.2, &quot;Slight delay&quot;));</span>
+<span class="nc" id="L204">      loans.add(new Loan(null, user_loan6, user_loan5, item_loan21, new Date(125, 3, 1), new Date(125, 3, 10), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L205">      loans.add(new Loan(null, user_loan7, user_loan4, item_loan22, new Date(125, 2, 15), new Date(125, 3, 22), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L206">      loans.add(new Loan(null, user_loan8, user_loan2, item_loan23, new Date(125, 1, 5), new Date(125, 1, 12), new Date(125, 1, 11), Loan.Status.RETURNED, 4.6, &quot;Early return&quot;));</span>
+<span class="nc" id="L207">      loans.add(new Loan(null, user_loan9, user_loan6, item_loan24, new Date(125, 0, 10), new Date(125, 0, 20), new Date(125, 0, 18), Loan.Status.RETURNED, 4.8, &quot;Returned ahead of time&quot;));</span>
+<span class="nc" id="L208">      loans.add(new Loan(null, user_loan10, user_loan8, item_loan25, new Date(125, 1, 14), new Date(125, 2, 25), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L209">      loans.add(new Loan(null, user_loan1, user_loan1, item_loan31, new Date(125, 2, 3), new Date(125, 2, 10), null, Loan.Status.LOST, null, &quot;Item lost during loan&quot;));</span>
+<span class="nc" id="L210">      loans.add(new Loan(null, user_loan2, user_loan7, item_loan32, new Date(125, 3, 2), new Date(125, 3, 30), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L211">      loans.add(new Loan(null, user_loan3, user_loan9, item_loan33, new Date(125, 2, 17), new Date(125, 3, 24), null, Loan.Status.IN_USE, null, &quot;&quot;));</span>
+<span class="nc" id="L212">      loans.add(new Loan(null, user_loan4, user_loan10, item_loan34, new Date(125, 2, 11), new Date(125, 2, 20), new Date(125, 2, 20), Loan.Status.RETURNED, 5.0, &quot;Excellent return&quot;));</span>
+<span class="nc" id="L213">      loans.add(new Loan(null, user_loan5, user_loan5, item_loan35, new Date(125, 1, 1), new Date(125, 1, 14), new Date(125, 1, 13), Loan.Status.RETURNED, 4.2, &quot;Returned without issues&quot;));</span>
+      
+<span class="nc" id="L215">      return loans;</span>
+   }
+
+   public void saveLoans(List&lt;Loan&gt; loans, LoanRepository loanRepository) {
+<span class="nc bnc" id="L219" title="All 2 branches missed.">      for (Loan loan : loans) {</span>
+<span class="nc" id="L220">         List&lt;Loan&gt; itemLoans = loanRepository.findByItem(loan.getItem());</span>
+          
+<span class="nc" id="L222">         boolean hasActiveLoan = false;</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">         for (Loan loan2 : itemLoans) {</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">            if (loan2.getLoanStatus() != Loan.Status.RETURNED) {</span>
+<span class="nc" id="L225">               hasActiveLoan = true;</span>
+<span class="nc" id="L226">               break;</span>
+            }
+<span class="nc" id="L228">         }</span>
+  
+<span class="nc bnc" id="L230" title="All 2 branches missed.">         if (!hasActiveLoan) {</span>
+<span class="nc" id="L231">            loanRepository.save(loan);</span>
+         }
+<span class="nc" id="L233">      }</span>
+<span class="nc" id="L234">   }   </span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

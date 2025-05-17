@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Loan.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">StudentLoanManagement</a> &gt; <a href="index.source.html" class="el_package">com.student_loan.model</a> &gt; <span class="el_source">Loan.java</span></div><h1>Loan.java</h1><pre class="source lang-java linenums">
+package com.student_loan.model;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+/**
+ * Entity class representing a loan in the system. Maps to the &quot;loans&quot; table in the database.
+ */
+@Entity
+@Table(name = &quot;loans&quot;)
+public class Loan {
+
+    /**
+     * The unique identifier for the loan.
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * The ID of the lender associated with the loan.
+     */
+    @Column(name = &quot;lender_id&quot;, nullable = false)
+    private Long lender;
+
+    /**
+     * The ID of the borrower associated with the loan.
+     */
+    @Column(name = &quot;borrower_id&quot;, nullable = false)
+    private Long borrower;
+
+    /**
+     * The ID of the item being loaned.
+     */
+    @Column(name = &quot;item_id&quot;, nullable = false)
+    private Long item;
+
+    /**
+     * The date when the loan was initiated.
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = &quot;loan_date&quot;, nullable = false)
+    private Date loanDate;
+
+    /**
+     * The estimated return date for the loaned item.
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = &quot;estimated_return_date&quot;)
+    private Date estimatedReturnDate;
+
+    /**
+     * The actual return date for the loaned item.
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = &quot;real_return_date&quot;)
+    private Date realReturnDate;
+
+    /**
+     * The status of the loan (e.g., IN_USE, RETURNED, DELAYED, LOST).
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;loan_status&quot;, nullable = false)
+    private Status loanStatus;
+
+    /**
+     * The rating given for the loan transaction.
+     */
+    @Column(name = &quot;rating&quot;)
+    private Double rating;
+
+    /**
+     * Additional observations or comments about the loan.
+     */
+    private String observations;
+
+    /**
+     * Enum representing the possible statuses of a loan.
+     */
+<span class="fc" id="L81">    public enum Status {</span>
+<span class="fc" id="L82">        IN_USE, RETURNED, DELAYED, LOST</span>
+    }
+
+    /**
+     * Default constructor for the Loan class.
+     */
+<span class="fc" id="L88">    public Loan() {</span>
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Constructor for the Loan class.
+     *
+     * @param id                 The unique identifier for the loan.
+     * @param lender             The ID of the lender.
+     * @param borrower           The ID of the borrower.
+     * @param item               The ID of the item being loaned.
+     * @param loanDate           The date when the loan was initiated.
+     * @param estimatedReturnDate The estimated return date for the loaned item.
+     * @param realReturnDate     The actual return date for the loaned item.
+     * @param loanStatus         The status of the loan.
+     * @param rating             The rating given for the loan transaction.
+     * @param observations       Additional observations or comments about the loan.
+     */
+<span class="fc" id="L105">    public Loan(Long id, Long lender, Long borrower, Long item, Date loanDate, Date estimatedReturnDate, Date realReturnDate, Status loanStatus, Double rating, String observations) {</span>
+<span class="fc" id="L106">        this.id = id;</span>
+<span class="fc" id="L107">        this.lender = lender;</span>
+<span class="fc" id="L108">        this.borrower = borrower;</span>
+<span class="fc" id="L109">        this.item = item;</span>
+<span class="fc" id="L110">        this.loanDate = loanDate;</span>
+<span class="fc" id="L111">        this.estimatedReturnDate = estimatedReturnDate;</span>
+<span class="fc" id="L112">        this.realReturnDate = realReturnDate;</span>
+<span class="fc" id="L113">        this.loanStatus = loanStatus;</span>
+<span class="fc" id="L114">        this.rating = rating;</span>
+<span class="fc" id="L115">        this.observations = observations;</span>
+<span class="fc" id="L116">    }</span>
+
+    /**
+     * Gets the unique identifier for the loan.
+     *
+     * @return The unique identifier for the loan.
+     */
+    public Long getId() {
+<span class="fc" id="L124">        return id;</span>
+    }
+
+    /**
+     * Sets the unique identifier for the loan.
+     *
+     * @param id The unique identifier for the loan.
+     */
+    public void setId(Long id) {
+<span class="fc" id="L133">        this.id = id;</span>
+<span class="fc" id="L134">    }</span>
+
+    /**
+     * Gets the ID of the lender associated with the loan.
+     *
+     * @return The ID of the lender.
+     */
+    public Long getLender() {
+<span class="fc" id="L142">        return lender;</span>
+    }
+
+    /**
+     * Sets the ID of the lender associated with the loan.
+     *
+     * @param lender The ID of the lender.
+     */
+    public void setLender(Long lender) {
+<span class="fc" id="L151">        this.lender = lender;</span>
+<span class="fc" id="L152">    }</span>
+
+    /**
+     * Gets the ID of the borrower associated with the loan.
+     *
+     * @return The ID of the borrower.
+     */
+    public Long getBorrower() {
+<span class="fc" id="L160">        return borrower;</span>
+    }
+
+    /**
+     * Sets the ID of the borrower associated with the loan.
+     *
+     * @param borrower The ID of the borrower.
+     */
+    public void setBorrower(Long borrower) {
+<span class="fc" id="L169">        this.borrower = borrower;</span>
+<span class="fc" id="L170">    }</span>
+
+    /**
+     * Gets the ID of the item being loaned.
+     *
+     * @return The ID of the item being loaned.
+     */
+    public Long getItem() {
+<span class="fc" id="L178">        return item;</span>
+    }
+
+    /**
+     * Sets the ID of the item being loaned.
+     *
+     * @param item The ID of the item being loaned.
+     */
+    public void setItem(Long item) {
+<span class="fc" id="L187">        this.item = item;</span>
+<span class="fc" id="L188">    }</span>
+
+    /**
+     * Gets the date when the loan was initiated.
+     *
+     * @return The date when the loan was initiated.
+     */
+    public Date getLoanDate() {
+<span class="fc" id="L196">        return loanDate;</span>
+    }
+
+    /**
+     * Sets the date when the loan was initiated.
+     *
+     * @param loanDate The date when the loan was initiated.
+     */
+    public void setLoanDate(Date loanDate) {
+<span class="fc" id="L205">        this.loanDate = loanDate;</span>
+<span class="fc" id="L206">    }</span>
+
+    /**
+     * Gets the estimated return date for the loaned item.
+     *
+     * @return The estimated return date for the loaned item.
+     */
+    public Date getEstimatedReturnDate() {
+<span class="fc" id="L214">        return estimatedReturnDate;</span>
+    }
+
+    /**
+     * Sets the estimated return date for the loaned item.
+     *
+     * @param estimatedReturnDate The estimated return date for the loaned item.
+     */
+    public void setEstimatedReturnDate(Date estimatedReturnDate) {
+<span class="fc" id="L223">        this.estimatedReturnDate = estimatedReturnDate;</span>
+<span class="fc" id="L224">    }</span>
+
+    /**
+     * Gets the actual return date for the loaned item.
+     *
+     * @return The actual return date for the loaned item.
+     */
+    public Date getRealReturnDate() {
+<span class="fc" id="L232">        return realReturnDate;</span>
+    }
+
+    /**
+     * Sets the actual return date for the loaned item.
+     *
+     * @param realReturnDate The actual return date for the loaned item.
+     */
+    public void setRealReturnDate(Date realReturnDate) {
+<span class="fc" id="L241">        this.realReturnDate = realReturnDate;</span>
+<span class="fc" id="L242">    }</span>
+
+    /**
+     * Gets the status of the loan.
+     *
+     * @return The status of the loan.
+     */
+    public Status getLoanStatus() {
+<span class="fc" id="L250">        return loanStatus;</span>
+    }
+
+    /**
+     * Sets the status of the loan.
+     *
+     * @param loanStatus The status of the loan.
+     */
+    public void setLoanStatus(Status loanStatus) {
+<span class="fc" id="L259">        this.loanStatus = loanStatus;</span>
+<span class="fc" id="L260">    }</span>
+
+    /**
+     * Gets the rating given for the loan transaction.
+     *
+     * @return The rating given for the loan transaction.
+     */
+    public Double getRating() {
+<span class="fc" id="L268">        return rating;</span>
+    }
+
+    /**
+     * Sets the rating given for the loan transaction.
+     *
+     * @param rating The rating given for the loan transaction.
+     */
+    public void setRating(Double rating) {
+<span class="fc" id="L277">        this.rating = rating;</span>
+<span class="fc" id="L278">    }</span>
+
+    /**
+     * Gets additional observations or comments about the loan.
+     *
+     * @return Additional observations or comments about the loan.
+     */
+    public String getObservations() {
+<span class="fc" id="L286">        return observations;</span>
+    }
+
+    /**
+     * Sets additional observations or comments about the loan.
+     *
+     * @param observations Additional observations or comments about the loan.
+     */
+    public void setObservations(String observations) {
+<span class="fc" id="L295">        this.observations = observations;</span>
+<span class="fc" id="L296">    }</span>
+
+    /**
+     * Returns a string representation of the loan.
+     *
+     * @return A string representation of the loan.
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L305">        return &quot;Loan{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, lender=&quot; + lender +
+                &quot;, borrower=&quot; + borrower +
+                &quot;, item=&quot; + item +
+                &quot;, loanDate=&quot; + loanDate +
+                &quot;, estimatedReturnDate=&quot; + estimatedReturnDate +
+                &quot;, realReturnDate=&quot; + realReturnDate +
+                &quot;, loanStatus=&quot; + loanStatus +
+                &quot;, rating=&quot; + rating +
+                &quot;, observations='&quot; + observations + '\'' +
+                '}';
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

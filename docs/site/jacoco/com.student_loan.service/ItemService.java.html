@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ItemService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">StudentLoanManagement</a> &gt; <a href="index.source.html" class="el_package">com.student_loan.service</a> &gt; <span class="el_source">ItemService.java</span></div><h1>ItemService.java</h1><pre class="source lang-java linenums">package com.student_loan.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.student_loan.model.Item;
+import com.student_loan.model.Item.ItemStatus;
+import com.student_loan.repository.ItemRepository;
+import com.student_loan.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Service class for managing items in the system.
+ * Handles operations such as retrieving, creating, saving, and deleting items.
+ */
+@Service
+<span class="fc" id="L19">public class ItemService {</span>
+    @Autowired
+    private ItemRepository itemRepository;
+    @Autowired
+    private UserRepository userRepository;
+    
+    /**
+     * Retrieves all items from the repository.
+     *
+     * @return List of all items.
+     */
+    public List&lt;Item&gt; getAllItems() {
+<span class="fc" id="L31">        return itemRepository.findAll();</span>
+    }
+
+    /**
+     * Retrieves only items with AVAILABLE status.
+     *
+     * @return List of available items.
+     */
+	public List&lt;Item&gt; getAvailableItems() {
+<span class="fc" id="L40">        return itemRepository.findByStatus(ItemStatus.AVAILABLE);</span>
+    }
+
+	 /**
+     * Finds an item by its ID.
+     *
+     * @param id The item ID.
+     * @return Optional containing the item if found, or empty if not.
+     */
+    public Optional&lt;Item&gt; getItemById(Long id) {
+<span class="fc" id="L50">        return itemRepository.findById(id);</span>
+    }
+
+    /**
+     * Finds a list of items by their IDs.
+     *
+     * @param itemsId List of item IDs.
+     * @return List of found items.
+     */
+	public List&lt;Item&gt; getItemsById(List&lt;Long&gt; itemsId) {
+<span class="fc" id="L60">		List&lt;Item&gt; items = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		for (Long id : itemsId) {</span>
+<span class="fc" id="L62">			Optional&lt;Item&gt; optionalItem = getItemById(id);</span>
+<span class="fc" id="L63">			optionalItem.ifPresent(items::add);</span>
+<span class="fc" id="L64">		}</span>
+<span class="fc" id="L65">		return items;</span>
+	}
+	
+	 /**
+     * Retrieves all items owned by a specific user.
+     *
+     * @param id User ID.
+     * @return List of items owned by the user.
+     * @throws RuntimeException if the user is not found.
+     */
+    
+    public List&lt;Item&gt; getItemsByUser(Long id){
+<span class="fc bfc" id="L77" title="All 2 branches covered.">    	if(userRepository.findById(id).isPresent()) {</span>
+<span class="fc" id="L78">    		return itemRepository.findByOwner(id);</span>
+    	}else {
+<span class="fc" id="L80">    		throw new RuntimeException(&quot;Failed to get items! User not found with id: &quot; + id);</span>
+    	}
+    }
+    
+    /**
+     * Saves an item to the repository.
+     *
+     * @param item The item to save.
+     * @return The saved item.
+     * @throws RuntimeException if the item's owner does not exist.
+     */
+
+    public Item saveItem(Item item) {
+<span class="fc bfc" id="L93" title="All 2 branches covered.">    	if(!userRepository.findById(item.getOwner()).isPresent()) {</span>
+<span class="fc" id="L94">    		throw new RuntimeException(&quot;Failed to save item with id &quot;+ item.getId()+&quot;: Owner not found with id: &quot; + item.getOwner());</span>
+    	}else {
+<span class="fc" id="L96">	        return itemRepository.save(item);</span>
+	    }
+    }
+    
+	/**
+	 * Creates a new item in the repository.
+	 *
+	 * @param item The item to create.
+	 * @return The created item.
+	 * @throws RuntimeException if the item already exists or the owner does not
+	 *                          exist.
+	 */
+    
+	public Item createItem(Item item) {
+<span class="fc" id="L110">		Optional&lt;Item&gt; optionalItem = itemRepository.findById(item.getId());</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">		if (optionalItem.isPresent()) {</span>
+<span class="fc" id="L112">			throw new RuntimeException(</span>
+<span class="fc" id="L113">					&quot;Failed to create item with id &quot; + item.getId() + &quot;: Item already exists with id: &quot; + item.getId());</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">		}else if(!userRepository.findById(item.getOwner()).isPresent()) {</span>
+<span class="fc" id="L115">    		throw new RuntimeException(&quot;Failed to save item with id &quot;+ item.getId()+&quot;: Owner not found with id: &quot; + item.getOwner());</span>
+    	}
+<span class="fc" id="L117">		return itemRepository.save(item);</span>
+	}
+	    
+	
+	  /**
+     * Deletes an item by its ID.
+     *
+     * @param id The ID of the item to delete.
+     */
+    public void deleteItem(Long id) {
+<span class="fc" id="L127">        itemRepository.deleteById(id);</span>
+<span class="fc" id="L128">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

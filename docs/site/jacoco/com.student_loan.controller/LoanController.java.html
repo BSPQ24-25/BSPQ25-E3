@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoanController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">StudentLoanManagement</a> &gt; <a href="index.source.html" class="el_package">com.student_loan.controller</a> &gt; <span class="el_source">LoanController.java</span></div><h1>LoanController.java</h1><pre class="source lang-java linenums">package com.student_loan.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+import com.student_loan.dtos.LoanRecord;
+import com.student_loan.model.Loan;
+import com.student_loan.model.User;
+import com.student_loan.service.LoanService;
+import com.student_loan.service.UserService;
+
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Controller class for managing loans in the system. Handles HTTP requests
+ * related to loan operations such as creating, updating, deleting, and
+ * retrieving loans.
+ */
+@RestController
+@RequestMapping(&quot;/loans&quot;)
+<span class="fc" id="L31">public class LoanController {</span>
+    @Autowired
+    private LoanService loanService;
+    @Autowired
+    private UserService userService;
+
+<span class="fc" id="L37">    private static final Logger logger = LoggerFactory.getLogger(ItemController.class);</span>
+
+    /**
+     * Retrieves the authenticated user from the SecurityContext.
+     *
+     * @return The authenticated user.
+     */
+	private User getAuthenticatedUser() {
+<span class="fc" id="L45">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L46">        String email = authentication.getName();</span>
+<span class="fc" id="L47">        return userService.getUserByEmail(email);</span>
+    }
+
+	 /**
+     * Retrieves all loans in the system.
+     *
+     * @param token The authentication token.
+     * @return ResponseEntity containing a list of all loans.
+     */
+    @GetMapping
+    public ResponseEntity&lt;List&lt;Loan&gt;&gt; getAllLoans(@RequestParam(&quot;token&quot;) String token) {
+<span class="fc" id="L58">    	User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L59" title="All 4 branches covered.">        if (user == null || user.getAdmin()==false) {</span>
+<span class="fc" id="L60">        	return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED);</span>
+        }
+<span class="fc" id="L62">        return  new ResponseEntity&lt;&gt;(loanService.getAllLoans(),HttpStatus.OK);</span>
+    }
+    /**
+     * Retrieves a loan by its ID.
+     *
+     * @param id    The ID of the loan.
+     * @param token The authentication token.
+     * @return ResponseEntity containing the loan.
+     */
+    
+    @GetMapping(&quot;/{id}&quot;)
+	public ResponseEntity&lt;Loan&gt; getLoanById(@PathVariable Long id, @RequestParam(&quot;token&quot;) String token) {
+<span class="fc" id="L74">    	User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">    	if (user == null || </span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        	(!user.getAdmin() &amp;&amp; </span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        	user.getId() != loanService.getLoanById(id).get().getLender() &amp;&amp; </span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        	user.getId() != loanService.getLoanById(id).get().getBorrower())) {</span>
+<span class="fc" id="L79">        	return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+    	}
+
+<span class="fc" id="L82">    	Optional&lt;Loan&gt; loanOpt = loanService.getLoanById(id);</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">    	if (loanOpt.isEmpty()) {</span>
+<span class="fc" id="L84">        	return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+    	}
+<span class="fc" id="L86">    	Loan loan = loanOpt.get();</span>
+<span class="fc" id="L87">    	return new ResponseEntity&lt;&gt;(loan, HttpStatus.OK);</span>
+	}
+
+    /**
+     * Retrieves loans by lender ID.
+     *
+     * @param token    The authentication token.
+     * @param lenderId The ID of the lender.
+     * @return ResponseEntity containing a list of loans by the lender.
+     */
+    @GetMapping(&quot;/lender&quot;)
+    public ResponseEntity&lt;List&lt;Loan&gt;&gt; getLoansByLender(@RequestParam(&quot;token&quot;) String token, @RequestParam(&quot;lenderId&quot;) Long lenderId) {
+<span class="fc" id="L99">    	User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L100" title="All 6 branches covered.">        if (user == null || user.getId()!=lenderId &amp;&amp; user.getAdmin()==false) {</span>
+<span class="fc" id="L101">			return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED);</span>
+        }
+        try {
+<span class="fc" id="L104">			List&lt;Loan&gt; loans = loanService.getLoansByLender(lenderId);</span>
+<span class="fc" id="L105">			return new ResponseEntity&lt;&gt;(loans, HttpStatus.OK);</span>
+			
+<span class="fc" id="L107">			} catch (RuntimeException e) {</span>
+<span class="fc" id="L108">				return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+        }
+	}
+    
+    /**
+     * Retrieves loans by borrower ID.
+     *
+     * @param token       The authentication token.
+     * @param borrowerId  The ID of the borrower.
+     * @return ResponseEntity containing a list of loans by the borrower.
+     */
+    @GetMapping(&quot;/borrower&quot;)
+	public ResponseEntity&lt;List&lt;Loan&gt;&gt; getLoansByBorrower(
+			@RequestParam(&quot;token&quot;) String token,
+			@RequestParam(&quot;borrowerId&quot;) Long borrowerId) {
+
+<span class="fc" id="L124">		User user = userService.getUserByToken(token);</span>
+
+<span class="fc bfc" id="L126" title="All 6 branches covered.">		if (user == null || (!user.getAdmin() &amp;&amp; !Objects.equals(user.getId(), borrowerId))) {</span>
+<span class="fc" id="L127">			logger.warn(&quot;Unauthorized access: token='{}' yielded user={}, trying to query borrowerId={}&quot;,</span>
+						token, user, borrowerId);
+<span class="fc" id="L129">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+		}
+
+<span class="fc" id="L132">		List&lt;Loan&gt; loans = loanService.getLoansByBorrower(borrowerId);</span>
+<span class="fc" id="L133">		return new ResponseEntity&lt;&gt;(loans, HttpStatus.OK);</span>
+	}
+
+    /**
+     * Creates a new loan.
+     *
+     * @param loan  The loan data.
+     * @return ResponseEntity indicating the result of the operation.
+     */
+    @PostMapping(&quot;/create&quot;)
+    public ResponseEntity&lt;String&gt; createLoan(@RequestBody LoanRecord loan) {
+<span class="fc" id="L144">    	User user = getAuthenticatedUser();</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (user == null) {</span>
+<span class="fc" id="L146">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+		}
+		
+<span class="fc" id="L149">		Loan loanEntity = convertToLoan(loan);</span>
+<span class="fc" id="L150">        loanEntity.setBorrower(user.getId());</span>
+		try {
+<span class="fc" id="L152">			loanService.saveLoan(loanEntity);</span>
+<span class="fc" id="L153">        } catch (RuntimeException e) {</span>
+<span class="fc" id="L154">            return new ResponseEntity&lt;&gt;(e.getMessage(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L155">        }</span>
+		// If the loan is created successfully, return a 201 Created response
+<span class="fc" id="L157">		return new ResponseEntity&lt;&gt;(HttpStatus.CREATED);</span>
+    }
+    
+    /**
+     * Updates a loan by its ID.
+     *
+     * @param id        The ID of the loan.
+     * @param loan      The updated loan data.
+     * @param authHeader The authorization header containing the token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
+    
+    @PutMapping(&quot;/{id}&quot;)
+	public ResponseEntity&lt;String&gt; updateLoan(@PathVariable Long id, @RequestBody LoanRecord loan, @RequestHeader(&quot;Authorization&quot;) String authHeader) {
+<span class="fc bfc" id="L171" title="All 4 branches covered.">		if (authHeader == null || !authHeader.startsWith(&quot;Bearer &quot;)) {</span>
+<span class="fc" id="L172">        	return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+    	}
+		
+<span class="fc" id="L175">    	String token = authHeader.substring(7);</span>
+
+<span class="fc" id="L177">    	User user = userService.getUserByToken(token);</span>
+<span class="fc" id="L178">    	Loan existingLoan = loanService.getLoanById(id).get();</span>
+<span class="fc bfc" id="L179" title="All 8 branches covered.">		if (user == null || user.getId()!=existingLoan.getLender() &amp;&amp; user.getId()!=existingLoan.getBorrower() &amp;&amp; user.getAdmin()==false) {</span>
+<span class="fc" id="L180">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+		}
+		
+    	try {
+<span class="fc bfc" id="L184" title="All 2 branches covered.">    		existingLoan.setLender(loan.lender()==null ? existingLoan.getLender() : loan.lender());</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">    		existingLoan.setBorrower(loan.borrower()==null ? existingLoan.getBorrower() : loan.borrower());</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">    		existingLoan.setItem(loan.item()==null ? existingLoan.getItem() : loan.item());</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">    		existingLoan.setLoanDate(loan.loanDate()==null ? existingLoan.getLoanDate() : Date.valueOf(loan.loanDate()));</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">    		existingLoan.setEstimatedReturnDate(loan.estimatedReturnDate()==null ? existingLoan.getEstimatedReturnDate() : Date.valueOf(loan.estimatedReturnDate()));</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">    		existingLoan.setRealReturnDate(loan.realReturnDate()==null ? existingLoan.getRealReturnDate() : Date.valueOf(loan.realReturnDate()));</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">    		existingLoan.setLoanStatus(loan.loanStatus()==null ? existingLoan.getLoanStatus() : Loan.Status.valueOf(loan.loanStatus()));</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">    		existingLoan.setRating(loan.rating()==null ? existingLoan.getRating() : Double.valueOf(loan.rating()));</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">    		existingLoan.setObservations(loan.observations()==null ? existingLoan.getObservations() : loan.observations());	</span>
+<span class="fc" id="L193">			loanService.saveLoan(existingLoan);</span>
+<span class="fc" id="L194">			return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
+<span class="fc" id="L195">		} catch (RuntimeException e) {</span>
+<span class="fc" id="L196">			return new ResponseEntity&lt;&gt;(e.getMessage(),HttpStatus.NOT_FOUND);</span>
+		}
+	}
+
+    /**
+     * Marks a loan as returned by its item ID.
+     *
+     * @param itemId The ID of the item.
+     * @return ResponseEntity indicating the result of the operation.
+     */
+	@PutMapping(&quot;/{itemId}/return&quot;)
+    public ResponseEntity&lt;Void&gt; returnLoan(@PathVariable Long itemId) {
+<span class="fc" id="L208">		User user = getAuthenticatedUser();</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">		if (user == null) {</span>
+<span class="fc" id="L210">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+		}
+		try {
+<span class="fc" id="L213">			boolean updated = loanService.returnLoan(itemId, user.getId());</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">			if (updated) {</span>
+<span class="fc" id="L215">				return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
+			} else {
+<span class="fc" id="L217">				return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+			}
+<span class="fc" id="L219">		} catch (Exception e) {</span>
+<span class="fc" id="L220">			return new ResponseEntity&lt;&gt;(HttpStatus.INTERNAL_SERVER_ERROR);</span>
+		}
+    }
+
+	
+	 /**
+     * Deletes a loan by its ID.
+     *
+     * @param id    The ID of the loan.
+     * @param token The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;String&gt; deleteLoan(@PathVariable Long id, @RequestParam(&quot;token&quot;) String token) {
+<span class="fc" id="L234">    	User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L235" title="All 8 branches covered.">        if (user == null || user.getId()!=loanService.getLoanById(id).get().getLender() &amp;&amp; user.getId()!=loanService.getLoanById(id).get().getBorrower() &amp;&amp; user.getAdmin()==false) {</span>
+<span class="fc" id="L236">        	 return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+        }
+        try {
+<span class="fc" id="L239">        	  loanService.deleteLoan(id);</span>
+<span class="fc" id="L240">              return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
+<span class="fc" id="L241">		} catch (RuntimeException e) {</span>
+<span class="fc" id="L242">			return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+		}
+      
+    }
+    
+    /**
+     * Converts a LoanRecord to a Loan entity.
+     *
+     * @param loanRecord The loan record.
+     * @return The converted Loan entity.
+     */
+	private Loan convertToLoan(LoanRecord loanRecord) {
+<span class="fc" id="L254">        return new Loan(</span>
+        	null,
+<span class="fc" id="L256">        	loanRecord.lender(),</span>
+            null, // It is setted in createLoan function
+<span class="fc" id="L258">            loanRecord.item(),</span>
+<span class="fc" id="L259">            Date.valueOf(loanRecord.loanDate()),</span>
+<span class="fc" id="L260">            Date.valueOf(loanRecord.estimatedReturnDate()),</span>
+            null,
+            Loan.Status.IN_USE,
+            null,
+<span class="fc" id="L264">            loanRecord.observations()</span>
+        );
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

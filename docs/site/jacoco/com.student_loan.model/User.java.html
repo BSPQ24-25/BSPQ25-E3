@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">StudentLoanManagement</a> &gt; <a href="index.source.html" class="el_package">com.student_loan.model</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">
+package com.student_loan.model;
+
+import jakarta.persistence.*;
+
+/**
+ * Entity class representing a user in the system. Maps to the &quot;users&quot; table in the database.
+ */
+@Entity
+@Table(name = &quot;users&quot;)
+public class User {
+
+    /**
+     * The unique identifier for the user.
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * The name of the user.
+     */
+    private String name;
+
+    /**
+     * The email of the user.
+     */
+    private String email;
+
+    /**
+     * The password of the user.
+     */
+    private String password;
+
+    /**
+     * The telephone number of the user.
+     */
+    @Column(name = &quot;telephone_number&quot;)
+    private String telephoneNumber;
+
+    /**
+     * The address of the user.
+     */
+    private String address;
+
+    /**
+     * The degree type of the user (e.g., UNIVERSITY_DEGREE, MASTER, DOCTORATE).
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;degree_type&quot;)
+    private DegreeType degreeType;
+
+    /**
+     * The year of the degree the user is pursuing or has completed.
+     */
+    @Column(name = &quot;degree_year&quot;)
+    private Integer degreeYear;
+
+    /**
+     * The number of penalties the user has accumulated.
+     */
+    private Integer penalties;
+
+    /**
+     * The average rating of the user.
+     */
+    @Column(name = &quot;average_rating&quot;)
+    private Double averageRating;
+
+    /**
+     * Indicates whether the user has admin privileges.
+     */
+    private Boolean admin;
+
+    /**
+     * Enum representing the possible degree types of a user.
+     */
+<span class="fc" id="L78">    public enum DegreeType {</span>
+<span class="fc" id="L79">        UNIVERSITY_DEGREE,</span>
+<span class="fc" id="L80">        MASTER,</span>
+<span class="fc" id="L81">        DOCTORATE</span>
+    }
+
+    /**
+     * Default constructor for the User class.
+     */
+<span class="fc" id="L87">    public User() {</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Constructor for the User class.
+     *
+     * @param id             The unique identifier for the user.
+     * @param name           The name of the user.
+     * @param email          The email of the user.
+     * @param password       The password of the user.
+     * @param telephoneNumber The telephone number of the user.
+     * @param address        The address of the user.
+     * @param degreeType     The degree type of the user.
+     * @param degreeYear     The year of the degree the user is pursuing or has completed.
+     * @param penalties      The number of penalties the user has accumulated.
+     * @param averageRating  The average rating of the user.
+     * @param admin          Indicates whether the user has admin privileges.
+     */
+    public User(Long id, String name, String email, String password, String telephoneNumber,
+                String address, DegreeType degreeType, Integer degreeYear, Integer penalties,
+<span class="fc" id="L107">                Double averageRating, Boolean admin) {</span>
+<span class="fc" id="L108">        this.id = id;</span>
+<span class="fc" id="L109">        this.name = name;</span>
+<span class="fc" id="L110">        this.email = email;</span>
+<span class="fc" id="L111">        this.password = password;</span>
+<span class="fc" id="L112">        this.telephoneNumber = telephoneNumber;</span>
+<span class="fc" id="L113">        this.address = address;</span>
+<span class="fc" id="L114">        this.degreeType = degreeType;</span>
+<span class="fc" id="L115">        this.degreeYear = degreeYear;</span>
+<span class="fc" id="L116">        this.penalties = penalties;</span>
+<span class="fc" id="L117">        this.averageRating = averageRating;</span>
+<span class="fc" id="L118">        this.admin = admin;</span>
+<span class="fc" id="L119">    }</span>
+
+    /**
+     * Gets the unique identifier for the user.
+     *
+     * @return The unique identifier for the user.
+     */
+    public Long getId() {
+<span class="fc" id="L127">        return id;</span>
+    }
+
+    /**
+     * Sets the unique identifier for the user.
+     *
+     * @param id The unique identifier for the user.
+     */
+    public void setId(Long id) {
+<span class="fc" id="L136">        this.id = id;</span>
+<span class="fc" id="L137">    }</span>
+
+    /**
+     * Gets the name of the user.
+     *
+     * @return The name of the user.
+     */
+    public String getName() {
+<span class="fc" id="L145">        return name;</span>
+    }
+
+    /**
+     * Sets the name of the user.
+     *
+     * @param name The name of the user.
+     */
+    public void setName(String name) {
+<span class="fc" id="L154">        this.name = name;</span>
+<span class="fc" id="L155">    }</span>
+
+    /**
+     * Gets the email of the user.
+     *
+     * @return The email of the user.
+     */
+    public String getEmail() {
+<span class="fc" id="L163">        return email;</span>
+    }
+
+    /**
+     * Sets the email of the user.
+     *
+     * @param email The email of the user.
+     */
+    public void setEmail(String email) {
+<span class="fc" id="L172">        this.email = email;</span>
+<span class="fc" id="L173">    }</span>
+
+    /**
+     * Gets the password of the user.
+     *
+     * @return The password of the user.
+     */
+    public String getPassword() {
+<span class="fc" id="L181">        return password;</span>
+    }
+
+    /**
+     * Sets the password of the user.
+     *
+     * @param password The password of the user.
+     */
+    public void setPassword(String password) {
+<span class="fc" id="L190">        this.password = password;</span>
+<span class="fc" id="L191">    }</span>
+
+    /**
+     * Gets the telephone number of the user.
+     *
+     * @return The telephone number of the user.
+     */
+    public String getTelephoneNumber() {
+<span class="fc" id="L199">        return telephoneNumber;</span>
+    }
+
+    /**
+     * Sets the telephone number of the user.
+     *
+     * @param telephoneNumber The telephone number of the user.
+     */
+    public void setTelephoneNumber(String telephoneNumber) {
+<span class="fc" id="L208">        this.telephoneNumber = telephoneNumber;</span>
+<span class="fc" id="L209">    }</span>
+
+    /**
+     * Gets the address of the user.
+     *
+     * @return The address of the user.
+     */
+    public String getAddress() {
+<span class="fc" id="L217">        return address;</span>
+    }
+
+    /**
+     * Sets the address of the user.
+     *
+     * @param address The address of the user.
+     */
+    public void setAddress(String address) {
+<span class="fc" id="L226">        this.address = address;</span>
+<span class="fc" id="L227">    }</span>
+
+    /**
+     * Gets the degree type of the user.
+     *
+     * @return The degree type of the user.
+     */
+    public DegreeType getDegreeType() {
+<span class="fc" id="L235">        return degreeType;</span>
+    }
+
+    /**
+     * Sets the degree type of the user.
+     *
+     * @param degreeType The degree type of the user.
+     */
+    public void setDegreeType(DegreeType degreeType) {
+<span class="fc" id="L244">        this.degreeType = degreeType;</span>
+<span class="fc" id="L245">    }</span>
+
+    /**
+     * Gets the year of the degree the user is pursuing or has completed.
+     *
+     * @return The year of the degree the user is pursuing or has completed.
+     */
+    public Integer getDegreeYear() {
+<span class="fc" id="L253">        return degreeYear;</span>
+    }
+
+    /**
+     * Sets the year of the degree the user is pursuing or has completed.
+     *
+     * @param degreeYear The year of the degree the user is pursuing or has completed.
+     */
+    public void setDegreeYear(Integer degreeYear) {
+<span class="fc" id="L262">        this.degreeYear = degreeYear;</span>
+<span class="fc" id="L263">    }</span>
+
+    /**
+     * Gets the number of penalties the user has accumulated.
+     *
+     * @return The number of penalties the user has accumulated.
+     */
+    public Integer getPenalties() {
+<span class="fc" id="L271">        return penalties;</span>
+    }
+
+    /**
+     * Sets the number of penalties the user has accumulated.
+     *
+     * @param penalties The number of penalties the user has accumulated.
+     */
+    public void setPenalties(Integer penalties) {
+<span class="fc" id="L280">        this.penalties = penalties;</span>
+<span class="fc" id="L281">    }</span>
+
+    /**
+     * Gets the average rating of the user.
+     *
+     * @return The average rating of the user.
+     */
+    public Double getAverageRating() {
+<span class="fc" id="L289">        return averageRating;</span>
+    }
+
+    /**
+     * Sets the average rating of the user.
+     *
+     * @param averageRating The average rating of the user.
+     */
+    public void setAverageRating(Double averageRating) {
+<span class="fc" id="L298">        this.averageRating = averageRating;</span>
+<span class="fc" id="L299">    }</span>
+
+    /**
+     * Gets whether the user has admin privileges.
+     *
+     * @return True if the user has admin privileges, false otherwise.
+     */
+    public Boolean getAdmin() {
+<span class="fc" id="L307">        return admin;</span>
+    }
+
+    /**
+     * Sets whether the user has admin privileges.
+     *
+     * @param admin True if the user has admin privileges, false otherwise.
+     */
+    public void setAdmin(Boolean admin) {
+<span class="fc" id="L316">        this.admin = admin;</span>
+<span class="fc" id="L317">    }</span>
+
+    /**
+     * Returns a string representation of the user.
+     *
+     * @return A string representation of the user.
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L326">        return &quot;User{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, name='&quot; + name + '\'' +
+                &quot;, email='&quot; + email + '\'' +
+                &quot;, password='&quot; + password + '\'' +
+                &quot;, telephoneNumber='&quot; + telephoneNumber + '\'' +
+                &quot;, address='&quot; + address + '\'' +
+                &quot;, degreeType=&quot; + degreeType +
+                &quot;, degreeYear=&quot; + degreeYear +
+                &quot;, penalties=&quot; + penalties +
+                &quot;, averageRating=&quot; + averageRating +
+                &quot;, admin=&quot; + admin +
+                '}';
+    }
+
+    public boolean hasPenalty() {
+<span class="fc bfc" id="L342" title="All 4 branches covered.">        return penalties != null &amp;&amp; penalties &gt; 0;</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

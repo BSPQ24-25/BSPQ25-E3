@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Item.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">StudentLoanManagement</a> &gt; <a href="index.source.html" class="el_package">com.student_loan.model</a> &gt; <span class="el_source">Item.java</span></div><h1>Item.java</h1><pre class="source lang-java linenums">
+package com.student_loan.model;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+/**
+ * Entity class representing an item in the system. Maps to the &quot;items&quot; table in the database.
+ */
+@Entity
+@Table(name = &quot;items&quot;)
+public class Item {
+
+    /**
+     * The unique identifier for the item.
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * The name of the item.
+     */
+    private String name;
+
+    /**
+     * A description of the item.
+     */
+    private String description;
+
+    /**
+     * The category of the item.
+     */
+    private String category;
+
+    /**
+     * The status of the item (e.g., AVAILABLE, BORROWED, UNAVAILABLE).
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;status&quot;)
+    private ItemStatus status;
+
+    /**
+     * The ID of the owner of the item.
+     */
+    @Column(name = &quot;owner_id&quot;, nullable = false)
+    private Long owner;
+
+    /**
+     * The purchase date of the item.
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = &quot;purchase_date&quot;)
+    private Date purchaseDate;
+
+    /**
+     * The purchase price of the item.
+     */
+    @Column(name = &quot;purchase_price&quot;)
+    private Double purchasePrice;
+
+    /**
+     * The condition of the item (e.g., NEW, LIKE_NEW, GOOD, etc.).
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;`condition`&quot;)
+    private ItemCondition condition;
+
+    /**
+     * The URL or path to the image of the item.
+     */
+    private String image;
+
+    /**
+     * Enum representing the possible statuses of an item.
+     */
+<span class="fc" id="L77">    public enum ItemStatus {</span>
+<span class="fc" id="L78">        AVAILABLE, BORROWED, UNAVAILABLE</span>
+    }
+
+    /**
+     * Enum representing the possible conditions of an item.
+     */
+<span class="fc" id="L84">    public enum ItemCondition {</span>
+<span class="fc" id="L85">        NEW, LIKE_NEW, GOOD, USED, VERY_USED, DAMAGED</span>
+    }
+
+    /**
+     * Default constructor for the Item class.
+     */
+<span class="fc" id="L91">    public Item() {</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Constructor for the Item class.
+     *
+     * @param id            The unique identifier for the item.
+     * @param name          The name of the item.
+     * @param description   A description of the item.
+     * @param category      The category of the item.
+     * @param status        The status of the item.
+     * @param owner         The ID of the owner of the item.
+     * @param purchaseDate  The purchase date of the item.
+     * @param purchasePrice The purchase price of the item.
+     * @param condition     The condition of the item.
+     * @param image         The URL or path to the image of the item.
+     */
+<span class="fc" id="L108">    public Item(Long id, String name, String description, String category, ItemStatus status, Long owner, Date purchaseDate, Double purchasePrice, ItemCondition condition, String image) {</span>
+<span class="fc" id="L109">        this.id = id;</span>
+<span class="fc" id="L110">        this.name = name;</span>
+<span class="fc" id="L111">        this.description = description;</span>
+<span class="fc" id="L112">        this.category = category;</span>
+<span class="fc" id="L113">        this.status = status;</span>
+<span class="fc" id="L114">        this.owner = owner;</span>
+<span class="fc" id="L115">        this.purchaseDate = purchaseDate;</span>
+<span class="fc" id="L116">        this.purchasePrice = purchasePrice;</span>
+<span class="fc" id="L117">        this.condition = condition;</span>
+<span class="fc" id="L118">        this.image = image;</span>
+<span class="fc" id="L119">    }</span>
+
+    // Getters &amp; Setters
+
+    /**
+     * Gets the unique identifier for the item.
+     *
+     * @return The unique identifier for the item.
+     */
+    public Long getId() {
+<span class="fc" id="L129">        return id;</span>
+    }
+
+    /**
+     * Sets the unique identifier for the item.
+     *
+     * @param id The unique identifier for the item.
+     */
+    public void setId(Long id) {
+<span class="fc" id="L138">        this.id = id;</span>
+<span class="fc" id="L139">    }</span>
+
+    /**
+     * Gets the name of the item.
+     *
+     * @return The name of the item.
+     */
+    public String getName() {
+<span class="fc" id="L147">        return name;</span>
+    }
+
+    /**
+     * Sets the name of the item.
+     *
+     * @param name The name of the item.
+     */
+    public void setName(String name) {
+<span class="fc" id="L156">        this.name = name;</span>
+<span class="fc" id="L157">    }</span>
+
+    /**
+     * Gets the description of the item.
+     *
+     * @return The description of the item.
+     */
+    public String getDescription() {
+<span class="fc" id="L165">        return description;</span>
+    }
+
+    /**
+     * Sets the description of the item.
+     *
+     * @param description The description of the item.
+     */
+    public void setDescription(String description) {
+<span class="fc" id="L174">        this.description = description;</span>
+<span class="fc" id="L175">    }</span>
+
+    /**
+     * Gets the category of the item.
+     *
+     * @return The category of the item.
+     */
+    public String getCategory() {
+<span class="fc" id="L183">        return category;</span>
+    }
+
+    /**
+     * Sets the category of the item.
+     *
+     * @param category The category of the item.
+     */
+    public void setCategory(String category) {
+<span class="fc" id="L192">        this.category = category;</span>
+<span class="fc" id="L193">    }</span>
+
+    /**
+     * Gets the status of the item.
+     *
+     * @return The status of the item.
+     */
+    public ItemStatus getStatus() {
+<span class="fc" id="L201">        return status;</span>
+    }
+
+    /**
+     * Sets the status of the item.
+     *
+     * @param status The status of the item.
+     */
+    public void setStatus(ItemStatus status) {
+<span class="fc" id="L210">        this.status = status;</span>
+<span class="fc" id="L211">    }</span>
+
+    /**
+     * Gets the ID of the owner of the item.
+     *
+     * @return The ID of the owner of the item.
+     */
+    public Long getOwner() {
+<span class="fc" id="L219">        return owner;</span>
+    }
+
+    /**
+     * Sets the ID of the owner of the item.
+     *
+     * @param owner The ID of the owner of the item.
+     */
+    public void setOwner(Long owner) {
+<span class="fc" id="L228">        this.owner = owner;</span>
+<span class="fc" id="L229">    }</span>
+
+    /**
+     * Gets the purchase date of the item.
+     *
+     * @return The purchase date of the item.
+     */
+    public Date getPurchaseDate() {
+<span class="fc" id="L237">        return purchaseDate;</span>
+    }
+
+    /**
+     * Sets the purchase date of the item.
+     *
+     * @param purchaseDate The purchase date of the item.
+     */
+    public void setPurchaseDate(Date purchaseDate) {
+<span class="fc" id="L246">        this.purchaseDate = purchaseDate;</span>
+<span class="fc" id="L247">    }</span>
+
+    /**
+     * Gets the purchase price of the item.
+     *
+     * @return The purchase price of the item.
+     */
+    public Double getPurchasePrice() {
+<span class="fc" id="L255">        return purchasePrice;</span>
+    }
+
+    /**
+     * Sets the purchase price of the item.
+     *
+     * @param purchasePrice The purchase price of the item.
+     */
+    public void setPurchasePrice(Double purchasePrice) {
+<span class="fc" id="L264">        this.purchasePrice = purchasePrice;</span>
+<span class="fc" id="L265">    }</span>
+
+    /**
+     * Gets the condition of the item.
+     *
+     * @return The condition of the item.
+     */
+    public ItemCondition getCondition() {
+<span class="fc" id="L273">        return condition;</span>
+    }
+
+    /**
+     * Sets the condition of the item.
+     *
+     * @param condition The condition of the item.
+     */
+    public void setCondition(ItemCondition condition) {
+<span class="fc" id="L282">        this.condition = condition;</span>
+<span class="fc" id="L283">    }</span>
+
+    /**
+     * Gets the URL or path to the image of the item.
+     *
+     * @return The URL or path to the image of the item.
+     */
+    public String getImage() {
+<span class="fc" id="L291">        return image;</span>
+    }
+
+    /**
+     * Sets the URL or path to the image of the item.
+     *
+     * @param image The URL or path to the image of the item.
+     */
+    public void setImage(String image) {
+<span class="fc" id="L300">        this.image = image;</span>
+<span class="fc" id="L301">    }</span>
+
+    /**
+     * Returns a string representation of the item.
+     *
+     * @return A string representation of the item.
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L310">        return &quot;Item{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, name='&quot; + name + '\'' +
+                &quot;, description='&quot; + description + '\'' +
+                &quot;, category='&quot; + category + '\'' +
+                &quot;, status=&quot; + status +
+                &quot;, owner=&quot; + owner +
+                &quot;, purchaseDate=&quot; + purchaseDate +
+                &quot;, purchasePrice=&quot; + purchasePrice +
+                &quot;, condition=&quot; + condition +
+                &quot;, image='&quot; + image + '\'' +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

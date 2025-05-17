@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">StudentLoanManagement</a> &gt; <a href="index.source.html" class="el_package">com.student_loan.controller</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package com.student_loan.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+import com.student_loan.model.User;
+import com.student_loan.service.UserService;
+import com.student_loan.dtos.UserRecord;
+import com.student_loan.dtos.CredentialsDTO;
+import com.student_loan.dtos.RegistrationRecord;
+import com.student_loan.dtos.UserDTO;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Controller class for managing users in the system. Handles HTTP requests
+ * related to user operations such as creating, updating, deleting, and
+ * retrieving users.
+ */
+@RestController
+@RequestMapping(&quot;/users&quot;)
+public class UserController {
+    
+
+    private UserService userService;
+    /**
+     * Constructor for UserController.
+     *
+     * @param userService Service for user operations.
+     */
+<span class="fc" id="L34">	public UserController(UserService userService) {</span>
+<span class="fc" id="L35">        this.userService = userService;</span>
+<span class="fc" id="L36">    }</span>
+	  /**
+     * Retrieves all users in the system.
+     *
+     * @param token The authentication token.
+     * @return ResponseEntity containing a list of all users.
+     */
+    @GetMapping
+    public ResponseEntity&lt;List&lt;User&gt;&gt; getAllUsers(@RequestParam(&quot;token&quot;) String token) {
+<span class="fc" id="L45">    	 User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L46" title="All 4 branches covered.">        if (user == null || user.getAdmin()==false) {</span>
+<span class="fc" id="L47">        	return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED);</span>
+        }
+<span class="fc" id="L49">    	return new ResponseEntity&lt;&gt;(userService.getAllUsers(), HttpStatus.OK);</span>
+    }
+    /**
+     * Authenticates a user and generates a token.
+     *
+     * @param credentials The user's credentials.
+     * @return ResponseEntity containing the authentication token or an error message.
+     */
+    @PostMapping(&quot;/login&quot;)
+    public ResponseEntity&lt;?&gt; login(@RequestBody CredentialsDTO credentials) {
+<span class="fc" id="L59">        String token = userService.login(credentials);</span>
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (token.equals(&quot;Invalid credentials&quot;)) {</span>
+<span class="fc" id="L62">            return ResponseEntity.status(401).body(&quot;Invalid credentials&quot;);</span>
+        }
+<span class="fc" id="L64">        return ResponseEntity.ok().body(&quot;{\&quot;token\&quot;: \&quot;&quot; + token + &quot;\&quot;}&quot;);</span>
+    }
+    /**
+     * Logs out a user by invalidating their token.
+     *
+     * @param token The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
+    @PostMapping(&quot;/logout&quot;)
+	public ResponseEntity&lt;String&gt; logout(@RequestParam(&quot;token&quot;) String token) {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		if (userService.logout(token)) {</span>
+<span class="fc" id="L75">			return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
+		} else {
+<span class="fc" id="L77">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+		}
+	}
+    /**
+     * Retrieves a user by their ID.
+     *
+     * @param id The ID of the user.
+     * @return ResponseEntity containing the user data.
+     */
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;UserDTO&gt; getUserById(@PathVariable Long id) {
+<span class="fc" id="L88">    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L89">		String email = authentication.getName();</span>
+
+<span class="fc" id="L91">    	User user = userService.getUserByEmail(email);</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (user == null) {</span>
+<span class="fc" id="L93">        	   return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+        }
+<span class="fc" id="L95">		User retrievedUser = userService.getUserById(id).get();</span>
+<span class="fc" id="L96">		UserDTO userDTO = new UserDTO(retrievedUser.getId(), retrievedUser.getName(), retrievedUser.getEmail());</span>
+
+<span class="fc" id="L98">    	return new ResponseEntity&lt;&gt;(userDTO, HttpStatus.OK);</span>
+    }
+
+	/**
+     * Updates a user by their ID.
+     *
+     * @param id       The ID of the user.
+     * @param userData The updated user data.
+     * @param token    The authentication token.
+     * @return ResponseEntity containing the updated user or an error status.
+     */
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;User&gt; updateUser(@PathVariable Long id, @RequestBody UserRecord userData, @RequestParam(&quot;token&quot;) String token) {
+<span class="fc" id="L111">        User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L112" title="All 6 branches covered.">		if (user == null || user.getAdmin() == false &amp;&amp; user.getId() != id) {</span>
+<span class="fc" id="L113">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+		}
+    	
+    	try {
+<span class="fc" id="L117">            User updatedUser = userService.updateUser(id, userRecordToUser(userData));</span>
+<span class="fc" id="L118">            return new ResponseEntity&lt;&gt;(updatedUser, HttpStatus.OK);</span>
+<span class="fc" id="L119">        } catch (RuntimeException e) {</span>
+<span class="fc" id="L120">            return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+        }
+    }
+
+    /**
+     * Registers a new user.
+     *
+     * @param userDTO The registration data.
+     * @return ResponseEntity indicating the result of the operation.
+     */
+    //Register 
+    @PostMapping(&quot;/register&quot;)
+    public ResponseEntity&lt;String&gt; register(@RequestBody RegistrationRecord userDTO) {
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (userService.register(registerRecordToUser(userDTO))) {</span>
+<span class="fc" id="L134">            return ResponseEntity.ok(&quot;User registered correctly&quot;);</span>
+        } else {
+<span class="fc" id="L136">            return ResponseEntity.badRequest().body(&quot;The user already exists&quot;);</span>
+        }
+    }
+    /**
+     * Deletes a user by their ID.
+     *
+     * @param id    The ID of the user.
+     * @param token The authentication token.
+     * @return ResponseEntity indicating the result of the operation.
+     */
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;String&gt; deleteUser(@PathVariable Long id, @RequestParam(&quot;token&quot;) String token) {
+<span class="fc" id="L149">        User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L150" title="All 6 branches covered.">		if (user == null || user.getAdmin() == false &amp;&amp; user.getId() != id) {</span>
+<span class="fc" id="L151">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+		}
+<span class="fc" id="L153">    	userService.deleteUser(id);</span>
+
+<span class="fc" id="L155">    	return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
+    }
+    
+
+    /**
+     * Converts a RegistrationRecord to a User entity.
+     *
+     * @param data The registration record.
+     * @return The converted User entity.
+     */
+
+    public User registerRecordToUser(RegistrationRecord data) {
+<span class="fc" id="L167">    	        User user = new User();</span>
+<span class="fc" id="L168">    	        user.setName(data.name() + &quot; &quot; + data.lastName() );</span>
+<span class="fc" id="L169">    	        user.setEmail(data.email());</span>
+<span class="fc" id="L170">    	        user.setPassword(data.password());</span>
+<span class="fc" id="L171">    	        user.setTelephoneNumber(data.telephoneNumber());</span>
+<span class="fc" id="L172">    	        user.setAddress(data.address());</span>
+<span class="fc" id="L173">    			user.setDegreeType(User.DegreeType.valueOf(data.degreeType()));</span>
+<span class="fc" id="L174">    			user.setDegreeYear(data.degreeYear());</span>
+<span class="fc" id="L175">    			user.setPenalties(0);</span>
+<span class="fc" id="L176">    			user.setAverageRating(0.0);</span>
+<span class="fc" id="L177">    			user.setAdmin(false);</span>
+<span class="fc" id="L178">    			return user;           </span>
+    }
+    /**
+     * Converts a UserRecord to a User entity.
+     *
+     * @param userDTO The user record.
+     * @return The converted User entity.
+     */
+    
+	public User userRecordToUser(UserRecord userDTO) {
+<span class="fc" id="L188">		User user = new User();</span>
+<span class="fc" id="L189">		user.setName(userDTO.name()+&quot; &quot;+userDTO.lastName());</span>
+<span class="fc" id="L190">		user.setEmail(userDTO.email());</span>
+<span class="fc" id="L191">		user.setPassword(userDTO.password());</span>
+<span class="fc" id="L192">		user.setTelephoneNumber(userDTO.telephoneNumber());</span>
+<span class="fc" id="L193">		user.setAddress(userDTO.address());</span>
+<span class="fc" id="L194">		user.setDegreeType(User.DegreeType.UNIVERSITY_DEGREE);</span>
+<span class="fc" id="L195">		user.setDegreeYear(userDTO.degreeYear());</span>
+<span class="fc" id="L196">		user.setPenalties(userDTO.penalties());</span>
+<span class="fc" id="L197">		user.setAverageRating(userDTO.averageRating());</span>
+<span class="fc" id="L198">		user.setAdmin(userDTO.admin());</span>
+		
+<span class="fc" id="L200">		return user;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
