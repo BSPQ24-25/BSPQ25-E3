@@ -17,7 +17,7 @@
       "confirmPassword": "Passwort bestätigen",
       "passwordMismatch": "Passwörter stimmen nicht überein",
       "registrationSuccess": "Registrierung erfolgreich!",
-      "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+      "alreadyHaveAccount": "Dieser Benutzer existiert bereits",
       "signIn": "Anmelden",
       "error": "Beim Registrieren ist ein Fehler aufgetreten"
     },

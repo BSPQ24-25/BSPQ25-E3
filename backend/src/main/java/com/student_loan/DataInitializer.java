@@ -55,7 +55,7 @@ public class DataInitializer {
       users.add(new User(null, "Sara García", "sara.garcia@email.com", "contra123", "602 123 654", "Calle del Sol, 22, 46001 Valencia", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));
 
       // Admin users
-      users.add(new User(null, "Sabin Luja", "sabin.luja@opendeusto.es", "sabin", "602 123 654", "Hermanos Aguirre Kalea, 2, 48014 Bilbao", User.DegreeType.UNIVERSITY_DEGREE, 4, 0, 5.0, true));
+      users.add(new User(null, "Sabin Luja", "sabin.luja@opendeusto.es", "sabin", "602 153 654", "Hermanos Aguirre Kalea, 2, 48014 Bilbao", User.DegreeType.UNIVERSITY_DEGREE, 4, 0, 5.0, true));
       
       return users;
    }

@@ -17,7 +17,7 @@
     "confirmPassword": "Confirm password",
     "passwordMismatch": "Passwords do not match",
     "registrationSuccess": "Registration successful!",
-    "alreadyHaveAccount": "Already have an account?",
+    "alreadyHaveAccount": "This user already exists",
     "signIn": "Sign in",
     "error": "An error occurred during registration"
   },

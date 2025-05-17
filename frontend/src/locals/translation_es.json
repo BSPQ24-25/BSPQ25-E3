@@ -17,9 +17,10 @@
       "confirmPassword": "Confirmar contraseña",
       "passwordMismatch": "Las contraseñas no coinciden",
       "registrationSuccess": "¡Registro exitoso!",
-      "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+      "alreadyHaveAccount": "Este usuario ya existe",
       "signIn": "Iniciar sesión",
-      "error": "Ocurrió un error durante el registro"
+      "error": "Ocurrió un error durante el registro",
+      "emailExists": "Este email ya está registrado"
     },
     "navbar": {
       "browseItems": "Explorar artículos",
