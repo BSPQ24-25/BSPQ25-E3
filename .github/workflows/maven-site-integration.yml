@@ -113,13 +113,13 @@ jobs:
           mkdir -p docs
           mkdir -p docs/site
           mkdir -p docs/doxygen
-          if [ -d "target/site" ]; then
-            cp -r target/site/* docs/site/
+          if [ -d "backend/target/site" ]; then
+            cp -r backend/target/site/* docs/site/
           else
             echo "No site generated. Skipping copy of site."
           fi
-          if [ -d "target/doxygen" ]; then
-            cp -r target/doxygen/* docs/doxygen/
+          if [ -d "backend/target/doxygen" ]; then
+            cp -r backend/target/doxygen/* docs/doxygen/
           else
             echo "No doxygen generated. Skipping copy of doxygen."
           fi
