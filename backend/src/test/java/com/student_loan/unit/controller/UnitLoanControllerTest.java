@@ -252,6 +252,16 @@ class UnitLoanControllerTest {
     @Test
     @DisplayName("POST /loans - Unauthorized if no user")
     void createLoan_unauthorized() {
+        // Simula un contexto con un Authentication no autenticado
+        Authentication mockAuth = mock(Authentication.class);
+        when(mockAuth.isAuthenticated()).thenReturn(false); // importante
+        when(mockAuth.getName()).thenReturn(null); // opcional, defensivo
+
+        SecurityContext mockContext = mock(SecurityContext.class);
+        when(mockContext.getAuthentication()).thenReturn(mockAuth);
+        SecurityContextHolder.setContext(mockContext);
+
+        // Simula que el token no devuelve usuario
         LoanRecord rec = new LoanRecord(null, null, null, null, null, null, null, null, null, null);
         when(userService.getUserByToken("token")).thenReturn(null);
 

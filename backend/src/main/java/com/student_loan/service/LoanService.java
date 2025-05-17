@@ -117,7 +117,7 @@ public class LoanService {
         if (optionalLoan != null && optionalLoan.isPresent()) {
             // Update item status
             Optional<Item> optionalItem = itemRepository.findById(itemId);
-            if (optionalItem != null) {
+            if (optionalItem.isPresent()) {
                 Item item = optionalItem.get();
                 item.setStatus(ItemStatus.AVAILABLE);
                 itemRepository.save(item);

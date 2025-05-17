@@ -707,6 +707,9 @@ class UnitLoanServiceTest {
         Long itemId = 1L;
         Long borrowerId = 2L;
 
+        Item item = new Item();
+        item.setId(itemId);
+
         Loan loan = new Loan();
         loan.setId(100L);
         loan.setLoanStatus(Loan.Status.IN_USE);
@@ -715,7 +718,9 @@ class UnitLoanServiceTest {
 
         when(loanRepository.findByBorrowerAndItemAndLoanStatus(
             borrowerId, itemId, Loan.Status.IN_USE)).thenReturn(Optional.of(loan));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(loanRepository.save(any(Loan.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         boolean result = loanService.returnLoan(itemId, borrowerId);
 
