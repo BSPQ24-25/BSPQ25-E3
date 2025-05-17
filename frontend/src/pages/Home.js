@@ -74,6 +74,11 @@ function Home() {
 
   const { t } = useTranslation();
 
+  // Function to remove an item by id
+  const removeItem = (id) => {
+    setItems((prevItems) => prevItems.filter(item => item.id !== id));
+  };
+
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -95,6 +100,7 @@ function Home() {
                 purchaseDate: item.purchaseDate || null,
                 purchasePrice: item.purchasePrice || 0,
                 imageUrl: `https://images.unsplash.com/photo-1606813907291-d86efa9b94db?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60`, // o ajusta si necesitas
+                lenderId: item.owner,
                 lenderName: ownerName
               };
             } catch (ownerError) {
@@ -107,6 +113,7 @@ function Home() {
                 purchaseDate: item.purchaseDate || null,
                 purchasePrice: item.purchasePrice || 0,
                 imageUrl: `https://images.unsplash.com/photo-1606813907291-d86efa9b94db?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60`,
+                lenderId: item.owner,
                 lenderName: 'Unknown'
               };
             }
@@ -155,7 +162,7 @@ function Home() {
         <h1 className="text-3xl font-bold text-gray-800 mb-8">{t('home.availableItems')}</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map(item => (
-            <ItemCard key={item.id} item={item} />
+            <ItemCard key={item.id} item={item} onLoanCreated={removeItem} />
           ))}
         </div>
       </div>

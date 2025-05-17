@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import BorrowModal from './BorrowModal';
 import { useTranslation } from 'react-i18next';
+import axiosInstance from '../axiosInstance';
 
-function ItemCard({ item, onClick }) {
+function ItemCard({ item, onClick, onLoanCreated }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = useTranslation();
 
   const handleBorrowButtonClick = (e) => {
+    console.log('Item recibido en ItemCard:', item);
     e.stopPropagation();
     setIsModalOpen(true);
   };
@@ -17,21 +19,40 @@ function ItemCard({ item, onClick }) {
 
   const handleConfirmBorrow = async (endDate) => {
     try {
-      const response = await fetch('/api/loans', {
-        method: 'POST',
+
+      const pad = (n) => n.toString().padStart(2, '0');
+      const formatDate = (date) => {
+        const d = new Date(date);
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+      };
+
+      const currentDate = new Date();
+
+      const newLoanData = {
+        item: item.id,
+        lender: item.lenderId,  // <- acá debe ser lenderId
+        loanDate: formatDate(currentDate),
+        estimatedReturnDate: endDate,
+      };
+
+      console.log(newLoanData);
+      await axiosInstance.post('/loans/create', newLoanData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          item: item.id,
-          lender: item.lenderId,
-          borrower: localStorage.getItem('userId'),
-          endDate: endDate,
-        }),
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
+      alert('Loan created successfully!');
+      setIsModalOpen(false);
+
+      // We warn Home that this item has been borrowed and to remove it from the view
+      if (onLoanCreated) {
+        onLoanCreated(item.id);
+      }
+
+    } catch (error) {
+        // error.response.data puede contener el mensaje del backend
+        const errorText = error.response?.data || error.message;
 
         if (errorText.includes('penalty')) {
           alert('You cannot borrow items while under penalty.');
@@ -48,12 +69,6 @@ function ItemCard({ item, onClick }) {
         }
 
         return;
-      }
-
-      alert('Loan created successfully!');
-      setIsModalOpen(false);
-    } catch (error) {
-      alert(`Unexpected error while creating the loan: ${error.message}`);
     }
   };
 

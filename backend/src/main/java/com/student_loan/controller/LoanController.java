@@ -137,17 +137,17 @@ public class LoanController {
      * Creates a new loan.
      *
      * @param loan  The loan data.
-     * @param token The authentication token.
      * @return ResponseEntity indicating the result of the operation.
      */
-    @PostMapping
-    public ResponseEntity<String> createLoan(@RequestBody LoanRecord loan, @RequestParam("token") String token) {
-    	User user = userService.getUserByToken(token);
-		if (user == null) {
+    @PostMapping("/create")
+    public ResponseEntity<String> createLoan(@RequestBody LoanRecord loan) {
+    	User user = getAuthenticatedUser();
+        if (user == null) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
 		Loan loanEntity = convertToLoan(loan);
+        loanEntity.setBorrower(user.getId());
 		try {
 			loanService.saveLoan(loanEntity);
         } catch (RuntimeException e) {
@@ -254,7 +254,7 @@ public class LoanController {
         return new Loan(
         	null,
         	loanRecord.lender(),
-            loanRecord.borrower(),
+            null, // It is setted in createLoan function
             loanRecord.item(),
             Date.valueOf(loanRecord.loanDate()),
             Date.valueOf(loanRecord.estimatedReturnDate()),

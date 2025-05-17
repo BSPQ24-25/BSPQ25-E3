@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.student_loan.model.Loan;
 import com.student_loan.model.Loan.Status;
 import com.student_loan.model.User;
+import com.student_loan.model.Item.ItemStatus;
 import com.student_loan.model.Item;
 import com.student_loan.repository.ItemRepository;
 import com.student_loan.repository.LoanRepository;
@@ -100,6 +101,12 @@ public class LoanService {
             }
         }
 
+        // Change item's status in DB
+        Item itemToModify = itemOpt.get();
+        itemToModify.setStatus(ItemStatus.BORROWED);
+        itemRepository.save(itemToModify);
+
+        // Save loan
         return loanRepository.save(loan);
     }
 
@@ -108,6 +115,14 @@ public class LoanService {
             borrowerId, itemId, Loan.Status.IN_USE);
 
         if (optionalLoan != null && optionalLoan.isPresent()) {
+            // Update item status
+            Optional<Item> optionalItem = itemRepository.findById(itemId);
+            if (optionalItem != null) {
+                Item item = optionalItem.get();
+                item.setStatus(ItemStatus.AVAILABLE);
+                itemRepository.save(item);
+            }
+            // Update loan status
             Loan loan = optionalLoan.get();
             loan.setLoanStatus(Loan.Status.RETURNED);
             loan.setRealReturnDate(new Date());

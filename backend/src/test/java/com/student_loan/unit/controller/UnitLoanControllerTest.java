@@ -239,12 +239,13 @@ class UnitLoanControllerTest {
     @Test
     @DisplayName("POST /loans - Create loan success")
     void createLoan_success() {
+        setSecurityContext(borrower);
         LoanRecord rec = new LoanRecord(null, lender.getId(), borrower.getId(), 100L,
                 "2025-01-01", "2025-02-01", null, null, null, "obs");
         when(userService.getUserByToken("token")).thenReturn(lender);
         when(loanService.saveLoan(any())).thenReturn(sampleLoan);
 
-        ResponseEntity<String> resp = loanController.createLoan(rec, "token");
+        ResponseEntity<String> resp = loanController.createLoan(rec);
         assertEquals(HttpStatus.CREATED, resp.getStatusCode());
     }
 
@@ -254,19 +255,20 @@ class UnitLoanControllerTest {
         LoanRecord rec = new LoanRecord(null, null, null, null, null, null, null, null, null, null);
         when(userService.getUserByToken("token")).thenReturn(null);
 
-        ResponseEntity<String> resp = loanController.createLoan(rec, "token");
+        ResponseEntity<String> resp = loanController.createLoan(rec);
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
 
     @Test
     @DisplayName("POST /loans - Bad request on service error")
     void createLoan_badRequest() {
+        setSecurityContext(borrower);
         LoanRecord rec = new LoanRecord(null, lender.getId(), borrower.getId(), 100L,
                 "2025-01-01", "2025-02-01", null, null, null, "obs");
         when(userService.getUserByToken("token")).thenReturn(lender);
         doThrow(new RuntimeException("error")).when(loanService).saveLoan(any());
 
-        ResponseEntity<String> resp = loanController.createLoan(rec, "token");
+        ResponseEntity<String> resp = loanController.createLoan(rec);
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
     }
 
