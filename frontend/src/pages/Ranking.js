@@ -19,7 +19,6 @@ function Ranking() {
   useEffect(() => {
     axios.get('http://localhost:8080/api/ranking', { withCredentials: true })
       .then(({ data }) => {
-        // Asigna el campo "rank" en base al índice +1
         const withRank = data.map((u, i) => ({ ...u, rank: i + 1 }));
         setRankingData(withRank);
       })

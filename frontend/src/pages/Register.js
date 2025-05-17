@@ -24,20 +24,15 @@ function Register() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Validar solo números, un único + y espacios para el campo teléfono
     if (name === 'telephoneNumber') {
-      // Solo dígitos, + y espacios
       const re = /^[0-9+ ]*$/;
       if (!re.test(value)) return;
-      // Máximo un '+' en todo el string
       const plusCount = (value.match(/\+/g) || []).length;
       if (plusCount > 1) return;
     }
 
-    // Validar grado entre 1 y 5
     if (name === 'degreeYear') {
       if (value === '' || (Number(value) >= 1 && Number(value) <= 5)) {
-        // Permitido
       } else {
         return;
       }
@@ -49,7 +44,6 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validación de contraseñas
     if (formData.password !== formData.confirmPassword) {
       setError(t('register.passwordMismatch'));
       return;
