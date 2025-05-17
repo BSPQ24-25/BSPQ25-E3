@@ -99,7 +99,7 @@ function Home() {
                 category: item.category || 'N/A',
                 purchaseDate: item.purchaseDate || null,
                 purchasePrice: item.purchasePrice || 0,
-                imageUrl: `https://images.unsplash.com/photo-1606813907291-d86efa9b94db?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60`, // o ajusta si necesitas
+                imageUrl: item.image,
                 lenderId: item.owner,
                 lenderName: ownerName
               };
@@ -112,7 +112,7 @@ function Home() {
                 category: item.category || 'N/A',
                 purchaseDate: item.purchaseDate || null,
                 purchasePrice: item.purchasePrice || 0,
-                imageUrl: `https://images.unsplash.com/photo-1606813907291-d86efa9b94db?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60`,
+                imageUrl: item.image,
                 lenderId: item.owner,
                 lenderName: 'Unknown'
               };

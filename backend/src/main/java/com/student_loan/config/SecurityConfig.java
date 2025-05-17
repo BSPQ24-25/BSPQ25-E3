@@ -56,6 +56,8 @@ public class SecurityConfig {
                 "/users/login",
                 "/users/register",
                 "/api/ranking",
+                "/images/**",
+                "/items/**",
                 "/users"
             ).permitAll()
             .anyRequest().authenticated()

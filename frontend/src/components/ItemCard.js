@@ -92,7 +92,7 @@ function ItemCard({ item, onClick, onLoanCreated }) {
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
         <div className="h-48 w-full bg-gray-200">
           <img 
-            src={item.imageUrl} 
+            src={`${process.env.REACT_APP_API_BASE_URL}${item.imageUrl}`} 
             alt={item.name}
             className="w-full h-full object-cover"
           />
