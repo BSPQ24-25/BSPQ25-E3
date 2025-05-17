@@ -107,14 +107,6 @@ jobs:
         run: |
           mkdir -p docs
           pandoc README.md -o docs/index.html
-
-      - name: Create Doxygen output folder
-        run: mkdir -p ../../../target/doxygen
-        working-directory: backend/src/main/resources
-      
-      - name: Run Doxygen
-        run: doxygen Doxyfile
-        working-directory: backend/src/main/resources
         
       - name: Copy site output to docs/site and docs/doxygen folder to docs/doxygen
         run: |
