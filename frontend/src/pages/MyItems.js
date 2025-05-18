@@ -122,6 +122,17 @@ function MyItems() {
   };
 
   const handleConfirmUpload = async (formData) => {
+    
+    const toBase64 = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+      });
+
+    const base64Image = formData.image ? await toBase64(formData.image) : null;
+
     try {
       // TODO change forms to be able to upload the whole info of the item
       const adaptedData = {
@@ -130,7 +141,7 @@ function MyItems() {
         category: formData.category || 'Misc',
         purchaseDate: formData.purchaseDate,
         purchasePrice: formData.purchasePrice,
-        //imageBase64: base64Image, // 👈 imagen como string base64
+        imageBase64: base64Image, // 👈 imagen como string base64
         status: 'available',
         condition: 'NEW',
       };

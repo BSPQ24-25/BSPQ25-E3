@@ -7,6 +7,6 @@ public record ItemRecord(
 		String description,
 		String category,
 		String purchasePrice, 
-		String imageUrl,
+		String imageBase64,
 		String status,
 		String condition) {}
