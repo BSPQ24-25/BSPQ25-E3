@@ -202,6 +202,10 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<!-- Required to allow VisualVM profiler connection -->
+					<jvmArguments>-Xverify:none</jvmArguments>
+				</configuration>
             </plugin>
 
 			<plugin>

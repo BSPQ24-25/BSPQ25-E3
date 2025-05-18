@@ -13,6 +13,11 @@
     "firstName": "First name",
     "lastName": "Last name",
     "email": "Email address",
+    "telephoneNumber": "Telephone number",
+    "address": "Address",
+    "degreeType": "Degree Type",
+    "selectDegreeType": "Select Degree Type...",
+    "degreeYear": "Degree Year",
     "password": "Password",
     "confirmPassword": "Confirm password",
     "passwordMismatch": "Passwords do not match",
@@ -21,11 +26,18 @@
     "signIn": "Sign in",
     "error": "An error occurred during registration"
   },
+  "degreeType": {
+    "universityDegree": "University Degree",
+    "master": "Master",
+    "doctorate": "Doctorate"
+  },
   "navbar": {
     "browseItems": "Browse Items",
     "myItems": "My Items",
     "logout": "Log out",
-    "signin": "Sign in"
+    "signin": "Sign in",
+    "ranking": "Ranking",
+    "users": "Users"
   },
   "myItems": {
     "title": "My Items",
@@ -54,11 +66,22 @@
   },
   "home": {
     "loading": "Loading available items...",
-    "availableItems": "Available Items"
+    "availableItems": "Available Items",
+    "errorLoading": "Error fetching available items"
   },
   "itemCard": {
     "lender": "Lender",
-    "borrow": "Borrow"
+    "borrow": "Borrow",
+    "category": "Category",
+    "loanCreated": "Loan created successfully!",
+    "penalty": "You cannot request more loans while you have penalties.",
+    "tooManyLoans": "You have 3 active loans. Return one before requesting another.",
+    "borrowerNotFound": "Borrower not found. Check the item details.",
+    "lenderNotFound": "User not found. Please log in again.",
+    "itemNotFound": "The item you're trying to borrow doesn't exist.",
+    "loanFailed": "Failed to create loan",
+    "purchaseDate": "Purchase Date",
+    "purchasePrice": "Purchase Price"
   },
   "borrowModal": {
     "borrowItem": "Borrow {{itemName}}",
@@ -72,17 +95,78 @@
     "itemDescription": "Item Description",
     "itemImage": "Item Image",
     "cancel": "Cancel",
-    "uploadItem": "Upload Item"
+    "uploadItem": "Upload Item",
+    "category": "Category",
+    "purchaseDate":"Purchase Date",
+    "purchasePrice":"Purchase Price"
   },
   "returnModal": {
     "confirmReturn": "Confirm Return",
     "cancel": "Cancel",
-    "sureReturn": "Are you sure you want to return '"
+    "sureReturn": "Are you sure you want to return '",
+    "placeholder": "E.g.: Excellent service",
+    "error": "An error has occurred",
+    "success": "Item successfully returned!"
   },
   "reminderModal": {
     "sendReminder": "Send Reminder",
     "sureReminder": "Are you sure you want to send a reminder to ",
     "sureReminder2": " about returning '",
     "cancel": "Cancel"
+  },
+  "ranking": {
+    "fetchError": "Error loading the ranking",
+    "loading": "Loading...",
+    "title": "User Rankings",
+    "rating": "Rating:",
+    "penalties": "Penalties:",
+    "noDataTitle": "No Rankings Yet",
+    "noDataPlaceholder": "Check back later to see the leaderboard!"
+  },
+  "users": {
+    "notAuthorized": "You are not authorized to see the user list.",
+    "fetchError": "Error loading users",
+    "loading": "Loading...",
+    "title": "Users",
+    "noUsers": "No users to display.",
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "address": "Address",
+      "degreeType": "Degree Type",
+      "degreeYear": "Degree Year",
+      "penalties": "Penalties",
+      "averageRating": "Average Rating"
+    }
+  },
+  "userProfile": {
+    "fetchError": "Error loading profile",
+    "loading": "Loading profile...",
+    "error": {
+      "notFoundTitle": "User Not Found",
+      "notFoundDetails": "Could not find a user with this ID.",
+      "backToUsers": "Back to Users List"
+    },
+    "noLentItems": "No items lent by ",
+    "noBorrowedItems": "No items borrowed by ",
+    "lentTo": "Lent to:",
+    "borrowedFrom": "Borrowed from:",
+    "date": "Date:",
+    "backToUsers": "Back to Users List",
+    "email": "Email",
+    "phone": "Phone Number",
+    "address": "Address",
+    "degreeType": "Degree Type",
+    "degreeYear": "Degree Year",
+    "penalties": "Penalties",
+    "averageRating": "Average Rating",
+    "itemsLentTitle": "Items Lent by {{name}}",
+    "itemsBorrowedTitle": "Items Borrowed by {{name}}"
+  },
+  "itemStatus": {
+    "returned": "Returned",
+    "available": "Available"
   }
 }
