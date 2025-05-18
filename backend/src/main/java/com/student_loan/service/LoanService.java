@@ -142,6 +142,15 @@ public class LoanService {
     		item.setStatus(Item.ItemStatus.AVAILABLE);
     		itemRepository.save(item);
             loanRepository.save(loan);
+            
+            //Update lender ranking
+            User lender = userRepository.findById(loan.getLender()).get();
+            double currentRating = lender.getAverageRating()+0.1;
+			if (currentRating > 5) {
+				currentRating = 5;
+			}
+            lender.setAverageRating(currentRating);
+            userRepository.save(lender);
          // Mail to lender
             if(userRepository.findById(loan.getLender()).isPresent() && userRepository.findById(loan.getBorrower()).isPresent()) {
     		notificationService.enviarCorreo(userRepository.findById(loan.getLender()).get().getEmail(), "Item returned",
@@ -203,6 +212,7 @@ public class LoanService {
 
         // Asegurar estado del préstamo
         loan.setLoanStatus(Loan.Status.IN_USE);
+        item.setStatus(Item.ItemStatus.BORROWED);
 
         // Enviar correos una sola vez usando objetos ya cargados
         notificationService.enviarCorreo(

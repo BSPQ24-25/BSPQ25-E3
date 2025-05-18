@@ -4,6 +4,7 @@ import ReturnItemModal from '../components/ReturnItemModal';
 import ReminderModal from '../components/ReminderModal';
 import UploadItemModal from '../components/UploadItemModal';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 
 function MyItems() {
   const { t } = useTranslation();
@@ -20,9 +21,11 @@ function MyItems() {
 
   const fetchItems = async () => {
     try {
-      const [borrowedResponse, lentResponse] = await Promise.all([
+      const [borrowedResponse, lentResponse,loansBorrowerResponse,loansLenderResponse] = await Promise.all([
         axiosInstance.get('/items/borrowed'),
-        axiosInstance.get('/items/lent')
+        axiosInstance.get('/items/lent'),
+        axiosInstance.get('/loans/borrower'),
+        axiosInstance.get('/loans/lender')
       ]);
 
       const borrowed = borrowedResponse.data.map((item) => ({
@@ -31,18 +34,83 @@ function MyItems() {
         owner: item.owner,
         dueDate: item.dueDate || '-', // if is NULL show '-'
         status: item.status.toLowerCase(),
-      }));
+      })); 
 
-      const lent = lentResponse.data.map((item) => ({
+      const lentRaw = lentResponse.data.map(item => ({
         id: item.id,
         name: item.name,
         borrower: item.borrower || '-',
         dueDate: item.dueDate || '-',
         status: item.status.toLowerCase(),
       }));
+      
+      const lent = lentRaw.filter((item, index, self) =>
+        index === self.findIndex(t => t.id === item.id)
+      );    
 
-      setBorrowedItems(borrowed);
-      setLentItems(lent);
+      const loansLender = loansLenderResponse.data.map(loan => ({
+        id: loan.id,
+        dueDate: loan.estimatedReturnDate || '-',
+        itemId: loan.item,
+        borrower: loan.borrower || '-',
+        status: loan.loanStatus.toLowerCase(),
+      }));
+
+      const lendWithDueDate = lent
+      .map(item => {
+        if (item.status === 'available') {
+          return {
+            ...item,
+            dueDate: '-',
+            borrower: '-',
+          };
+        }
+    
+        const loan = loansLender.find(
+          loan => loan.itemId === item.id && loan.status === 'in_use'
+        );
+    
+        if (loan) {
+          return {
+            ...item,
+            dueDate: loan.dueDate,
+            borrower: loan.borrower,
+          };
+        }
+    
+        return null; // Excluir si no tiene loan "in_use" y no está disponible
+      })
+      .filter(item => item !== null);
+    
+
+
+      const loans = loansBorrowerResponse.data.map(loan => ({
+        id: loan.id,
+        dueDate: loan.estimatedReturnDate || '-',
+        itemId: loan.item,
+        status: loan.loanStatus.toLowerCase(),
+      }));
+
+
+      //Put the actual due date in the lent items
+      const borrowedWithDueDate = borrowed
+      .map(item => {
+        const loan = loans.find(
+          loan => loan.itemId === item.id && loan.status === 'in_use'
+        );
+        if (loan) {
+          return {
+            ...item,
+            dueDate: loan.dueDate,
+          };
+        }
+        return null; // Excluir si no cumple condición
+      })
+      .filter(item => item !== null);
+
+
+      setBorrowedItems(borrowedWithDueDate);
+      setLentItems(lendWithDueDate);
     } catch (err) {
       console.error('Error fetching items:', err);
       setError('Failed to load items');
@@ -234,9 +302,7 @@ function MyItems() {
                   <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                     {t('myItems.table.status')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    {t('myItems.table.actions')}
-                  </th>
+                  
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -256,16 +322,7 @@ function MyItems() {
                         {t(`myItems.status.${item.status}`)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-left text-gray-500">
-                      {item.status !== 'available' && (
-                        <button
-                          onClick={() => handleSendReminder(item)}
-                          className="text-blue-600 hover:text-blue-900"
-                        >
-                          {t('myItems.actions.reminder')}
-                        </button>
-                      )}
-                    </td>
+            
                   </tr>
                 ))}
               </tbody>
