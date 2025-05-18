@@ -62,8 +62,41 @@
         <main id="bodyColumn" class="span10">
 <section><a id="CPD_Results"></a>
 <h1>CPD Results</h1>
-<p>The following document contains the results of PMD's  <a class="externalLink" href="https://pmd.github.io/latest/pmd_userdocs_cpd.html">CPD</a> 7.7.0.</p>
-<p>CPD found no problems in your source code.</p></section>
+<p>The following document contains the results of PMD's  <a class="externalLink" href="https://pmd.github.io/latest/pmd_userdocs_cpd.html">CPD</a> 7.7.0.</p><section><a id="Duplications"></a>
+<h2>Duplications</h2>
+<table class="table table-striped">
+<tr class="a">
+<th>File</th>
+<th>Line</th></tr>
+<tr class="b">
+<td>com/student_loan/service/ItemService.java</td>
+<td>110</td></tr>
+<tr class="a">
+<td>com/student_loan/service/ItemService.java</td>
+<td>131</td></tr>
+<tr class="b">
+<td colspan="2">
+<pre>List&lt;Loan&gt; loans = loanRepository.findByLenderAndLoanStatus(userId, Loan.Status.IN_USE);
+        
+        return loans.stream()
+            .map(loan -&gt; {
+                Item item = itemRepository.findById(loan.getItem())
+                                        .orElseThrow(() -&gt; new RuntimeException(&quot;Item no encontrado&quot;));
+                LoanAndItemDto loanItemDto = new LoanAndItemDto();
+                loanItemDto.setLoanId(loan.getId());
+                loanItemDto.setBorrowerId(loan.getBorrower());
+                loanItemDto.setLenderId(loan.getLender());
+                loanItemDto.setStartDate(loan.getLoanDate());
+                loanItemDto.setEndDate(loan.getEstimatedReturnDate());
+                loanItemDto.setItemId(item.getId());
+                loanItemDto.setItemName(item.getName());
+                loanItemDto.setItemDescription(item.getDescription());
+                return loanItemDto;
+            })
+            .collect(Collectors.toList());
+    }
+
+    public List&lt;LoanAndItemDto&gt; getItemsBorrowedByUserWithActiveLoans(Long userId) {</pre></td></tr></table></section></section>
         </main>
       </div>
     </div>

@@ -5,7 +5,7 @@ var classcom_1_1student__loan_1_1service_1_1ItemService =
     [ "getAllItems", "classcom_1_1student__loan_1_1service_1_1ItemService.html#a42be476a45af697f022d61f8362c8443", null ],
     [ "getAvailableItems", "classcom_1_1student__loan_1_1service_1_1ItemService.html#a59539e37c22092ecdc3394dd6683c14f", null ],
     [ "getItemById", "classcom_1_1student__loan_1_1service_1_1ItemService.html#ad045fffa928779bf7b62b9fc0856c612", null ],
-    [ "getItemsBorrowedByUserWithActiveLoans", "classcom_1_1student__loan_1_1service_1_1ItemService.html#ae5b1eb073671c5f6b6e99b996f0e99ef", null ],
+    [ "getItemsBorrowedByUserWithActiveLoans", "classcom_1_1student__loan_1_1service_1_1ItemService.html#aa048468b0ababef7994162a4f0c2e4fa", null ],
     [ "getItemsByAvailability", "classcom_1_1student__loan_1_1service_1_1ItemService.html#a2f52405e8ea6467e856dceaf2548c00c", null ],
     [ "getItemsById", "classcom_1_1student__loan_1_1service_1_1ItemService.html#a87d5cbcafaf794c8313cae7468b842d8", null ],
     [ "getItemsByUser", "classcom_1_1student__loan_1_1service_1_1ItemService.html#a2a13ae8d50285a5c44bc1351f8029a0e", null ],
