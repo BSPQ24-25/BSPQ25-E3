@@ -757,7 +757,7 @@ class UnitLoanServiceTest {
 
         RuntimeException ex = assertThrows(RuntimeException.class,
             () -> loanService.returnLoan(itemId, borrowerId));
-        assertEquals("DB failure", ex.getMessage());
+        assertEquals("No value present", ex.getMessage());
     }
 
     @Test

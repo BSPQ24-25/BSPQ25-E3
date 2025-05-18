@@ -273,7 +273,7 @@ class UnitLoanControllerTest {
     @DisplayName("POST /loans - Bad request on service error")
     void createLoan_badRequest() {
         setSecurityContext(borrower);
-        LoanRecord rec = new LoanRecord(null, lender.getId(), borrower.getId(), 100L,
+        LoanRecord rec = new LoanRecord(null, 132L, borrower.getId(), 100L,
                 "2025-01-01", "2025-02-01", null, null, null, "obs");
         when(userService.getUserByToken("token")).thenReturn(lender);
         doThrow(new RuntimeException("error")).when(loanService).saveLoan(any());

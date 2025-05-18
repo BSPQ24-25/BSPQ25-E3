@@ -140,6 +140,7 @@ public class LoanService {
     		itemRepository.save(item);
             loanRepository.save(loan);
          // Mail to lender
+            if(userRepository.findById(loan.getLender()).isPresent() && userRepository.findById(loan.getBorrower()).isPresent()) {
     		notificationService.enviarCorreo(userRepository.findById(loan.getLender()).get().getEmail(), "Item returned",
     				"Your item has been returned!\nItem: " + itemRepository.findById(loan.getItem()).get().getName()
     						+ "\nBorrower: " + userRepository.findById(loan.getBorrower()).get().getName()
@@ -150,10 +151,11 @@ public class LoanService {
     				"You have returned the item!\nItem: " + itemRepository.findById(loan.getItem()).get().getName()
     						+ "\nLender: " + userRepository.findById(loan.getLender()).get().getName() + "\nReturn date: "
     						+ loan.getRealReturnDate().toString() + "\n\nThank you for using our service!");
+            }
 
             return true;
         } else {
-        	throw new RuntimeException("Failed to return loan with item id " + itemId + ": Loan not found");
+        	return false;
         }
 		
 		
@@ -181,8 +183,7 @@ public class LoanService {
         User borrower = borrowerOpt.get();
 
         if (borrower.hasPenalty()) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
+            throw new RuntimeException(
                 "Cannot borrow items while under penalty."
             );
         }

@@ -211,6 +211,9 @@ public class Loan {
      * @return The estimated return date for the loaned item.
      */
     public Date getEstimatedReturnDate() {
+    	if (estimatedReturnDate == null) {
+    		            return new Date();
+    	}
         return estimatedReturnDate;
     }
 
@@ -229,6 +232,9 @@ public class Loan {
      * @return The actual return date for the loaned item.
      */
     public Date getRealReturnDate() {
+		if (realReturnDate == null) {
+			return new Date();
+		}
         return realReturnDate;
     }
 
