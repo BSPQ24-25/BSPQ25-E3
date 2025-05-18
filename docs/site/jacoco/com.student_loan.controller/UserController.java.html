@@ -7,10 +7,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.student_loan.model.Item;
 import com.student_loan.model.User;
+import com.student_loan.service.ItemService;
 import com.student_loan.service.UserService;
 import com.student_loan.dtos.UserRecord;
 import com.student_loan.dtos.CredentialsDTO;
+import com.student_loan.dtos.LoanAndItemDto;
 import com.student_loan.dtos.RegistrationRecord;
 import com.student_loan.dtos.UserDTO;
 
@@ -28,14 +31,17 @@ public class UserController {
     
 
     private UserService userService;
+
+    private ItemService itemService;
     /**
      * Constructor for UserController.
      *
      * @param userService Service for user operations.
      */
-<span class="fc" id="L36">	public UserController(UserService userService) {</span>
-<span class="fc" id="L37">        this.userService = userService;</span>
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L41">	public UserController(UserService userService, ItemService itemService) {</span>
+<span class="fc" id="L42">        this.userService = userService;</span>
+<span class="fc" id="L43">        this.itemService = itemService;</span>
+<span class="fc" id="L44">    }</span>
 	  /**
      * Retrieves all users in the system.
      *
@@ -44,11 +50,11 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity&lt;List&lt;User&gt;&gt; getAllUsers(@RequestParam(&quot;token&quot;) String token) {
-<span class="fc" id="L47">    	 User user = userService.getUserByToken(token);</span>
-<span class="fc bfc" id="L48" title="All 4 branches covered.">        if (user == null || user.getAdmin()==false) {</span>
-<span class="fc" id="L49">        	return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L53">    	 User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L54" title="All 4 branches covered.">        if (user == null || user.getAdmin()==false) {</span>
+<span class="fc" id="L55">        	return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED);</span>
         }
-<span class="fc" id="L51">    	return new ResponseEntity&lt;&gt;(userService.getAllUsers(), HttpStatus.OK);</span>
+<span class="fc" id="L57">    	return new ResponseEntity&lt;&gt;(userService.getAllUsers(), HttpStatus.OK);</span>
     }
     /**
      * Authenticates a user and generates a token.
@@ -58,12 +64,12 @@ public class UserController {
      */
     @PostMapping(&quot;/login&quot;)
     public ResponseEntity&lt;?&gt; login(@RequestBody CredentialsDTO credentials) {
-<span class="fc" id="L61">        String token = userService.login(credentials);</span>
+<span class="fc" id="L67">        String token = userService.login(credentials);</span>
 
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (token.equals(&quot;Invalid credentials&quot;)) {</span>
-<span class="fc" id="L64">            return ResponseEntity.status(401).body(&quot;Invalid credentials&quot;);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (token.equals(&quot;Invalid credentials&quot;)) {</span>
+<span class="fc" id="L70">            return ResponseEntity.status(401).body(&quot;Invalid credentials&quot;);</span>
         }
-<span class="fc" id="L66">        return ResponseEntity.ok().body(&quot;{\&quot;token\&quot;: \&quot;&quot; + token + &quot;\&quot;}&quot;);</span>
+<span class="fc" id="L72">        return ResponseEntity.ok().body(&quot;{\&quot;token\&quot;: \&quot;&quot; + token + &quot;\&quot;}&quot;);</span>
     }
     /**
      * Logs out a user by invalidating their token.
@@ -73,10 +79,10 @@ public class UserController {
      */
     @PostMapping(&quot;/logout&quot;)
 	public ResponseEntity&lt;String&gt; logout(@RequestParam(&quot;token&quot;) String token) {
-<span class="fc bfc" id="L76" title="All 2 branches covered.">		if (userService.logout(token)) {</span>
-<span class="fc" id="L77">			return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">		if (userService.logout(token)) {</span>
+<span class="fc" id="L83">			return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
 		} else {
-<span class="fc" id="L79">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L85">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
 		}
 	}
     /**
@@ -87,17 +93,17 @@ public class UserController {
      */
     @GetMapping(&quot;/{id}&quot;)
     public ResponseEntity&lt;UserDTO&gt; getUserById(@PathVariable Long id) {
-<span class="fc" id="L90">    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="fc" id="L91">		String email = authentication.getName();</span>
+<span class="fc" id="L96">    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L97">		String email = authentication.getName();</span>
 
-<span class="fc" id="L93">    	User user = userService.getUserByEmail(email);</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (user == null) {</span>
-<span class="fc" id="L95">        	   return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L99">    	User user = userService.getUserByEmail(email);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (user == null) {</span>
+<span class="fc" id="L101">        	   return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
         }
-<span class="fc" id="L97">		User retrievedUser = userService.getUserById(id).get();</span>
-<span class="fc" id="L98">		UserDTO userDTO = new UserDTO(retrievedUser.getId(), retrievedUser.getName(), retrievedUser.getEmail());</span>
+<span class="fc" id="L103">		User retrievedUser = userService.getUserById(id).get();</span>
+<span class="fc" id="L104">		UserDTO userDTO = new UserDTO(retrievedUser.getId(), retrievedUser.getName(), retrievedUser.getEmail());</span>
 
-<span class="fc" id="L100">    	return new ResponseEntity&lt;&gt;(userDTO, HttpStatus.OK);</span>
+<span class="fc" id="L106">    	return new ResponseEntity&lt;&gt;(userDTO, HttpStatus.OK);</span>
     }
 
     /**
@@ -110,18 +116,32 @@ public class UserController {
      */
     @GetMapping(&quot;/{id}/record&quot;)
     public ResponseEntity&lt;UserRecord&gt; getUserRecordById(@PathVariable Long id) {
-<span class="fc" id="L113">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="fc" id="L114">        String email = authentication.getName();</span>
+<span class="fc" id="L119">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L120">        String email = authentication.getName();</span>
 
-<span class="fc" id="L116">        User requester = userService.getUserByEmail(email);</span>
-<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (requester == null) {</span>
-<span class="fc" id="L118">            return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L122">        User requester = userService.getUserByEmail(email);</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        if (requester == null) {</span>
+<span class="fc" id="L124">            return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
         }
 
-<span class="fc" id="L121">        User target = userService.getUserById(id)</span>
-<span class="fc" id="L122">            .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND));</span>
+<span class="fc" id="L127">        User target = userService.getUserById(id)</span>
+<span class="fc" id="L128">            .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND));</span>
 
-<span class="fc" id="L124">        return ResponseEntity.ok(userToUserRecord(target));</span>
+<span class="fc" id="L130">        return ResponseEntity.ok(userToUserRecord(target));</span>
+    }
+
+    // Ítems prestados por un usuario
+    @GetMapping(&quot;/{userId}/items/lent&quot;)
+    public ResponseEntity&lt;List&lt;LoanAndItemDto&gt;&gt; getItemsLentByUser(@PathVariable Long userId) {
+<span class="nc" id="L136">        List&lt;LoanAndItemDto&gt; items = itemService.getItemsLentByUserWithActiveLoans(userId);</span>
+<span class="nc" id="L137">        return ResponseEntity.ok(items);</span>
+    }
+
+    // Ítems tomados prestados por un usuario
+    @GetMapping(&quot;/{userId}/items/borrowed&quot;)
+    public ResponseEntity&lt;List&lt;Item&gt;&gt; getItemsBorrowedByUser(@PathVariable Long userId) {
+<span class="nc" id="L143">        List&lt;Item&gt; items = itemService.getItemsBorrowedByUserWithActiveLoans(userId);</span>
+<span class="nc" id="L144">        return ResponseEntity.ok(items);</span>
     }
 
 	/**
@@ -134,16 +154,16 @@ public class UserController {
      */
     @PutMapping(&quot;/{id}&quot;)
     public ResponseEntity&lt;User&gt; updateUser(@PathVariable Long id, @RequestBody UserRecord userData, @RequestParam(&quot;token&quot;) String token) {
-<span class="fc" id="L137">        User user = userService.getUserByToken(token);</span>
-<span class="fc bfc" id="L138" title="All 6 branches covered.">		if (user == null || user.getAdmin() == false &amp;&amp; user.getId() != id) {</span>
-<span class="fc" id="L139">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L157">        User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L158" title="All 6 branches covered.">		if (user == null || user.getAdmin() == false &amp;&amp; user.getId() != id) {</span>
+<span class="fc" id="L159">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
 		}
     	
     	try {
-<span class="fc" id="L143">            User updatedUser = userService.updateUser(id, userRecordToUser(userData));</span>
-<span class="fc" id="L144">            return new ResponseEntity&lt;&gt;(updatedUser, HttpStatus.OK);</span>
-<span class="fc" id="L145">        } catch (RuntimeException e) {</span>
-<span class="fc" id="L146">            return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L163">            User updatedUser = userService.updateUser(id, userRecordToUser(userData));</span>
+<span class="fc" id="L164">            return new ResponseEntity&lt;&gt;(updatedUser, HttpStatus.OK);</span>
+<span class="fc" id="L165">        } catch (RuntimeException e) {</span>
+<span class="fc" id="L166">            return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
         }
     }
 
@@ -156,10 +176,10 @@ public class UserController {
     //Register 
     @PostMapping(&quot;/register&quot;)
     public ResponseEntity&lt;String&gt; register(@RequestBody RegistrationRecord userDTO) {
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        if (userService.register(registerRecordToUser(userDTO))) {</span>
-<span class="fc" id="L160">            return ResponseEntity.ok(&quot;User registered correctly&quot;);</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        if (userService.register(registerRecordToUser(userDTO))) {</span>
+<span class="fc" id="L180">            return ResponseEntity.ok(&quot;User registered correctly&quot;);</span>
         } else {
-<span class="fc" id="L162">            return ResponseEntity.badRequest().body(&quot;The user already exists&quot;);</span>
+<span class="fc" id="L182">            return ResponseEntity.badRequest().body(&quot;The user already exists&quot;);</span>
         }
     }
     /**
@@ -172,13 +192,13 @@ public class UserController {
 
     @DeleteMapping(&quot;/{id}&quot;)
     public ResponseEntity&lt;String&gt; deleteUser(@PathVariable Long id, @RequestParam(&quot;token&quot;) String token) {
-<span class="fc" id="L175">        User user = userService.getUserByToken(token);</span>
-<span class="fc bfc" id="L176" title="All 6 branches covered.">		if (user == null || user.getAdmin() == false &amp;&amp; user.getId() != id) {</span>
-<span class="fc" id="L177">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L195">        User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L196" title="All 6 branches covered.">		if (user == null || user.getAdmin() == false &amp;&amp; user.getId() != id) {</span>
+<span class="fc" id="L197">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
 		}
-<span class="fc" id="L179">    	userService.deleteUser(id);</span>
+<span class="fc" id="L199">    	userService.deleteUser(id);</span>
 
-<span class="fc" id="L181">    	return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
+<span class="fc" id="L201">    	return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
     }
     
 
@@ -190,18 +210,18 @@ public class UserController {
      */
 
     public User registerRecordToUser(RegistrationRecord data) {
-<span class="fc" id="L193">    	        User user = new User();</span>
-<span class="fc" id="L194">    	        user.setName(data.name() + &quot; &quot; + data.lastName() );</span>
-<span class="fc" id="L195">    	        user.setEmail(data.email());</span>
-<span class="fc" id="L196">    	        user.setPassword(data.password());</span>
-<span class="fc" id="L197">    	        user.setTelephoneNumber(data.telephoneNumber());</span>
-<span class="fc" id="L198">    	        user.setAddress(data.address());</span>
-<span class="fc" id="L199">    			user.setDegreeType(User.DegreeType.valueOf(data.degreeType()));</span>
-<span class="fc" id="L200">    			user.setDegreeYear(data.degreeYear());</span>
-<span class="fc" id="L201">    			user.setPenalties(0);</span>
-<span class="fc" id="L202">    			user.setAverageRating(0.0);</span>
-<span class="fc" id="L203">    			user.setAdmin(false);</span>
-<span class="fc" id="L204">    			return user;           </span>
+<span class="fc" id="L213">    	        User user = new User();</span>
+<span class="fc" id="L214">    	        user.setName(data.name() + &quot; &quot; + data.lastName() );</span>
+<span class="fc" id="L215">    	        user.setEmail(data.email());</span>
+<span class="fc" id="L216">    	        user.setPassword(data.password());</span>
+<span class="fc" id="L217">    	        user.setTelephoneNumber(data.telephoneNumber());</span>
+<span class="fc" id="L218">    	        user.setAddress(data.address());</span>
+<span class="fc" id="L219">    			user.setDegreeType(User.DegreeType.valueOf(data.degreeType()));</span>
+<span class="fc" id="L220">    			user.setDegreeYear(data.degreeYear());</span>
+<span class="fc" id="L221">    			user.setPenalties(0);</span>
+<span class="fc" id="L222">    			user.setAverageRating(0.0);</span>
+<span class="fc" id="L223">    			user.setAdmin(false);</span>
+<span class="fc" id="L224">    			return user;           </span>
     }
     /**
      * Converts a UserRecord to a User entity.
@@ -211,38 +231,38 @@ public class UserController {
      */
     
 	public User userRecordToUser(UserRecord userDTO) {
-<span class="fc" id="L214">		User user = new User();</span>
-<span class="fc" id="L215">		user.setName(userDTO.name()+&quot; &quot;+userDTO.lastName());</span>
-<span class="fc" id="L216">		user.setEmail(userDTO.email());</span>
-<span class="fc" id="L217">		user.setPassword(userDTO.password());</span>
-<span class="fc" id="L218">		user.setTelephoneNumber(userDTO.telephoneNumber());</span>
-<span class="fc" id="L219">		user.setAddress(userDTO.address());</span>
-<span class="fc" id="L220">		user.setDegreeType(User.DegreeType.UNIVERSITY_DEGREE);</span>
-<span class="fc" id="L221">		user.setDegreeYear(userDTO.degreeYear());</span>
-<span class="fc" id="L222">		user.setPenalties(userDTO.penalties());</span>
-<span class="fc" id="L223">		user.setAverageRating(userDTO.averageRating());</span>
-<span class="fc" id="L224">		user.setAdmin(userDTO.admin());</span>
+<span class="fc" id="L234">		User user = new User();</span>
+<span class="fc" id="L235">		user.setName(userDTO.name()+&quot; &quot;+userDTO.lastName());</span>
+<span class="fc" id="L236">		user.setEmail(userDTO.email());</span>
+<span class="fc" id="L237">		user.setPassword(userDTO.password());</span>
+<span class="fc" id="L238">		user.setTelephoneNumber(userDTO.telephoneNumber());</span>
+<span class="fc" id="L239">		user.setAddress(userDTO.address());</span>
+<span class="fc" id="L240">		user.setDegreeType(User.DegreeType.UNIVERSITY_DEGREE);</span>
+<span class="fc" id="L241">		user.setDegreeYear(userDTO.degreeYear());</span>
+<span class="fc" id="L242">		user.setPenalties(userDTO.penalties());</span>
+<span class="fc" id="L243">		user.setAverageRating(userDTO.averageRating());</span>
+<span class="fc" id="L244">		user.setAdmin(userDTO.admin());</span>
 		
-<span class="fc" id="L226">		return user;</span>
+<span class="fc" id="L246">		return user;</span>
 	}
 
     public UserRecord userToUserRecord(User user) {
-<span class="fc" id="L230">        String[] nameParts = user.getName().split(&quot; &quot;);</span>
-<span class="fc" id="L231">        String firstName = nameParts[0];</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">        String lastName  = nameParts.length &gt; 1 ? nameParts[nameParts.length - 1] : &quot;&quot;;</span>
+<span class="fc" id="L250">        String[] nameParts = user.getName().split(&quot; &quot;);</span>
+<span class="fc" id="L251">        String firstName = nameParts[0];</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">        String lastName  = nameParts.length &gt; 1 ? nameParts[nameParts.length - 1] : &quot;&quot;;</span>
 
-<span class="fc" id="L234">        return new UserRecord(</span>
+<span class="fc" id="L254">        return new UserRecord(</span>
             firstName,
             lastName,
-<span class="fc" id="L237">            user.getEmail(),</span>
-<span class="fc" id="L238">            user.getPassword(),</span>
-<span class="fc" id="L239">            user.getTelephoneNumber(),</span>
-<span class="fc" id="L240">            user.getAddress(),</span>
-<span class="fc" id="L241">            user.getDegreeType().name(),</span>
-<span class="fc" id="L242">            user.getDegreeYear(),</span>
-<span class="fc" id="L243">            user.getPenalties(),</span>
-<span class="fc" id="L244">            user.getAverageRating(),</span>
-<span class="fc" id="L245">            user.getAdmin()</span>
+<span class="fc" id="L257">            user.getEmail(),</span>
+<span class="fc" id="L258">            user.getPassword(),</span>
+<span class="fc" id="L259">            user.getTelephoneNumber(),</span>
+<span class="fc" id="L260">            user.getAddress(),</span>
+<span class="fc" id="L261">            user.getDegreeType().name(),</span>
+<span class="fc" id="L262">            user.getDegreeYear(),</span>
+<span class="fc" id="L263">            user.getPenalties(),</span>
+<span class="fc" id="L264">            user.getAverageRating(),</span>
+<span class="fc" id="L265">            user.getAdmin()</span>
         );
     }
 }

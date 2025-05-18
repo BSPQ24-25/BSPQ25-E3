@@ -1,8 +1,10 @@
 var classcom_1_1student__loan_1_1controller_1_1UserController =
 [
-    [ "UserController", "classcom_1_1student__loan_1_1controller_1_1UserController.html#af724c01f3922dbf8f5f7f49b73d93a58", null ],
+    [ "UserController", "classcom_1_1student__loan_1_1controller_1_1UserController.html#a0b435dca4c474fbe330477430aefcdb6", null ],
     [ "deleteUser", "classcom_1_1student__loan_1_1controller_1_1UserController.html#ad00203f9bd35c84f00978073b7aed124", null ],
     [ "getAllUsers", "classcom_1_1student__loan_1_1controller_1_1UserController.html#a2fde177803d657f7657cbf59fe48860c", null ],
+    [ "getItemsBorrowedByUser", "classcom_1_1student__loan_1_1controller_1_1UserController.html#a969ad99328081c9f4677cf9cc58a171c", null ],
+    [ "getItemsLentByUser", "classcom_1_1student__loan_1_1controller_1_1UserController.html#ace68b7b7ab8d4df61600a78c95bfea19", null ],
     [ "getUserById", "classcom_1_1student__loan_1_1controller_1_1UserController.html#a78aadcb8f075e57dee17bbe14a1e1912", null ],
     [ "getUserRecordById", "classcom_1_1student__loan_1_1controller_1_1UserController.html#a837f6b666e28c5ff77244bba8217e6e6", null ],
     [ "login", "classcom_1_1student__loan_1_1controller_1_1UserController.html#a3ce8bec307b86e43431659628b957dc7", null ],
