@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+
+import com.student_loan.model.Item;
 import com.student_loan.model.Loan;
 import com.student_loan.model.Loan.Status;
 import com.student_loan.model.User;
@@ -16,154 +18,221 @@ import com.student_loan.repository.UserRepository;
 
 import java.util.Date;
 import java.util.ArrayList;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-<span class="fc" id="L23">public class LoanService {</span>
-    @Autowired
-    private LoanRepository loanRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ItemRepository itemRepository;
+<span class="fc" id="L28">public class LoanService {</span>
+	@Autowired
+	private LoanRepository loanRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private ItemRepository itemRepository;
+	@Autowired
+	private NotificationService notificationService;
 
-    public List&lt;Loan&gt; getAllLoans() {
-<span class="fc" id="L32">        return loanRepository.findAll();</span>
-    }
+	
+<span class="fc" id="L39">	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LoanService.class);</span>
+	
+	public List&lt;Loan&gt; getAllLoans() {
+<span class="fc" id="L42">		return loanRepository.findAll();</span>
+	}
 
     public Optional&lt;Loan&gt; getLoanById(Long id) {
-<span class="fc" id="L36">        return loanRepository.findById(id);</span>
+<span class="fc" id="L46">        return loanRepository.findById(id);</span>
     }
 
     public List&lt;Loan&gt; getLoansByLender(Long userId) {
-<span class="fc" id="L40">        return loanRepository.findByLender(userId);</span>
+<span class="fc" id="L50">        return loanRepository.findByLender(userId);</span>
     }
 
     public List&lt;Loan&gt; getLoansByBorrower(Long userId) {
-<span class="fc" id="L44">        return loanRepository.findByBorrower(userId);</span>
+<span class="fc" id="L54">        return loanRepository.findByBorrower(userId);</span>
     }
 
     public List&lt;Long&gt; getLentItemsIdByUser(Long userId) {
-<span class="fc" id="L48">        List&lt;Loan&gt; loans = loanRepository.findByLenderAndLoanStatus(userId, Status.IN_USE);</span>
-<span class="fc" id="L49">        List&lt;Long&gt; lentItems = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        for (Loan loan : loans) {</span>
-<span class="fc" id="L51">            lentItems.add(loan.getItem());</span>
-<span class="fc" id="L52">        }</span>
-<span class="fc" id="L53">        return lentItems;</span>
+<span class="fc" id="L58">        List&lt;Loan&gt; loans = loanRepository.findByLenderAndLoanStatus(userId, Status.IN_USE);</span>
+<span class="fc" id="L59">        List&lt;Long&gt; lentItems = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        for (Loan loan : loans) {</span>
+<span class="fc" id="L61">            lentItems.add(loan.getItem());</span>
+<span class="fc" id="L62">        }</span>
+<span class="fc" id="L63">        return lentItems;</span>
     }
 
     public List&lt;Long&gt; getBorrowedItemsIdByUser(Long userId) {
-<span class="fc" id="L57">        List&lt;Loan&gt; loans = loanRepository.findByBorrowerAndLoanStatus(userId, Status.IN_USE);</span>
-<span class="fc" id="L58">        List&lt;Long&gt; borrowedItems = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L59" title="All 2 branches covered.">        for (Loan loan : loans) {</span>
-<span class="fc" id="L60">            borrowedItems.add(loan.getItem());</span>
-<span class="fc" id="L61">        }</span>
-<span class="fc" id="L62">        return borrowedItems;</span>
+<span class="fc" id="L67">        List&lt;Loan&gt; loans = loanRepository.findByBorrowerAndLoanStatus(userId, Status.IN_USE);</span>
+<span class="fc" id="L68">        List&lt;Long&gt; borrowedItems = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        for (Loan loan : loans) {</span>
+<span class="fc" id="L70">            borrowedItems.add(loan.getItem());</span>
+<span class="fc" id="L71">        }</span>
+<span class="fc" id="L72">        return borrowedItems;</span>
     }
+
 
     public Loan saveLoan(Loan loan) {
         // Validate lender first to satisfy tests
-<span class="fc" id="L67">        Optional&lt;User&gt; lenderOpt = userRepository.findById(loan.getLender());</span>
-<span class="fc bfc" id="L68" title="All 4 branches covered.">        if (lenderOpt == null || lenderOpt.isEmpty()) {</span>
-<span class="fc" id="L69">            throw new RuntimeException(&quot;Failed to save loan with id &quot; + loan.getId() + &quot;: Lender not found with id: &quot; + loan.getLender());</span>
+<span class="fc" id="L78">        Optional&lt;User&gt; lenderOpt = userRepository.findById(loan.getLender());</span>
+<span class="fc bfc" id="L79" title="All 4 branches covered.">        if (lenderOpt == null || lenderOpt.isEmpty()) {</span>
+<span class="fc" id="L80">            throw new RuntimeException(&quot;Failed to save loan with id &quot; + loan.getId() + &quot;: Lender not found with id: &quot; + loan.getLender());</span>
         }
 
         // Validate borrower
-<span class="fc" id="L73">        Optional&lt;User&gt; borrowerOpt = userRepository.findById(loan.getBorrower());</span>
-<span class="fc bfc" id="L74" title="All 4 branches covered.">        if (borrowerOpt == null || borrowerOpt.isEmpty()) {</span>
-<span class="fc" id="L75">            throw new RuntimeException(&quot;Failed to save loan with id &quot; + loan.getId() + &quot;: Borrower not found with id: &quot; + loan.getBorrower());</span>
+<span class="fc" id="L84">        Optional&lt;User&gt; borrowerOpt = userRepository.findById(loan.getBorrower());</span>
+<span class="fc bfc" id="L85" title="All 4 branches covered.">        if (borrowerOpt == null || borrowerOpt.isEmpty()) {</span>
+<span class="fc" id="L86">            throw new RuntimeException(&quot;Failed to save loan with id &quot; + loan.getId() + &quot;: Borrower not found with id: &quot; + loan.getBorrower());</span>
         }
-<span class="fc" id="L77">        User borrower = borrowerOpt.get();</span>
+<span class="fc" id="L88">        User borrower = borrowerOpt.get();</span>
 
-<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (borrower.hasPenalty()) {</span>
-<span class="fc" id="L80">            throw new ResponseStatusException(</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (borrower.hasPenalty()) {</span>
+<span class="fc" id="L91">            throw new ResponseStatusException(</span>
                 HttpStatus.BAD_REQUEST,
                 &quot;Cannot borrow items while under penalty.&quot;
             );
         }
 
         // Validate item
-<span class="fc" id="L87">        Optional&lt;Item&gt; itemOpt = itemRepository.findById(loan.getItem());</span>
-<span class="fc bfc" id="L88" title="All 4 branches covered.">        if (itemOpt == null || itemOpt.isEmpty()) {</span>
-<span class="fc" id="L89">            throw new RuntimeException(&quot;Failed to save loan with id &quot; + loan.getId() + &quot;: Item not found with id: &quot; + loan.getItem());</span>
+<span class="fc" id="L98">        Optional&lt;Item&gt; itemOpt = itemRepository.findById(loan.getItem());</span>
+<span class="fc bfc" id="L99" title="All 4 branches covered.">        if (itemOpt == null || itemOpt.isEmpty()) {</span>
+<span class="fc" id="L100">            throw new RuntimeException(&quot;Failed to save loan with id &quot; + loan.getId() + &quot;: Item not found with id: &quot; + loan.getItem());</span>
         }
 
         // Check active loans limit on new loans
-<span class="fc bfc" id="L93" title="All 4 branches covered.">        if (loan.getId() == null &amp;&amp; loan.getLoanStatus() == Loan.Status.IN_USE) {</span>
-<span class="fc" id="L94">            int activos = loanRepository.countByBorrowerAndLoanStatus(</span>
-<span class="fc" id="L95">                loan.getBorrower(), Loan.Status.IN_USE);</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">            if (activos &gt;= 3) {</span>
-<span class="fc" id="L97">                throw new ResponseStatusException(</span>
+<span class="fc bfc" id="L104" title="All 4 branches covered.">        if (loan.getId() == null &amp;&amp; loan.getLoanStatus() == Loan.Status.IN_USE) {</span>
+<span class="fc" id="L105">            int activos = loanRepository.countByBorrowerAndLoanStatus(</span>
+<span class="fc" id="L106">                loan.getBorrower(), Loan.Status.IN_USE);</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if (activos &gt;= 3) {</span>
+<span class="fc" id="L108">                throw new ResponseStatusException(</span>
                     HttpStatus.BAD_REQUEST,
-<span class="fc" id="L99">                    &quot;Failed to save loan with id &quot; + loan.getId() + &quot;: You already have 3 items reserved. Return an item before booking another.&quot;</span>
+<span class="fc" id="L110">                    &quot;Failed to save loan with id &quot; + loan.getId() + &quot;: You already have 3 items reserved. Return an item before booking another.&quot;</span>
                 );
             }
         }
 
         // Change item's status in DB
-<span class="fc" id="L105">        Item itemToModify = itemOpt.get();</span>
-<span class="fc" id="L106">        itemToModify.setStatus(ItemStatus.BORROWED);</span>
-<span class="fc" id="L107">        itemRepository.save(itemToModify);</span>
+<span class="fc" id="L116">        Item itemToModify = itemOpt.get();</span>
+<span class="fc" id="L117">        itemToModify.setStatus(ItemStatus.BORROWED);</span>
+<span class="fc" id="L118">        itemRepository.save(itemToModify);</span>
 
         // Save loan
-<span class="fc" id="L110">        return loanRepository.save(loan);</span>
+<span class="fc" id="L121">        return loanRepository.save(loan);</span>
     }
+
 
     public boolean returnLoan(Long itemId, Long borrowerId) {
-<span class="fc" id="L114">        Optional&lt;Loan&gt; optionalLoan = loanRepository.findByBorrowerAndItemAndLoanStatus(</span>
-            borrowerId, itemId, Loan.Status.IN_USE);
+<span class="fc" id="L126">    	Optional&lt;Loan&gt; optionalLoan = loanRepository.findByBorrowerAndItemAndLoanStatus(</span>
+                borrowerId, itemId, Loan.Status.IN_USE);
 
-<span class="fc bfc" id="L117" title="All 4 branches covered.">        if (optionalLoan != null &amp;&amp; optionalLoan.isPresent()) {</span>
+<span class="fc bfc" id="L129" title="All 4 branches covered.">        if (optionalLoan != null &amp;&amp; optionalLoan.isPresent()) {</span>
             // Update item status
-<span class="fc" id="L119">            Optional&lt;Item&gt; optionalItem = itemRepository.findById(itemId);</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">            if (optionalItem.isPresent()) {</span>
-<span class="fc" id="L121">                Item item = optionalItem.get();</span>
-<span class="fc" id="L122">                item.setStatus(ItemStatus.AVAILABLE);</span>
-<span class="fc" id="L123">                itemRepository.save(item);</span>
+<span class="fc" id="L131">            Optional&lt;Item&gt; optionalItem = itemRepository.findById(itemId);</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            if (optionalItem.isPresent()) {</span>
+<span class="fc" id="L133">                Item item = optionalItem.get();</span>
+<span class="fc" id="L134">                item.setStatus(ItemStatus.AVAILABLE);</span>
+<span class="fc" id="L135">                itemRepository.save(item);</span>
             }
             // Update loan status
-<span class="fc" id="L126">            Loan loan = optionalLoan.get();</span>
-<span class="fc" id="L127">            loan.setLoanStatus(Loan.Status.RETURNED);</span>
-<span class="fc" id="L128">            loan.setRealReturnDate(new Date());</span>
-<span class="fc" id="L129">            loanRepository.save(loan);</span>
-<span class="fc" id="L130">            return true;</span>
+<span class="fc" id="L138">            Loan loan = optionalLoan.get();</span>
+<span class="fc" id="L139">            loan.setLoanStatus(Loan.Status.RETURNED);</span>
+<span class="fc" id="L140">            loan.setRealReturnDate(new Date());</span>
+<span class="fc" id="L141">    		Item item = itemRepository.findById(loan.getItem()).get();</span>
+<span class="fc" id="L142">    		item.setStatus(Item.ItemStatus.AVAILABLE);</span>
+<span class="fc" id="L143">    		itemRepository.save(item);</span>
+<span class="fc" id="L144">            loanRepository.save(loan);</span>
+         // Mail to lender
+<span class="pc bpc" id="L146" title="3 of 4 branches missed.">            if(userRepository.findById(loan.getLender()).isPresent() &amp;&amp; userRepository.findById(loan.getBorrower()).isPresent()) {</span>
+<span class="nc" id="L147">    		notificationService.enviarCorreo(userRepository.findById(loan.getLender()).get().getEmail(), &quot;Item returned&quot;,</span>
+<span class="nc" id="L148">    				&quot;Your item has been returned!\nItem: &quot; + itemRepository.findById(loan.getItem()).get().getName()</span>
+<span class="nc" id="L149">    						+ &quot;\nBorrower: &quot; + userRepository.findById(loan.getBorrower()).get().getName()</span>
+<span class="nc" id="L150">    						+ &quot;\nReturn date: &quot; + loan.getRealReturnDate().toString()</span>
+    						+ &quot;\n\nThank you for using our service!&quot;);
+    		// Mail to borrower
+<span class="nc" id="L153">    		notificationService.enviarCorreo(userRepository.findById(loan.getBorrower()).get().getEmail(), &quot;Item returned&quot;,</span>
+<span class="nc" id="L154">    				&quot;You have returned the item!\nItem: &quot; + itemRepository.findById(loan.getItem()).get().getName()</span>
+<span class="nc" id="L155">    						+ &quot;\nLender: &quot; + userRepository.findById(loan.getLender()).get().getName() + &quot;\nReturn date: &quot;</span>
+<span class="nc" id="L156">    						+ loan.getRealReturnDate().toString() + &quot;\n\nThank you for using our service!&quot;);</span>
+            }
+
+<span class="fc" id="L159">            return true;</span>
         } else {
-<span class="fc" id="L132">            return false;</span>
+<span class="fc" id="L161">        	return false;</span>
         }
-    }
+		
+		
+	}
+
 
     public Loan createLoan(Loan loan) {
         // Check existing loan
-<span class="fc" id="L138">        Optional&lt;Loan&gt; existing = loanRepository.findById(loan.getId());</span>
-<span class="fc bfc" id="L139" title="All 4 branches covered.">        if (existing != null &amp;&amp; existing.isPresent()) {</span>
-<span class="fc" id="L140">            throw new RuntimeException(&quot;Loan already exists with id: &quot; + loan.getId());</span>
+<span class="fc" id="L170">    	logger.info(&quot;Creating loan&quot; + loan.toString());</span>
+<span class="fc" id="L171">        Optional&lt;Loan&gt; existing = loanRepository.findById(loan.getId());</span>
+<span class="fc bfc" id="L172" title="All 4 branches covered.">        if (existing != null &amp;&amp; existing.isPresent()) {</span>
+<span class="fc" id="L173">            throw new RuntimeException(&quot;Loan already exists with id: &quot; + loan.getId());</span>
         }
 
-        // Validate lender
-<span class="fc" id="L144">        Optional&lt;User&gt; lenderOpt = userRepository.findById(loan.getLender());</span>
-<span class="fc bfc" id="L145" title="All 4 branches covered.">        if (lenderOpt == null || lenderOpt.isEmpty()) {</span>
-<span class="fc" id="L146">            throw new RuntimeException(&quot;Failed to create loan with id &quot; + loan.getId() + &quot;: Lender not found with id: &quot; + loan.getLender());</span>
+		 // Validate lender first to satisfy tests
+<span class="fc" id="L177">        Optional&lt;User&gt; lenderOpt = userRepository.findById(loan.getLender());</span>
+<span class="fc bfc" id="L178" title="All 4 branches covered.">        if (lenderOpt == null || lenderOpt.isEmpty()) {</span>
+<span class="fc" id="L179">            throw new RuntimeException(&quot;Failed to save loan with id &quot; + loan.getId() + &quot;: Lender not found with id: &quot; + loan.getLender());</span>
         }
 
         // Validate borrower
-<span class="fc" id="L150">        Optional&lt;User&gt; borrowerOpt = userRepository.findById(loan.getBorrower());</span>
-<span class="fc bfc" id="L151" title="All 4 branches covered.">        if (borrowerOpt == null || borrowerOpt.isEmpty()) {</span>
-<span class="fc" id="L152">            throw new RuntimeException(&quot;Failed to create loan with id &quot; + loan.getId() + &quot;: Borrower not found with id: &quot; + loan.getBorrower());</span>
+<span class="fc" id="L183">        Optional&lt;User&gt; borrowerOpt = userRepository.findById(loan.getBorrower());</span>
+<span class="fc bfc" id="L184" title="All 4 branches covered.">        if (borrowerOpt == null || borrowerOpt.isEmpty()) {</span>
+<span class="fc" id="L185">            throw new RuntimeException(&quot;Failed to save loan with id &quot; + loan.getId() + &quot;: Borrower not found with id: &quot; + loan.getBorrower());</span>
+        }
+<span class="fc" id="L187">        User borrower = borrowerOpt.get();</span>
+
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        if (borrower.hasPenalty()) {</span>
+<span class="nc" id="L190">            throw new RuntimeException(</span>
+                &quot;Cannot borrow items while under penalty.&quot;
+            );
         }
 
         // Validate item
-<span class="fc" id="L156">        Optional&lt;Item&gt; itemOpt = itemRepository.findById(loan.getItem());</span>
-<span class="fc bfc" id="L157" title="All 4 branches covered.">        if (itemOpt == null || itemOpt.isEmpty()) {</span>
-<span class="fc" id="L158">            throw new RuntimeException(&quot;Failed to create loan with id &quot; + loan.getId() + &quot;: Item not found with id: &quot; + loan.getItem());</span>
+<span class="fc" id="L196">        Optional&lt;Item&gt; itemOpt = itemRepository.findById(loan.getItem());</span>
+<span class="fc bfc" id="L197" title="All 4 branches covered.">        if (itemOpt == null || itemOpt.isEmpty()) {</span>
+<span class="fc" id="L198">            throw new RuntimeException(&quot;Failed to save loan with id &quot; + loan.getId() + &quot;: Item not found with id: &quot; + loan.getItem());</span>
         }
 
-<span class="fc" id="L161">        loan.setLoanStatus(Loan.Status.IN_USE);</span>
-<span class="fc" id="L162">        return loanRepository.save(loan);</span>
-    }
+        // Check active loans limit on new loans
+<span class="pc bpc" id="L202" title="1 of 4 branches missed.">        if (loan.getId() == null &amp;&amp; loan.getLoanStatus() == Loan.Status.IN_USE) {</span>
+<span class="nc" id="L203">            int activos = loanRepository.countByBorrowerAndLoanStatus(</span>
+<span class="nc" id="L204">                loan.getBorrower(), Loan.Status.IN_USE);</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">            if (activos &gt;= 3) {</span>
+<span class="nc" id="L206">                throw new RuntimeException(</span>
+<span class="nc" id="L207">                    &quot;Failed to save loan with id &quot; + loan.getId() + &quot;: You already have 3 items reserved. Return an item before booking another.&quot;</span>
+                );
+            }
+        }
+<span class="fc" id="L211">		loan.setLoanStatus(Loan.Status.IN_USE);</span>
 
-    public void deleteLoan(Long id) {
-<span class="fc" id="L166">        loanRepository.deleteById(id);</span>
-<span class="fc" id="L167">    }</span>
+		// Mail to borrower
+<span class="fc" id="L214">		notificationService.enviarCorreo(userRepository.findById(loan.getBorrower()).get().getEmail(),</span>
+				&quot;Loan Created&quot;,
+				&quot;You have succesfully made a loan!\nItem: &quot;
+<span class="fc" id="L217">						+ itemRepository.findById(loan.getItem()).get().getName() + &quot;\nLender: &quot;</span>
+<span class="fc" id="L218">						+ userRepository.findById(loan.getLender()).get().getName() + &quot;\nReturn date: &quot;</span>
+<span class="fc" id="L219">						+ loan.getEstimatedReturnDate().toString() + &quot;\n\nThank you for using our service!&quot;);</span>
+
+		// Mail to lender
+<span class="fc" id="L222">		notificationService.enviarCorreo(userRepository.findById(loan.getLender()).get().getEmail(), &quot;Item lended&quot;,</span>
+				&quot;Your item has succesfully been lended!\nItem: &quot;
+<span class="fc" id="L224">						+ itemRepository.findById(loan.getItem()).get().getName() + &quot;\nBorrower: &quot;</span>
+<span class="fc" id="L225">						+ userRepository.findById(loan.getBorrower()).get().getName() + &quot;\nReturn date: &quot;</span>
+<span class="fc" id="L226">						+ loan.getEstimatedReturnDate().toString() + &quot;\n\nThank you for using our service!&quot;);</span>
+
+<span class="fc" id="L228">		return loanRepository.save(loan);</span>
+
+	}
+    
+	public void deleteLoan(Long id) {
+<span class="fc" id="L233">		loanRepository.deleteById(id);</span>
+<span class="fc" id="L234">	}</span>
+
+	
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -18,6 +18,7 @@ var hierarchy =
     [ "com.student_loan.model.Loan", "classcom_1_1student__loan_1_1model_1_1Loan.html", null ],
     [ "com.student_loan.controller.LoanController", "classcom_1_1student__loan_1_1controller_1_1LoanController.html", null ],
     [ "com.student_loan.service.LoanService", "classcom_1_1student__loan_1_1service_1_1LoanService.html", null ],
+    [ "com.student_loan.service.NotificationService", "classcom_1_1student__loan_1_1service_1_1NotificationService.html", null ],
     [ "OncePerRequestFilter", null, [
       [ "com.student_loan.security.JwtFilter", "classcom_1_1student__loan_1_1security_1_1JwtFilter.html", null ]
     ] ],

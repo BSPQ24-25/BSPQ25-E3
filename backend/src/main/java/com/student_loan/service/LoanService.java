@@ -35,6 +35,9 @@ public class LoanService {
 	@Autowired
 	private NotificationService notificationService;
 
+	
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LoanService.class);
+	
 	public List<Loan> getAllLoans() {
 		return loanRepository.findAll();
 	}

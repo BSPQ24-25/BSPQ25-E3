@@ -37,6 +37,8 @@ class UnitLoanControllerTest {
 
     @Mock
     private LoanService loanService;
+    
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnitLoanControllerTest.class);
 
     @Mock
     private UserService userService;
@@ -273,10 +275,11 @@ class UnitLoanControllerTest {
     @DisplayName("POST /loans - Bad request on service error")
     void createLoan_badRequest() {
         setSecurityContext(borrower);
-        LoanRecord rec = new LoanRecord(null, 132L, borrower.getId(), 100L,
+        LoanRecord rec = new LoanRecord(null, 132L, borrower.getId(),null,
                 "2025-01-01", "2025-02-01", null, null, null, "obs");
         when(userService.getUserByToken("token")).thenReturn(lender);
-        doThrow(new RuntimeException("error")).when(loanService).saveLoan(any());
+        doThrow(new RuntimeException("error")).when(loanService).createLoan(any());
+        logger.info("Created loan with id " + rec.toString());
 
         ResponseEntity<String> resp = loanController.createLoan(rec);
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());

@@ -149,7 +149,7 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L149">		Loan loanEntity = convertToLoan(loan);</span>
 <span class="fc" id="L150">        loanEntity.setBorrower(user.getId());</span>
 		try {
-<span class="fc" id="L152">			loanService.saveLoan(loanEntity);</span>
+<span class="fc" id="L152">			loanService.createLoan(loanEntity);</span>
 <span class="fc" id="L153">        } catch (RuntimeException e) {</span>
 <span class="fc" id="L154">            return new ResponseEntity&lt;&gt;(e.getMessage(), HttpStatus.BAD_REQUEST);</span>
 <span class="fc" id="L155">        }</span>

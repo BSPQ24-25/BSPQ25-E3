@@ -68,6 +68,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a96805c9f009fed22ee6a754213765214"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78aadcb8f075e57dee17bbe14a1e1912" id="r_a78aadcb8f075e57dee17bbe14a1e1912"><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; UserDTO &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a78aadcb8f075e57dee17bbe14a1e1912">getUserById</a> (@PathVariable Long id)</td></tr>
 <tr class="separator:a78aadcb8f075e57dee17bbe14a1e1912"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a837f6b666e28c5ff77244bba8217e6e6" id="r_a837f6b666e28c5ff77244bba8217e6e6"><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; UserRecord &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a837f6b666e28c5ff77244bba8217e6e6">getUserRecordById</a> (@PathVariable Long id)</td></tr>
+<tr class="separator:a837f6b666e28c5ff77244bba8217e6e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f23481e58e65a40fa3f7a75b1111f60" id="r_a7f23481e58e65a40fa3f7a75b1111f60"><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; User &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a7f23481e58e65a40fa3f7a75b1111f60">updateUser</a> (@PathVariable Long id, @RequestBody UserRecord userData, @RequestParam(&quot;token&quot;) String token)</td></tr>
 <tr class="separator:a7f23481e58e65a40fa3f7a75b1111f60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f95ae9b89da85118a173984dbff8b5d" id="r_a7f95ae9b89da85118a173984dbff8b5d"><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; String &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a7f95ae9b89da85118a173984dbff8b5d">register</a> (@RequestBody RegistrationRecord userDTO)</td></tr>
@@ -78,11 +80,13 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae83d98c71377b6a29c029235a78b6b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c4c206d1fd59eb81cc65df1c3569bb5" id="r_a6c4c206d1fd59eb81cc65df1c3569bb5"><td class="memItemLeft" align="right" valign="top">User&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a6c4c206d1fd59eb81cc65df1c3569bb5">userRecordToUser</a> (UserRecord userDTO)</td></tr>
 <tr class="separator:a6c4c206d1fd59eb81cc65df1c3569bb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a537cc70c319604966018579277d01c6f" id="r_a537cc70c319604966018579277d01c6f"><td class="memItemLeft" align="right" valign="top">UserRecord&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a537cc70c319604966018579277d01c6f">userToUserRecord</a> (User user)</td></tr>
+<tr class="separator:a537cc70c319604966018579277d01c6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Controller class for managing users in the system. Handles HTTP requests related to user operations such as creating, updating, deleting, and retrieving users. </p>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00025">25</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00027">27</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af724c01f3922dbf8f5f7f49b73d93a58" name="af724c01f3922dbf8f5f7f49b73d93a58"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af724c01f3922dbf8f5f7f49b73d93a58">&#9670;&#160;</a></span>UserController()</h2>
@@ -107,7 +111,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00034">34</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00036">36</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>
@@ -147,7 +151,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity indicating the result of the operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00148">148</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00174">174</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>
@@ -175,7 +179,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing a list of all users. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00044">44</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00046">46</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>
@@ -203,7 +207,36 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing the user data. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00087">87</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00089">89</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+
+</div>
+</div>
+<a id="a837f6b666e28c5ff77244bba8217e6e6" name="a837f6b666e28c5ff77244bba8217e6e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a837f6b666e28c5ff77244bba8217e6e6">&#9670;&#160;</a></span>getUserRecordById()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ResponseEntity&lt; UserRecord &gt; com.student_loan.controller.UserController.getUserRecordById </td>
+          <td>(</td>
+          <td class="paramtype">@PathVariable Long&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Retrieves a user by their ID (versión completa usando UserRecord).</p>
+<p>GET /users/{id}/record</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The ID of the user. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing el UserRecord con todos los campos. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00112">112</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>
@@ -231,7 +264,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing the authentication token or an error message. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00058">58</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00060">60</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>
@@ -259,7 +292,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity indicating the result of the operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00073">73</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00075">75</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>
@@ -287,7 +320,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity indicating the result of the operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00132">132</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00158">158</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>
@@ -315,7 +348,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The converted User entity. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00166">166</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00192">192</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>
@@ -361,7 +394,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing the updated user or an error status. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00110">110</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00136">136</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>
@@ -389,7 +422,27 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The converted User entity. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00187">187</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00213">213</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
+
+</div>
+</div>
+<a id="a537cc70c319604966018579277d01c6f" name="a537cc70c319604966018579277d01c6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a537cc70c319604966018579277d01c6f">&#9670;&#160;</a></span>userToUserRecord()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">UserRecord com.student_loan.controller.UserController.userToUserRecord </td>
+          <td>(</td>
+          <td class="paramtype">User&#160;</td>
+          <td class="paramname"><em>user</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="UserController_8java_source.html#l00229">229</a> of file <a class="el" href="UserController_8java_source.html">UserController.java</a>.</p>
 
 </div>
 </div>

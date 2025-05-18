@@ -51,7 +51,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "CorsConfig_8java.html",
-"dir_93c6ba7fb77bae0709fae89c9c13b44a.html"
+"classcom_1_1student__loan_1_1service_1_1UserService.html#a61712e504b607ff1ef07ea1027eea627"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

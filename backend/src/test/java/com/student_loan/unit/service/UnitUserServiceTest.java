@@ -5,6 +5,7 @@ import com.student_loan.model.User;
 import com.student_loan.model.User.DegreeType;
 import com.student_loan.repository.UserRepository;
 import com.student_loan.security.JwtUtil;
+import com.student_loan.service.NotificationService;
 import com.student_loan.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,9 @@ public class UnitUserServiceTest {
 
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
+    
+    @Mock
+    private NotificationService notificationService;
 
     private User user1;
     private User user2;

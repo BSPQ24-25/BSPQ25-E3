@@ -6,7 +6,7 @@ Student Loan Management is a platform for managing student loans that allows stu
 This project is implemented using Spring Boot, Java 17, JUnit 5 for unit testing, Mockito for mocking, and JaCoCo for test coverage. The application also utilizes JPA (Hibernate) for entity management and database handling.
 
 ## 2. Generated Documentation
-- **Technical documentation ([Doxygen](doxygen/html/index.html))**: package, class and method details.  
+- **Technical documentation ([Doxygen](https://bspq24-25.github.io/BSPQ25-E3/doxygen/html/index.html))**: package, class and method details.  
 - **Test reports**:  
   - Code coverage (JaCoCo)  
   - Unit tests (JUnit 5 + Mockito)  
@@ -14,7 +14,7 @@ This project is implemented using Spring Boot, Java 17, JUnit 5 for unit testing
   - Performance tests (JUnitPerf)
     - [Duration Test](https://github.com/BSPQ24-25/BSPQ25-E3/blob/main/snapshots-reports/Duration%20Test.png)
     - [Throughput Test](https://github.com/BSPQ24-25/BSPQ25-E3/blob/main/snapshots-reports/Throughput%20Test.png)
-- **Architecture overview**: MVC diagram and explanations.  
+- **Maven Site**: Curious about the inner workings? Check out the [Maven Site](https://bspq24-25.github.io/BSPQ25-E3/site/index.html). 
 
 
 ### 3. Architecture & Folder Structure
