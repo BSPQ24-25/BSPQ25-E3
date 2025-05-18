@@ -164,21 +164,17 @@ public class LoanService {
 		
 	}
 
-
     public Loan createLoan(Loan loan) {
-        // Validar que el ID no exista solo si se envía (nuevo préstamo no debería tener ID)
         if (loan.getId() != null) {
             if (loanRepository.existsById(loan.getId())) {
                 throw new RuntimeException("Loan already exists with id: " + loan.getId());
             }
         }
 
-        // Validar lender
         User lender = userRepository.findById(loan.getLender())
             .orElseThrow(() -> new RuntimeException(
                 "Failed to save loan: Lender not found with id: " + loan.getLender()));
 
-        // Validar borrower
         User borrower = userRepository.findById(loan.getBorrower())
             .orElseThrow(() -> new RuntimeException(
                 "Failed to save loan: Borrower not found with id: " + loan.getBorrower()));
@@ -187,12 +183,10 @@ public class LoanService {
             throw new RuntimeException("Cannot borrow items while under penalty.");
         }
 
-        // Validar item
         Item item = itemRepository.findById(loan.getItem())
             .orElseThrow(() -> new RuntimeException(
                 "Failed to save loan: Item not found with id: " + loan.getItem()));
 
-        // Comprobar límite de préstamos activos solo para nuevos préstamos en uso
         if (loan.getId() == null && loan.getLoanStatus() == Loan.Status.IN_USE) {
             int activos = loanRepository.countByBorrowerAndLoanStatus(loan.getBorrower(), Loan.Status.IN_USE);
             if (activos >= 3) {
@@ -201,10 +195,8 @@ public class LoanService {
             }
         }
 
-        // Asegurar estado del préstamo
         loan.setLoanStatus(Loan.Status.IN_USE);
 
-        // Enviar correos una sola vez usando objetos ya cargados
         notificationService.enviarCorreo(
             borrower.getEmail(),
             "Loan Created",
@@ -223,7 +215,6 @@ public class LoanService {
             "\n\nThank you for using our service!"
         );
 
-        // Guardar préstamo
         return loanRepository.save(loan);
     }
     
