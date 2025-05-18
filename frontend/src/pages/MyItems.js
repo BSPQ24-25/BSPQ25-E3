@@ -4,7 +4,6 @@ import ReturnItemModal from '../components/ReturnItemModal';
 import ReminderModal from '../components/ReminderModal';
 import UploadItemModal from '../components/UploadItemModal';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
 
 function MyItems() {
   const { t } = useTranslation();
@@ -21,7 +20,7 @@ function MyItems() {
 
   const fetchItems = async () => {
     try {
-      const [borrowedResponse, lentResponse,loansBorrowerResponse,loansLenderResponse] = await Promise.all([
+      const [borrowedResponse, lentResponse, loansBorrowerResponse, loansLenderResponse] = await Promise.all([
         axiosInstance.get('/items/borrowed'),
         axiosInstance.get('/items/lent'),
         axiosInstance.get('/loans/borrower'),
@@ -32,9 +31,9 @@ function MyItems() {
         id: item.id,
         name: item.name,
         owner: item.owner,
-        dueDate: item.dueDate || '-', // if is NULL show '-'
+        dueDate: item.dueDate || '-',
         status: item.status.toLowerCase(),
-      })); 
+      }));
 
       const lentRaw = lentResponse.data.map(item => ({
         id: item.id,
@@ -43,10 +42,9 @@ function MyItems() {
         dueDate: item.dueDate || '-',
         status: item.status.toLowerCase(),
       }));
-      
       const lent = lentRaw.filter((item, index, self) =>
         index === self.findIndex(t => t.id === item.id)
-      );    
+      );
 
       const loansLender = loansLenderResponse.data.map(loan => ({
         id: loan.id,
@@ -55,34 +53,15 @@ function MyItems() {
         borrower: loan.borrower || '-',
         status: loan.loanStatus.toLowerCase(),
       }));
-
       const lendWithDueDate = lent
-      .map(item => {
-        if (item.status === 'available') {
-          return {
-            ...item,
-            dueDate: '-',
-            borrower: '-',
-          };
-        }
-    
-        const loan = loansLender.find(
-          loan => loan.itemId === item.id && loan.status === 'in_use'
-        );
-    
-        if (loan) {
-          return {
-            ...item,
-            dueDate: loan.dueDate,
-            borrower: loan.borrower,
-          };
-        }
-    
-        return null; // Excluir si no tiene loan "in_use" y no está disponible
-      })
-      .filter(item => item !== null);
-    
-
+        .map(item => {
+          if (item.status === 'available') {
+            return { ...item, dueDate: '-', borrower: '-' };
+          }
+          const loan = loansLender.find(l => l.itemId === item.id && l.status === 'in_use');
+          return loan ? { ...item, dueDate: loan.dueDate, borrower: loan.borrower } : null;
+        })
+        .filter(item => item);
 
       const loans = loansBorrowerResponse.data.map(loan => ({
         id: loan.id,
@@ -90,24 +69,12 @@ function MyItems() {
         itemId: loan.item,
         status: loan.loanStatus.toLowerCase(),
       }));
-
-
-      //Put the actual due date in the lent items
       const borrowedWithDueDate = borrowed
-      .map(item => {
-        const loan = loans.find(
-          loan => loan.itemId === item.id && loan.status === 'in_use'
-        );
-        if (loan) {
-          return {
-            ...item,
-            dueDate: loan.dueDate,
-          };
-        }
-        return null; // Excluir si no cumple condición
-      })
-      .filter(item => item !== null);
-
+        .map(item => {
+          const loan = loans.find(l => l.itemId === item.id && l.status === 'in_use');
+          return loan ? { ...item, dueDate: loan.dueDate } : null;
+        })
+        .filter(item => item);
 
       setBorrowedItems(borrowedWithDueDate);
       setLentItems(lendWithDueDate);
@@ -128,15 +95,20 @@ function MyItems() {
     setIsReturnModalOpen(true);
   };
 
-  const handleConfirmReturn = async () => {
-    // Return item functionality
+  /**
+   * Ahora recibe 'observations' desde ReturnItemModal
+   * Envía PUT a /loans/{id}/return con el body { observations }
+   */
+  const handleConfirmReturn = async (observations) => {
     try {
-      const response = await axiosInstance.put(`loans/${selectedItem.id}/return`) 
+      const response = await axiosInstance.put(
+        `/loans/${selectedItem.id}/return`,
+        { observations }
+      );
       if (response.status === 200) {
-        console.log('Item returned successfully:', selectedItem.id);
-        // Update the Borrowed items UI
+        console.log('Item returned successfully:', selectedItem.id, observations);
         fetchItems();
-      }  else {
+      } else {
         console.error('Failed to return item');
       }
     } catch (error) {
@@ -170,58 +142,44 @@ function MyItems() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'borrowed':
-        return 'bg-green-100 text-green-800';
-      case 'overdue':
-        return 'bg-red-100 text-red-800';
-      case 'available':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+      case 'borrowed': return 'bg-green-100 text-green-800';
+      case 'overdue':  return 'bg-red-100 text-red-800';
+      case 'available':return 'bg-blue-100 text-blue-800';
+      default:         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const handleUploadItem = () => {
-    setIsUploadModalOpen(true);
-  };
-
-  const handleCloseUploadModal = () => {
-    setIsUploadModalOpen(false);
-  };
-
+  const handleUploadItem = () => setIsUploadModalOpen(true);
+  const handleCloseUploadModal = () => setIsUploadModalOpen(false);
   const handleConfirmUpload = async (formData) => {
-    
-    const toBase64 = (file) =>
-      new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-      });
-
+    const toBase64 = file => new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => res(reader.result);
+      reader.onerror = rej;
+    });
     const base64Image = formData.image ? await toBase64(formData.image) : null;
-
     try {
-      // TODO change forms to be able to upload the whole info of the item
       const adaptedData = {
         name: formData.name,
         description: formData.description,
         category: formData.category || 'Misc',
         purchaseDate: formData.purchaseDate,
         purchasePrice: formData.purchasePrice,
-        imageBase64: base64Image, // 👈 imagen como string base64
+        imageBase64: base64Image,
         status: 'available',
         condition: 'NEW',
       };
-
       await axiosInstance.post('/items/create', adaptedData);
-  
       console.log('Item uploaded successfully!');
       setIsUploadModalOpen(false);
     } catch (error) {
       console.error('Failed to upload item:', error.response?.data || error.message);
     }
   };
+
+  if (loading) return <div>{t('loading')}</div>;
+  if (error)   return <div className="text-red-600">{error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-50">
