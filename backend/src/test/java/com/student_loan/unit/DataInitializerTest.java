@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 import java.util.Collections;
@@ -48,7 +49,13 @@ public class DataInitializerTest {
     private LoanRepository loanRepository;
     
     @Mock
+    private BCryptPasswordEncoder passwordEncoder;
+
+    
+    @Mock
     private NotificationService notificationService;
+    
+    
     
     
 
