@@ -29,10 +29,13 @@ function UserProfile() {
   useEffect(() => {
     Promise.all([
       axiosInstance.get(`/users/${id}/record`),   // <-- Cambiado aquí
-      axiosInstance.get(`/items/lent`),
-      axiosInstance.get(`/items/borrowed`),
+      axiosInstance.get(`/users/${id}/items/lent`),
+      axiosInstance.get(`/users/${id}/items/borrowed`),
     ])
       .then(([uRes, lentRes, borRes]) => {
+        console.log('LENT ITEMS:', lentRes.data);
+        console.log('BORROWED ITEMS:', borRes.data);
+
         setUser(uRes.data);
         setLentItems(lentRes.data);
         setBorrowedItems(borRes.data);
@@ -93,9 +96,9 @@ function UserProfile() {
               <p className="text-md font-medium text-gray-800">{item.itemName}</p>
               <p className="text-sm text-gray-500">
                 {type === 'lent'
-                  ? `${t('userProfile.lentTo', 'Lent to:')} ${item.borrowerName}`
-                  : `${t('userProfile.borrowedFrom', 'Borrowed from:')} ${item.lenderName}`}
-                {item.date && ` - ${t('userProfile.date', 'Date:')} ${item.date}`}
+                  ? `${t('userProfile.lentTo', 'Lent to:')} ${item.borrowerId}`
+                  : `${t('userProfile.borrowedFrom', 'Borrowed from:')} ${item.lenderId}`}
+                {item.endDate && ` - ${t('userProfile.date', 'Due date:')} ${item.endDate}`}
               </p>
             </div>
             <span
@@ -105,7 +108,6 @@ function UserProfile() {
                   : 'bg-yellow-100 text-yellow-800'
               }`}
             >
-              {t(`itemStatus.${item.status.toLowerCase()}`, item.status)}
             </span>
           </li>
         ))}
