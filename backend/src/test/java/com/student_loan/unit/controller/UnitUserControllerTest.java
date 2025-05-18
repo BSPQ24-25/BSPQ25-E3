@@ -35,11 +35,13 @@ import com.student_loan.dtos.RegistrationRecord;
 import com.student_loan.dtos.UserDTO;
 import com.student_loan.dtos.UserRecord;
 import com.student_loan.model.User;
+import com.student_loan.service.ItemService;
 import com.student_loan.service.UserService;
 
 class UnitUserControllerTest {
 
     private UserService userService;
+    private ItemService itemService; 
     private UserController userController;
     private static final String ADMIN_TOKEN = "admin-token";
     private static final String USER_TOKEN = "user-token";
@@ -47,7 +49,7 @@ class UnitUserControllerTest {
     @BeforeEach
     void setUp() {
         userService = mock(UserService.class);
-        userController = new UserController(userService);
+        userController = new UserController(userService, itemService);
 
         SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
