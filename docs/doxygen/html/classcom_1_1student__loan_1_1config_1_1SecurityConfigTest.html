@@ -60,12 +60,16 @@ $(document).ready(function(){initNavTree('classcom_1_1student__loan_1_1config_1_
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aa48062c13a29a386735d5fea8793fa19" id="r_aa48062c13a29a386735d5fea8793fa19"><td class="memItemLeft" align="right" valign="top">BCryptPasswordEncoder&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#aa48062c13a29a386735d5fea8793fa19">bCryptPasswordEncoder</a> ()</td></tr>
 <tr class="separator:aa48062c13a29a386735d5fea8793fa19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd6fb12b4fcaa2d5a694cca70b4818f8" id="r_acd6fb12b4fcaa2d5a694cca70b4818f8"><td class="memItemLeft" align="right" valign="top">SecurityFilterChain&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#acd6fb12b4fcaa2d5a694cca70b4818f8">securityFilterChain</a> (HttpSecurity http)  throws Exception </td></tr>
-<tr class="separator:acd6fb12b4fcaa2d5a694cca70b4818f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1f1001d8860a86c58507a18a3226abe" id="r_ad1f1001d8860a86c58507a18a3226abe"><td class="memItemLeft" align="right" valign="top">JwtUtil&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#ad1f1001d8860a86c58507a18a3226abe">jwtUtil</a> ()</td></tr>
+<tr class="separator:ad1f1001d8860a86c58507a18a3226abe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6479d3a5cd9a10e42da181c3fce2f767" id="r_a6479d3a5cd9a10e42da181c3fce2f767"><td class="memItemLeft" align="right" valign="top">JwtFilter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#a6479d3a5cd9a10e42da181c3fce2f767">jwtFilter</a> (JwtUtil <a class="el" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#ad1f1001d8860a86c58507a18a3226abe">jwtUtil</a>)</td></tr>
+<tr class="separator:a6479d3a5cd9a10e42da181c3fce2f767"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfa6444ea59c4bff1cb65227f05fc0bf" id="r_adfa6444ea59c4bff1cb65227f05fc0bf"><td class="memItemLeft" align="right" valign="top">SecurityFilterChain&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#adfa6444ea59c4bff1cb65227f05fc0bf">securityFilterChain</a> (HttpSecurity http, @Autowired JwtFilter <a class="el" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#a6479d3a5cd9a10e42da181c3fce2f767">jwtFilter</a>)  throws Exception </td></tr>
+<tr class="separator:adfa6444ea59c4bff1cb65227f05fc0bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="SecurityConfigTest_8java_source.html#l00014">14</a> of file <a class="el" href="SecurityConfigTest_8java_source.html">SecurityConfigTest.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SecurityConfigTest_8java_source.html#l00018">18</a> of file <a class="el" href="SecurityConfigTest_8java_source.html">SecurityConfigTest.java</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aa48062c13a29a386735d5fea8793fa19" name="aa48062c13a29a386735d5fea8793fa19"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa48062c13a29a386735d5fea8793fa19">&#9670;&#160;</a></span>bCryptPasswordEncoder()</h2>
@@ -82,12 +86,51 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SecurityConfigTest_8java_source.html#l00016">16</a> of file <a class="el" href="SecurityConfigTest_8java_source.html">SecurityConfigTest.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SecurityConfigTest_8java_source.html#l00021">21</a> of file <a class="el" href="SecurityConfigTest_8java_source.html">SecurityConfigTest.java</a>.</p>
 
 </div>
 </div>
-<a id="acd6fb12b4fcaa2d5a694cca70b4818f8" name="acd6fb12b4fcaa2d5a694cca70b4818f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd6fb12b4fcaa2d5a694cca70b4818f8">&#9670;&#160;</a></span>securityFilterChain()</h2>
+<a id="a6479d3a5cd9a10e42da181c3fce2f767" name="a6479d3a5cd9a10e42da181c3fce2f767"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6479d3a5cd9a10e42da181c3fce2f767">&#9670;&#160;</a></span>jwtFilter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JwtFilter com.student_loan.config.SecurityConfigTest.jwtFilter </td>
+          <td>(</td>
+          <td class="paramtype">JwtUtil&#160;</td>
+          <td class="paramname"><em>jwtUtil</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SecurityConfigTest_8java_source.html#l00031">31</a> of file <a class="el" href="SecurityConfigTest_8java_source.html">SecurityConfigTest.java</a>.</p>
+
+</div>
+</div>
+<a id="ad1f1001d8860a86c58507a18a3226abe" name="ad1f1001d8860a86c58507a18a3226abe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1f1001d8860a86c58507a18a3226abe">&#9670;&#160;</a></span>jwtUtil()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JwtUtil com.student_loan.config.SecurityConfigTest.jwtUtil </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SecurityConfigTest_8java_source.html#l00026">26</a> of file <a class="el" href="SecurityConfigTest_8java_source.html">SecurityConfigTest.java</a>.</p>
+
+</div>
+</div>
+<a id="adfa6444ea59c4bff1cb65227f05fc0bf" name="adfa6444ea59c4bff1cb65227f05fc0bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfa6444ea59c4bff1cb65227f05fc0bf">&#9670;&#160;</a></span>securityFilterChain()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -96,13 +139,23 @@ Public Member Functions</h2></td></tr>
           <td class="memname">SecurityFilterChain com.student_loan.config.SecurityConfigTest.securityFilterChain </td>
           <td>(</td>
           <td class="paramtype">HttpSecurity&#160;</td>
-          <td class="paramname"><em>http</em></td><td>)</td>
-          <td> throws Exception</td>
+          <td class="paramname"><em>http</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">@Autowired JwtFilter&#160;</td>
+          <td class="paramname"><em>jwtFilter</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> throws Exception</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SecurityConfigTest_8java_source.html#l00021">21</a> of file <a class="el" href="SecurityConfigTest_8java_source.html">SecurityConfigTest.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SecurityConfigTest_8java_source.html#l00036">36</a> of file <a class="el" href="SecurityConfigTest_8java_source.html">SecurityConfigTest.java</a>.</p>
 
 </div>
 </div>

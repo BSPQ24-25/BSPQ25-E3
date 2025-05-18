@@ -2,8 +2,8 @@ GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_
 StudentLoanManagement,com.student_loan.security,JwtFilter,0,58,0,6,0,14,0,5,0,2
 StudentLoanManagement,com.student_loan.security,JwtUtil,0,53,0,0,0,18,0,4,0,4
 StudentLoanManagement,com.student_loan,StudentLoanManagementApplication,5,3,0,0,2,1,1,1,1,1
-StudentLoanManagement,com.student_loan,DataInitializer,2837,0,16,0,171,0,63,0,55,0
-StudentLoanManagement,com.student_loan.model,Loan,0,132,0,0,0,45,0,23,0,23
+StudentLoanManagement,com.student_loan,DataInitializer,3067,0,38,0,201,0,75,0,56,0
+StudentLoanManagement,com.student_loan.model,Loan,0,146,0,4,0,49,0,25,0,23
 StudentLoanManagement,com.student_loan.model,Item.ItemStatus,0,21,0,0,0,2,0,1,0,1
 StudentLoanManagement,com.student_loan.model,User,0,152,0,4,0,50,0,28,0,26
 StudentLoanManagement,com.student_loan.model,Loan.Status,0,27,0,0,0,2,0,1,0,1
@@ -18,14 +18,15 @@ StudentLoanManagement,com.student_loan.dtos,LoanRecord,0,63,0,0,0,1,0,11,0,11
 StudentLoanManagement,com.student_loan.dtos,RankingDTO,0,27,0,0,0,10,0,5,0,5
 StudentLoanManagement,com.student_loan.dtos,ItemRecord,0,39,0,0,0,1,0,7,0,7
 StudentLoanManagement,com.student_loan.controller,ItemController,0,518,0,44,0,109,0,36,0,14
-StudentLoanManagement,com.student_loan.controller,UserController,0,289,0,24,0,61,0,22,0,10
+StudentLoanManagement,com.student_loan.controller,UserController,86,289,6,24,21,61,6,22,3,10
 StudentLoanManagement,com.student_loan.controller,LoanController,0,498,0,70,0,85,0,47,0,12
 StudentLoanManagement,com.student_loan.controller,RankingController,0,13,0,0,0,5,0,2,0,2
-StudentLoanManagement,com.student_loan.service,LoanService,0,339,0,46,0,68,0,34,0,11
+StudentLoanManagement,com.student_loan.service,LoanService,93,449,7,51,14,85,5,36,0,12
 StudentLoanManagement,com.student_loan.service,RankingService,0,10,0,0,0,4,0,2,0,2
-StudentLoanManagement,com.student_loan.service,UserService,0,280,0,38,0,55,0,29,0,10
-StudentLoanManagement,com.student_loan.service,ItemService,0,129,0,10,0,25,0,14,0,9
+StudentLoanManagement,com.student_loan.service,UserService,0,298,1,41,0,58,1,30,0,10
+StudentLoanManagement,com.student_loan.service,ItemService,5,129,0,10,1,25,1,14,1,9
+StudentLoanManagement,com.student_loan.service,NotificationService,25,7,0,0,9,2,1,2,1,2
 StudentLoanManagement,com.student_loan.config,SecurityConfig,0,101,0,0,0,21,0,5,0,5
 StudentLoanManagement,com.student_loan.config,CorsConfig,0,8,0,0,0,2,0,2,0,2
 StudentLoanManagement,com.student_loan.config,CorsConfig.new WebMvcConfigurer() {...},0,50,0,0,0,7,0,2,0,2
-StudentLoanManagement,com.student_loan.config,SecurityConfigTest,0,41,0,0,0,7,0,4,0,4
+StudentLoanManagement,com.student_loan.config,SecurityConfigTest,0,65,0,0,0,11,0,6,0,6

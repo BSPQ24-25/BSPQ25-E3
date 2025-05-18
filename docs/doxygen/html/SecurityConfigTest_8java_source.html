@@ -54,42 +54,69 @@ $(document).ready(function(){initNavTree('SecurityConfigTest_8java_source.html',
 <div class="contents">
 <a href="SecurityConfigTest_8java.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="keyword">package </span>com.student_loan.config;</div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">import</span> org.springframework.context.annotation.Bean;</div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">import</span> org.springframework.context.annotation.Profile;</div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">import</span> org.springframework.security.config.annotation.web.builders.HttpSecurity;</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">import</span> org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">import</span> org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">import</span> org.springframework.security.web.SecurityFilterChain;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>@Configuration</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>@EnableWebSecurity</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>@Profile(<span class="stringliteral">&quot;test&quot;</span>)</div>
-<div class="foldopen" id="foldopen00014" data-start="{" data-end="};">
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html">   14</a></span>public class <a class="code hl_class" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html">SecurityConfigTest</a> {</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    @Bean</div>
-<div class="foldopen" id="foldopen00016" data-start="{" data-end="}">
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#aa48062c13a29a386735d5fea8793fa19">   16</a></span>    <span class="keyword">public</span> BCryptPasswordEncoder <a class="code hl_function" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#aa48062c13a29a386735d5fea8793fa19">bCryptPasswordEncoder</a>() {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> BCryptPasswordEncoder();</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    }</div>
-</div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">import</span> com.student_loan.security.JwtFilter;</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="keyword">import</span> com.student_loan.security.JwtUtil;</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">import</span> org.springframework.context.annotation.Bean;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">import</span> org.springframework.context.annotation.Profile;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">import</span> org.springframework.security.config.annotation.web.builders.HttpSecurity;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">import</span> org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">import</span> org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">import</span> org.springframework.security.web.SecurityFilterChain;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">import</span> org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>@Configuration</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>@EnableWebSecurity</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>@Profile(<span class="stringliteral">&quot;test&quot;</span>)</div>
+<div class="foldopen" id="foldopen00018" data-start="{" data-end="};">
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html">   18</a></span>public class <a class="code hl_class" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html">SecurityConfigTest</a> {</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    @Bean</div>
 <div class="foldopen" id="foldopen00021" data-start="{" data-end="}">
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#acd6fb12b4fcaa2d5a694cca70b4818f8">   21</a></span>    <span class="keyword">public</span> SecurityFilterChain <a class="code hl_function" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#acd6fb12b4fcaa2d5a694cca70b4818f8">securityFilterChain</a>(HttpSecurity http) <span class="keywordflow">throws</span> Exception {</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    http.csrf().disable()</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>            .authorizeHttpRequests(auth -&gt; auth</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>                .requestMatchers(<span class="stringliteral">&quot;/users/**&quot;</span>,<span class="stringliteral">&quot;/items/**&quot;</span>,<span class="stringliteral">&quot;/loans/**&quot;</span>).permitAll() <span class="comment">// Public routes (login, register)</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>                .anyRequest().authenticated() <span class="comment">// All other routes require authentication</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>            );</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        <span class="keywordflow">return</span> http.build();</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#aa48062c13a29a386735d5fea8793fa19">   21</a></span>    <span class="keyword">public</span> BCryptPasswordEncoder <a class="code hl_function" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#aa48062c13a29a386735d5fea8793fa19">bCryptPasswordEncoder</a>() {</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> BCryptPasswordEncoder();</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    }</div>
+</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    @Bean</div>
+<div class="foldopen" id="foldopen00026" data-start="{" data-end="}">
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#ad1f1001d8860a86c58507a18a3226abe">   26</a></span>    <span class="keyword">public</span> JwtUtil <a class="code hl_function" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#ad1f1001d8860a86c58507a18a3226abe">jwtUtil</a>() {</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> JwtUtil();</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    }</div>
 </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>}</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    @Bean</div>
+<div class="foldopen" id="foldopen00031" data-start="{" data-end="}">
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#a6479d3a5cd9a10e42da181c3fce2f767">   31</a></span>    <span class="keyword">public</span> JwtFilter <a class="code hl_function" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#a6479d3a5cd9a10e42da181c3fce2f767">jwtFilter</a>(JwtUtil jwtUtil) {</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> JwtFilter(jwtUtil);</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    }</div>
 </div>
-<div class="ttc" id="aclasscom_1_1student__loan_1_1config_1_1SecurityConfigTest_html"><div class="ttname"><a href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html">com.student_loan.config.SecurityConfigTest</a></div><div class="ttdef"><b>Definition</b> <a href="SecurityConfigTest_8java_source.html#l00014">SecurityConfigTest.java:14</a></div></div>
-<div class="ttc" id="aclasscom_1_1student__loan_1_1config_1_1SecurityConfigTest_html_aa48062c13a29a386735d5fea8793fa19"><div class="ttname"><a href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#aa48062c13a29a386735d5fea8793fa19">com.student_loan.config.SecurityConfigTest.bCryptPasswordEncoder</a></div><div class="ttdeci">BCryptPasswordEncoder bCryptPasswordEncoder()</div><div class="ttdef"><b>Definition</b> <a href="SecurityConfigTest_8java_source.html#l00016">SecurityConfigTest.java:16</a></div></div>
-<div class="ttc" id="aclasscom_1_1student__loan_1_1config_1_1SecurityConfigTest_html_acd6fb12b4fcaa2d5a694cca70b4818f8"><div class="ttname"><a href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#acd6fb12b4fcaa2d5a694cca70b4818f8">com.student_loan.config.SecurityConfigTest.securityFilterChain</a></div><div class="ttdeci">SecurityFilterChain securityFilterChain(HttpSecurity http)</div><div class="ttdef"><b>Definition</b> <a href="SecurityConfigTest_8java_source.html#l00021">SecurityConfigTest.java:21</a></div></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    @Bean</div>
+<div class="foldopen" id="foldopen00036" data-start="{" data-end="}">
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#adfa6444ea59c4bff1cb65227f05fc0bf">   36</a></span>    <span class="keyword">public</span> SecurityFilterChain <a class="code hl_function" href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#adfa6444ea59c4bff1cb65227f05fc0bf">securityFilterChain</a>(HttpSecurity http,</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>                                                   @Autowired JwtFilter jwtFilter) <span class="keywordflow">throws</span> Exception {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        http.csrf().disable()</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            .authorizeHttpRequests(auth -&gt; auth</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>                .requestMatchers(</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>                    <span class="stringliteral">&quot;/users&quot;</span>, <span class="stringliteral">&quot;/users/**&quot;</span>,</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                    <span class="stringliteral">&quot;/items&quot;</span>, <span class="stringliteral">&quot;/items/**&quot;</span>,</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                    <span class="stringliteral">&quot;/loans&quot;</span>, <span class="stringliteral">&quot;/loans/**&quot;</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                ).permitAll()</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                .anyRequest().authenticated()</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            );</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keywordflow">return</span> http.build();</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    }</div>
+</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
+</div>
+<div class="ttc" id="aclasscom_1_1student__loan_1_1config_1_1SecurityConfigTest_html"><div class="ttname"><a href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html">com.student_loan.config.SecurityConfigTest</a></div><div class="ttdef"><b>Definition</b> <a href="SecurityConfigTest_8java_source.html#l00018">SecurityConfigTest.java:18</a></div></div>
+<div class="ttc" id="aclasscom_1_1student__loan_1_1config_1_1SecurityConfigTest_html_a6479d3a5cd9a10e42da181c3fce2f767"><div class="ttname"><a href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#a6479d3a5cd9a10e42da181c3fce2f767">com.student_loan.config.SecurityConfigTest.jwtFilter</a></div><div class="ttdeci">JwtFilter jwtFilter(JwtUtil jwtUtil)</div><div class="ttdef"><b>Definition</b> <a href="SecurityConfigTest_8java_source.html#l00031">SecurityConfigTest.java:31</a></div></div>
+<div class="ttc" id="aclasscom_1_1student__loan_1_1config_1_1SecurityConfigTest_html_aa48062c13a29a386735d5fea8793fa19"><div class="ttname"><a href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#aa48062c13a29a386735d5fea8793fa19">com.student_loan.config.SecurityConfigTest.bCryptPasswordEncoder</a></div><div class="ttdeci">BCryptPasswordEncoder bCryptPasswordEncoder()</div><div class="ttdef"><b>Definition</b> <a href="SecurityConfigTest_8java_source.html#l00021">SecurityConfigTest.java:21</a></div></div>
+<div class="ttc" id="aclasscom_1_1student__loan_1_1config_1_1SecurityConfigTest_html_ad1f1001d8860a86c58507a18a3226abe"><div class="ttname"><a href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#ad1f1001d8860a86c58507a18a3226abe">com.student_loan.config.SecurityConfigTest.jwtUtil</a></div><div class="ttdeci">JwtUtil jwtUtil()</div><div class="ttdef"><b>Definition</b> <a href="SecurityConfigTest_8java_source.html#l00026">SecurityConfigTest.java:26</a></div></div>
+<div class="ttc" id="aclasscom_1_1student__loan_1_1config_1_1SecurityConfigTest_html_adfa6444ea59c4bff1cb65227f05fc0bf"><div class="ttname"><a href="classcom_1_1student__loan_1_1config_1_1SecurityConfigTest.html#adfa6444ea59c4bff1cb65227f05fc0bf">com.student_loan.config.SecurityConfigTest.securityFilterChain</a></div><div class="ttdeci">SecurityFilterChain securityFilterChain(HttpSecurity http, @Autowired JwtFilter jwtFilter)</div><div class="ttdef"><b>Definition</b> <a href="SecurityConfigTest_8java_source.html#l00036">SecurityConfigTest.java:36</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

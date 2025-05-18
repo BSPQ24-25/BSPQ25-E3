@@ -89,11 +89,15 @@ import java.util.Optional;
      * @throws RuntimeException if the item's owner does not exist.
      */
 
+
+	public List&lt;Item&gt; getItemsByAvailability(ItemStatus status) {
+<span class="nc" id="L94">		return itemRepository.findByStatus(status);</span>
+	}
     public Item saveItem(Item item) {
-<span class="fc bfc" id="L93" title="All 2 branches covered.">    	if(!userRepository.findById(item.getOwner()).isPresent()) {</span>
-<span class="fc" id="L94">    		throw new RuntimeException(&quot;Failed to save item with id &quot;+ item.getId()+&quot;: Owner not found with id: &quot; + item.getOwner());</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">    	if(!userRepository.findById(item.getOwner()).isPresent()) {</span>
+<span class="fc" id="L98">    		throw new RuntimeException(&quot;Failed to save item with id &quot;+ item.getId()+&quot;: Owner not found with id: &quot; + item.getOwner());</span>
     	}else {
-<span class="fc" id="L96">	        return itemRepository.save(item);</span>
+<span class="fc" id="L100">	        return itemRepository.save(item);</span>
 	    }
     }
     
@@ -107,14 +111,14 @@ import java.util.Optional;
 	 */
     
 	public Item createItem(Item item) {
-<span class="fc" id="L110">		Optional&lt;Item&gt; optionalItem = itemRepository.findById(item.getId());</span>
-<span class="fc bfc" id="L111" title="All 2 branches covered.">		if (optionalItem.isPresent()) {</span>
-<span class="fc" id="L112">			throw new RuntimeException(</span>
-<span class="fc" id="L113">					&quot;Failed to create item with id &quot; + item.getId() + &quot;: Item already exists with id: &quot; + item.getId());</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">		}else if(!userRepository.findById(item.getOwner()).isPresent()) {</span>
-<span class="fc" id="L115">    		throw new RuntimeException(&quot;Failed to save item with id &quot;+ item.getId()+&quot;: Owner not found with id: &quot; + item.getOwner());</span>
+<span class="fc" id="L114">		Optional&lt;Item&gt; optionalItem = itemRepository.findById(item.getId());</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		if (optionalItem.isPresent()) {</span>
+<span class="fc" id="L116">			throw new RuntimeException(</span>
+<span class="fc" id="L117">					&quot;Failed to create item with id &quot; + item.getId() + &quot;: Item already exists with id: &quot; + item.getId());</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">		}else if(!userRepository.findById(item.getOwner()).isPresent()) {</span>
+<span class="fc" id="L119">    		throw new RuntimeException(&quot;Failed to save item with id &quot;+ item.getId()+&quot;: Owner not found with id: &quot; + item.getOwner());</span>
     	}
-<span class="fc" id="L117">		return itemRepository.save(item);</span>
+<span class="fc" id="L121">		return itemRepository.save(item);</span>
 	}
 	    
 	
@@ -124,7 +128,7 @@ import java.util.Optional;
      * @param id The ID of the item to delete.
      */
     public void deleteItem(Long id) {
-<span class="fc" id="L127">        itemRepository.deleteById(id);</span>
-<span class="fc" id="L128">    }</span>
+<span class="fc" id="L131">        itemRepository.deleteById(id);</span>
+<span class="fc" id="L132">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

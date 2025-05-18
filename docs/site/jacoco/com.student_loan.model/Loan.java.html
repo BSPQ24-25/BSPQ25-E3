@@ -211,7 +211,10 @@ public class Loan {
      * @return The estimated return date for the loaned item.
      */
     public Date getEstimatedReturnDate() {
-<span class="fc" id="L214">        return estimatedReturnDate;</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">    	if (estimatedReturnDate == null) {</span>
+<span class="fc" id="L215">    		            return new Date();</span>
+    	}
+<span class="fc" id="L217">        return estimatedReturnDate;</span>
     }
 
     /**
@@ -220,8 +223,8 @@ public class Loan {
      * @param estimatedReturnDate The estimated return date for the loaned item.
      */
     public void setEstimatedReturnDate(Date estimatedReturnDate) {
-<span class="fc" id="L223">        this.estimatedReturnDate = estimatedReturnDate;</span>
-<span class="fc" id="L224">    }</span>
+<span class="fc" id="L226">        this.estimatedReturnDate = estimatedReturnDate;</span>
+<span class="fc" id="L227">    }</span>
 
     /**
      * Gets the actual return date for the loaned item.
@@ -229,7 +232,10 @@ public class Loan {
      * @return The actual return date for the loaned item.
      */
     public Date getRealReturnDate() {
-<span class="fc" id="L232">        return realReturnDate;</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">		if (realReturnDate == null) {</span>
+<span class="fc" id="L236">			return new Date();</span>
+		}
+<span class="fc" id="L238">        return realReturnDate;</span>
     }
 
     /**
@@ -238,8 +244,8 @@ public class Loan {
      * @param realReturnDate The actual return date for the loaned item.
      */
     public void setRealReturnDate(Date realReturnDate) {
-<span class="fc" id="L241">        this.realReturnDate = realReturnDate;</span>
-<span class="fc" id="L242">    }</span>
+<span class="fc" id="L247">        this.realReturnDate = realReturnDate;</span>
+<span class="fc" id="L248">    }</span>
 
     /**
      * Gets the status of the loan.
@@ -247,7 +253,7 @@ public class Loan {
      * @return The status of the loan.
      */
     public Status getLoanStatus() {
-<span class="fc" id="L250">        return loanStatus;</span>
+<span class="fc" id="L256">        return loanStatus;</span>
     }
 
     /**
@@ -256,8 +262,8 @@ public class Loan {
      * @param loanStatus The status of the loan.
      */
     public void setLoanStatus(Status loanStatus) {
-<span class="fc" id="L259">        this.loanStatus = loanStatus;</span>
-<span class="fc" id="L260">    }</span>
+<span class="fc" id="L265">        this.loanStatus = loanStatus;</span>
+<span class="fc" id="L266">    }</span>
 
     /**
      * Gets the rating given for the loan transaction.
@@ -265,7 +271,7 @@ public class Loan {
      * @return The rating given for the loan transaction.
      */
     public Double getRating() {
-<span class="fc" id="L268">        return rating;</span>
+<span class="fc" id="L274">        return rating;</span>
     }
 
     /**
@@ -274,8 +280,8 @@ public class Loan {
      * @param rating The rating given for the loan transaction.
      */
     public void setRating(Double rating) {
-<span class="fc" id="L277">        this.rating = rating;</span>
-<span class="fc" id="L278">    }</span>
+<span class="fc" id="L283">        this.rating = rating;</span>
+<span class="fc" id="L284">    }</span>
 
     /**
      * Gets additional observations or comments about the loan.
@@ -283,7 +289,7 @@ public class Loan {
      * @return Additional observations or comments about the loan.
      */
     public String getObservations() {
-<span class="fc" id="L286">        return observations;</span>
+<span class="fc" id="L292">        return observations;</span>
     }
 
     /**
@@ -292,8 +298,8 @@ public class Loan {
      * @param observations Additional observations or comments about the loan.
      */
     public void setObservations(String observations) {
-<span class="fc" id="L295">        this.observations = observations;</span>
-<span class="fc" id="L296">    }</span>
+<span class="fc" id="L301">        this.observations = observations;</span>
+<span class="fc" id="L302">    }</span>
 
     /**
      * Returns a string representation of the loan.
@@ -302,7 +308,7 @@ public class Loan {
      */
     @Override
     public String toString() {
-<span class="fc" id="L305">        return &quot;Loan{&quot; +</span>
+<span class="fc" id="L311">        return &quot;Loan{&quot; +</span>
                 &quot;id=&quot; + id +
                 &quot;, lender=&quot; + lender +
                 &quot;, borrower=&quot; + borrower +

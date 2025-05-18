@@ -156,7 +156,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity indicating the result of the operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00223">223</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00245">245</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
 
 </div>
 </div>
@@ -195,7 +195,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity indicating the result of the operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00250">250</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00272">272</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
 
 </div>
 </div>
@@ -234,7 +234,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity indicating the result of the operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00275">275</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00297">297</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
 
 </div>
 </div>
@@ -276,7 +276,7 @@ Public Member Functions</h2></td></tr>
 <p>Retrieves all available items in the system.</p>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing a list of available items. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00091">91</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00094">94</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
 
 </div>
 </div>
@@ -297,7 +297,7 @@ Public Member Functions</h2></td></tr>
 <p>Retrieves all items borrowed by the authenticated user.</p>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing a list of borrowed items. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00191">191</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00213">213</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
 
 </div>
 </div>
@@ -316,7 +316,15 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Retrieves an item by its ID.</p>
+<p>Retrieves all available items in the system using a token for authentication.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">token</td><td>The authentication token. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing a list of available items.</dd></dl>
+<p>@GetMapping("/available") public ResponseEntity&lt;List&lt;Item&gt;&gt; getAvailableItems(@RequestParam("token") String token) { User user = userService.getUserByToken(token); if (user == null) { return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED); } List&lt;Item&gt; items = itemService.getItemsByAvailability(Item.ItemStatus.AVAILABLE); return new ResponseEntity&lt;&gt;(items, HttpStatus.OK); } Retrieves an item by its ID.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">id</td><td>The ID of the item. </td></tr>
@@ -325,7 +333,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing the item. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00135">135</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00157">157</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
 
 </div>
 </div>
@@ -353,7 +361,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing a list of items owned by the user. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00110">110</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00114">114</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
 
 </div>
 </div>
@@ -374,7 +382,7 @@ Public Member Functions</h2></td></tr>
 <p>Retrieves all items lent by the authenticated user.</p>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity containing a list of lent items. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00162">162</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00184">184</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
 
 </div>
 </div>
@@ -420,7 +428,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ResponseEntity indicating the result of the operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00295">295</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemController_8java_source.html#l00317">317</a> of file <a class="el" href="ItemController_8java_source.html">ItemController.java</a>.</p>
 
 </div>
 </div>

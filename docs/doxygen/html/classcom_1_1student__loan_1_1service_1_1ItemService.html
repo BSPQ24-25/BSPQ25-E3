@@ -68,6 +68,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a87d5cbcafaf794c8313cae7468b842d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a13ae8d50285a5c44bc1351f8029a0e" id="r_a2a13ae8d50285a5c44bc1351f8029a0e"><td class="memItemLeft" align="right" valign="top">List&lt; Item &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1service_1_1ItemService.html#a2a13ae8d50285a5c44bc1351f8029a0e">getItemsByUser</a> (Long id)</td></tr>
 <tr class="separator:a2a13ae8d50285a5c44bc1351f8029a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f52405e8ea6467e856dceaf2548c00c" id="r_a2f52405e8ea6467e856dceaf2548c00c"><td class="memItemLeft" align="right" valign="top">List&lt; Item &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1service_1_1ItemService.html#a2f52405e8ea6467e856dceaf2548c00c">getItemsByAvailability</a> (ItemStatus status)</td></tr>
+<tr class="separator:a2f52405e8ea6467e856dceaf2548c00c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad010366a1714c7d8b30b6b7f5f5850e7" id="r_ad010366a1714c7d8b30b6b7f5f5850e7"><td class="memItemLeft" align="right" valign="top">Item&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1service_1_1ItemService.html#ad010366a1714c7d8b30b6b7f5f5850e7">saveItem</a> (Item item)</td></tr>
 <tr class="separator:ad010366a1714c7d8b30b6b7f5f5850e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bf20e04db2a3f5bfffda649e82b7412" id="r_a3bf20e04db2a3f5bfffda649e82b7412"><td class="memItemLeft" align="right" valign="top">Item&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1service_1_1ItemService.html#a3bf20e04db2a3f5bfffda649e82b7412">createItem</a> (Item item)</td></tr>
@@ -110,7 +112,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemService_8java_source.html#l00109">109</a> of file <a class="el" href="ItemService_8java_source.html">ItemService.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemService_8java_source.html#l00113">113</a> of file <a class="el" href="ItemService_8java_source.html">ItemService.java</a>.</p>
 
 </div>
 </div>
@@ -137,7 +139,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemService_8java_source.html#l00126">126</a> of file <a class="el" href="ItemService_8java_source.html">ItemService.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemService_8java_source.html#l00130">130</a> of file <a class="el" href="ItemService_8java_source.html">ItemService.java</a>.</p>
 
 </div>
 </div>
@@ -208,6 +210,40 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Optional containing the item if found, or empty if not. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="ItemService_8java_source.html#l00049">49</a> of file <a class="el" href="ItemService_8java_source.html">ItemService.java</a>.</p>
+
+</div>
+</div>
+<a id="a2f52405e8ea6467e856dceaf2548c00c" name="a2f52405e8ea6467e856dceaf2548c00c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f52405e8ea6467e856dceaf2548c00c">&#9670;&#160;</a></span>getItemsByAvailability()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">List&lt; Item &gt; com.student_loan.service.ItemService.getItemsByAvailability </td>
+          <td>(</td>
+          <td class="paramtype">ItemStatus&#160;</td>
+          <td class="paramname"><em>status</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Saves an item to the repository.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">item</td><td>The item to save. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The saved item. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">RuntimeException</td><td>if the item's owner does not exist. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="ItemService_8java_source.html#l00093">93</a> of file <a class="el" href="ItemService_8java_source.html">ItemService.java</a>.</p>
 
 </div>
 </div>
@@ -288,22 +324,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Saves an item to the repository.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">item</td><td>The item to save. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The saved item. </dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">RuntimeException</td><td>if the item's owner does not exist. </td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p class="definition">Definition at line <a class="el" href="ItemService_8java_source.html#l00092">92</a> of file <a class="el" href="ItemService_8java_source.html">ItemService.java</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ItemService_8java_source.html#l00096">96</a> of file <a class="el" href="ItemService_8java_source.html">ItemService.java</a>.</p>
 
 </div>
 </div>
