@@ -15,6 +15,7 @@ var annotated_dup =
         ] ],
         [ "dtos", "namespacecom_1_1student__loan_1_1dtos.html", [
           [ "CredentialsDTO", "classcom_1_1student__loan_1_1dtos_1_1CredentialsDTO.html", "classcom_1_1student__loan_1_1dtos_1_1CredentialsDTO" ],
+          [ "LoanAndItemDto", "classcom_1_1student__loan_1_1dtos_1_1LoanAndItemDto.html", "classcom_1_1student__loan_1_1dtos_1_1LoanAndItemDto" ],
           [ "RankingDTO", "classcom_1_1student__loan_1_1dtos_1_1RankingDTO.html", "classcom_1_1student__loan_1_1dtos_1_1RankingDTO" ],
           [ "UserDTO", "classcom_1_1student__loan_1_1dtos_1_1UserDTO.html", "classcom_1_1student__loan_1_1dtos_1_1UserDTO" ]
         ] ],
