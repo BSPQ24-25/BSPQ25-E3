@@ -227,27 +227,26 @@ $(document).ready(function(){initNavTree('UserController_8java_source.html','');
 <div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span> </div>
 <div class="foldopen" id="foldopen00229" data-start="{" data-end="}">
 <div class="line"><a id="l00229" name="l00229"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a537cc70c319604966018579277d01c6f">  229</a></span>    <span class="keyword">public</span> UserRecord <a class="code hl_function" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a537cc70c319604966018579277d01c6f">userToUserRecord</a>(User user) {</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    String[] nameParts = user.getName().split(<span class="stringliteral">&quot; &quot;</span>, 2);</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    String firstName = nameParts.length &gt; 0 ? nameParts[0] : <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    String lastName = nameParts.length &gt; 1 ? nameParts[1] : <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        String[] nameParts = user.getName().split(<span class="stringliteral">&quot; &quot;</span>, 2);</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        String firstName = nameParts.length &gt; 0 ? nameParts[0] : <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        String lastName = nameParts.length &gt; 1 ? nameParts[1] : <span class="stringliteral">&quot;&quot;</span>;</div>
 <div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    <span class="keywordflow">return</span> <span class="keyword">new</span> UserRecord(</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        firstName,</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        lastName,</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>        user.getEmail(),</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>        user.getPassword(),</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        user.getTelephoneNumber(),</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        user.getAddress(),</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>        user.getDegreeType().name(),</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        user.getDegreeYear(),</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        user.getPenalties(),</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        user.getAverageRating(),</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>        user.getAdmin()</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    );</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>}</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> UserRecord(</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            firstName,</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>            lastName,</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>            user.getEmail(),</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            user.getPassword(),</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>            user.getTelephoneNumber(),</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>            user.getAddress(),</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>            user.getDegreeType().name(),</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            user.getDegreeYear(),</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>            user.getPenalties(),</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>            user.getAverageRating(),</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>            user.getAdmin()</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        );</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    }</div>
 </div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span> </div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>}</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>}</div>
 </div>
 <div class="ttc" id="aclasscom_1_1student__loan_1_1controller_1_1UserController_html"><div class="ttname"><a href="classcom_1_1student__loan_1_1controller_1_1UserController.html">com.student_loan.controller.UserController</a></div><div class="ttdef"><b>Definition</b> <a href="UserController_8java_source.html#l00027">UserController.java:27</a></div></div>
 <div class="ttc" id="aclasscom_1_1student__loan_1_1controller_1_1UserController_html_a2fde177803d657f7657cbf59fe48860c"><div class="ttname"><a href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a2fde177803d657f7657cbf59fe48860c">com.student_loan.controller.UserController.getAllUsers</a></div><div class="ttdeci">ResponseEntity&lt; List&lt; User &gt; &gt; getAllUsers(@RequestParam(&quot;token&quot;) String token)</div><div class="ttdef"><b>Definition</b> <a href="UserController_8java_source.html#l00046">UserController.java:46</a></div></div>

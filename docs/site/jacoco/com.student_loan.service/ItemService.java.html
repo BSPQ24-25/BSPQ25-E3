@@ -91,7 +91,7 @@ import java.util.Optional;
 
 
 	public List&lt;Item&gt; getItemsByAvailability(ItemStatus status) {
-<span class="nc" id="L94">		return itemRepository.findByStatus(status);</span>
+<span class="fc" id="L94">		return itemRepository.findByStatus(status);</span>
 	}
     public Item saveItem(Item item) {
 <span class="fc bfc" id="L97" title="All 2 branches covered.">    	if(!userRepository.findById(item.getOwner()).isPresent()) {</span>

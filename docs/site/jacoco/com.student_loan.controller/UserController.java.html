@@ -110,18 +110,18 @@ public class UserController {
      */
     @GetMapping(&quot;/{id}/record&quot;)
     public ResponseEntity&lt;UserRecord&gt; getUserRecordById(@PathVariable Long id) {
-<span class="nc" id="L113">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="nc" id="L114">        String email = authentication.getName();</span>
+<span class="fc" id="L113">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L114">        String email = authentication.getName();</span>
 
-<span class="nc" id="L116">        User requester = userService.getUserByEmail(email);</span>
-<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (requester == null) {</span>
-<span class="nc" id="L118">            return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L116">        User requester = userService.getUserByEmail(email);</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (requester == null) {</span>
+<span class="fc" id="L118">            return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
         }
 
-<span class="nc" id="L121">        User target = userService.getUserById(id)</span>
-<span class="nc" id="L122">            .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND));</span>
+<span class="fc" id="L121">        User target = userService.getUserById(id)</span>
+<span class="fc" id="L122">            .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND));</span>
 
-<span class="nc" id="L124">        return ResponseEntity.ok(userToUserRecord(target));</span>
+<span class="fc" id="L124">        return ResponseEntity.ok(userToUserRecord(target));</span>
     }
 
 	/**
@@ -227,24 +227,23 @@ public class UserController {
 	}
 
     public UserRecord userToUserRecord(User user) {
-<span class="nc" id="L230">    String[] nameParts = user.getName().split(&quot; &quot;, 2);</span>
-<span class="nc bnc" id="L231" title="All 2 branches missed.">    String firstName = nameParts.length &gt; 0 ? nameParts[0] : &quot;&quot;;</span>
-<span class="nc bnc" id="L232" title="All 2 branches missed.">    String lastName = nameParts.length &gt; 1 ? nameParts[1] : &quot;&quot;;</span>
+<span class="fc" id="L230">        String[] nameParts = user.getName().split(&quot; &quot;, 2);</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">        String firstName = nameParts.length &gt; 0 ? nameParts[0] : &quot;&quot;;</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        String lastName = nameParts.length &gt; 1 ? nameParts[1] : &quot;&quot;;</span>
 
-<span class="nc" id="L234">    return new UserRecord(</span>
-        firstName,
-        lastName,
-<span class="nc" id="L237">        user.getEmail(),</span>
-<span class="nc" id="L238">        user.getPassword(),</span>
-<span class="nc" id="L239">        user.getTelephoneNumber(),</span>
-<span class="nc" id="L240">        user.getAddress(),</span>
-<span class="nc" id="L241">        user.getDegreeType().name(),</span>
-<span class="nc" id="L242">        user.getDegreeYear(),</span>
-<span class="nc" id="L243">        user.getPenalties(),</span>
-<span class="nc" id="L244">        user.getAverageRating(),</span>
-<span class="nc" id="L245">        user.getAdmin()</span>
-    );
-}
-
+<span class="fc" id="L234">        return new UserRecord(</span>
+            firstName,
+            lastName,
+<span class="fc" id="L237">            user.getEmail(),</span>
+<span class="fc" id="L238">            user.getPassword(),</span>
+<span class="fc" id="L239">            user.getTelephoneNumber(),</span>
+<span class="fc" id="L240">            user.getAddress(),</span>
+<span class="fc" id="L241">            user.getDegreeType().name(),</span>
+<span class="fc" id="L242">            user.getDegreeYear(),</span>
+<span class="fc" id="L243">            user.getPenalties(),</span>
+<span class="fc" id="L244">            user.getAverageRating(),</span>
+<span class="fc" id="L245">            user.getAdmin()</span>
+        );
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -66,8 +66,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2ca30a0c67ba71f80b5a0d7d3a9678e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa305243851832574fc19cf817817d34" id="r_aaa305243851832574fc19cf817817d34"><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; List&lt; Loan &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1LoanController.html#aaa305243851832574fc19cf817817d34">getLoansByBorrower</a> ( @RequestParam(&quot;token&quot;) String token, @RequestParam(&quot;borrowerId&quot;) Long borrowerId)</td></tr>
 <tr class="separator:aaa305243851832574fc19cf817817d34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae555f9196ae2bdf3e299f030a16fab43" id="r_ae555f9196ae2bdf3e299f030a16fab43"><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; String &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1LoanController.html#ae555f9196ae2bdf3e299f030a16fab43">createLoan</a> (@RequestBody LoanRecord loan)</td></tr>
-<tr class="separator:ae555f9196ae2bdf3e299f030a16fab43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e11447b33e07fd54375c24e7debf2eb" id="r_a1e11447b33e07fd54375c24e7debf2eb"><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; String &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1LoanController.html#a1e11447b33e07fd54375c24e7debf2eb">createLoan</a> (@RequestBody LoanRecord loanRecord)</td></tr>
+<tr class="separator:a1e11447b33e07fd54375c24e7debf2eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2aa343066cf68fe4fa5d5ff1af89956" id="r_aa2aa343066cf68fe4fa5d5ff1af89956"><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; String &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1LoanController.html#aa2aa343066cf68fe4fa5d5ff1af89956">updateLoan</a> (@PathVariable Long id, @RequestBody LoanRecord loan, @RequestHeader(&quot;Authorization&quot;) String authHeader)</td></tr>
 <tr class="separator:aa2aa343066cf68fe4fa5d5ff1af89956"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98f8a725cc5812084293d05eba48422b" id="r_a98f8a725cc5812084293d05eba48422b"><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; Void &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1student__loan_1_1controller_1_1LoanController.html#a98f8a725cc5812084293d05eba48422b">returnLoan</a> (@PathVariable Long itemId)</td></tr>
@@ -80,8 +80,8 @@ Public Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="LoanController_8java_source.html#l00031">31</a> of file <a class="el" href="LoanController_8java_source.html">LoanController.java</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae555f9196ae2bdf3e299f030a16fab43" name="ae555f9196ae2bdf3e299f030a16fab43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae555f9196ae2bdf3e299f030a16fab43">&#9670;&#160;</a></span>createLoan()</h2>
+<a id="a1e11447b33e07fd54375c24e7debf2eb" name="a1e11447b33e07fd54375c24e7debf2eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e11447b33e07fd54375c24e7debf2eb">&#9670;&#160;</a></span>createLoan()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -90,7 +90,7 @@ Public Member Functions</h2></td></tr>
           <td class="memname">ResponseEntity&lt; String &gt; com.student_loan.controller.LoanController.createLoan </td>
           <td>(</td>
           <td class="paramtype">@RequestBody LoanRecord&#160;</td>
-          <td class="paramname"><em>loan</em></td><td>)</td>
+          <td class="paramname"><em>loanRecord</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -98,7 +98,7 @@ Public Member Functions</h2></td></tr>
 <p>Creates a new loan.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">loan</td><td>The loan data. </td></tr>
+    <tr><td class="paramname">loanRecord</td><td>The loan data. </td></tr>
   </table>
   </dd>
 </dl>

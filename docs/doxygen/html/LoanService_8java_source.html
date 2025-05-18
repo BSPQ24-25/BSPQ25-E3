@@ -238,78 +238,76 @@ $(document).ready(function(){initNavTree('LoanService_8java_source.html',''); in
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
 <div class="foldopen" id="foldopen00168" data-start="{" data-end="}">
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1service_1_1LoanService.html#a5d28aa0390365c476b926e630eec5859">  168</a></span>    <span class="keyword">public</span> Loan <a class="code hl_function" href="classcom_1_1student__loan_1_1service_1_1LoanService.html#a5d28aa0390365c476b926e630eec5859">createLoan</a>(Loan loan) {</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        <span class="comment">// Check existing loan</span></div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        logger.info(<span class="stringliteral">&quot;Creating loan&quot;</span> + loan.toString());</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        Optional&lt;Loan&gt; existing = loanRepository.findById(loan.getId());</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        <span class="keywordflow">if</span> (existing != <span class="keyword">null</span> &amp;&amp; existing.isPresent()) {</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> RuntimeException(<span class="stringliteral">&quot;Loan already exists with id: &quot;</span> + loan.getId());</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        <span class="comment">// Validar que el ID no exista solo si se envía (nuevo préstamo no debería tener ID)</span></div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        <span class="keywordflow">if</span> (loan.getId() != <span class="keyword">null</span>) {</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>            <span class="keywordflow">if</span> (loanRepository.existsById(loan.getId())) {</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> RuntimeException(<span class="stringliteral">&quot;Loan already exists with id: &quot;</span> + loan.getId());</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            }</div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        }</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>         <span class="comment">// Validate lender first to satisfy tests</span></div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        Optional&lt;User&gt; lenderOpt = userRepository.findById(loan.getLender());</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        <span class="keywordflow">if</span> (lenderOpt == <span class="keyword">null</span> || lenderOpt.isEmpty()) {</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> RuntimeException(<span class="stringliteral">&quot;Failed to save loan with id &quot;</span> + loan.getId() + <span class="stringliteral">&quot;: Lender not found with id: &quot;</span> + loan.getLender());</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        }</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        <span class="comment">// Validate borrower</span></div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        Optional&lt;User&gt; borrowerOpt = userRepository.findById(loan.getBorrower());</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        <span class="keywordflow">if</span> (borrowerOpt == <span class="keyword">null</span> || borrowerOpt.isEmpty()) {</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> RuntimeException(<span class="stringliteral">&quot;Failed to save loan with id &quot;</span> + loan.getId() + <span class="stringliteral">&quot;: Borrower not found with id: &quot;</span> + loan.getBorrower());</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>        }</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        User borrower = borrowerOpt.get();</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        <span class="keywordflow">if</span> (borrower.hasPenalty()) {</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> RuntimeException(</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>                <span class="stringliteral">&quot;Cannot borrow items while under penalty.&quot;</span></div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            );</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        }</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        <span class="comment">// Validar lender</span></div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        User lender = userRepository.findById(loan.getLender())</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>            .orElseThrow(() -&gt; <span class="keyword">new</span> RuntimeException(</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>                <span class="stringliteral">&quot;Failed to save loan: Lender not found with id: &quot;</span> + loan.getLender()));</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>        <span class="comment">// Validar borrower</span></div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        User borrower = userRepository.findById(loan.getBorrower())</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>            .orElseThrow(() -&gt; <span class="keyword">new</span> RuntimeException(</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                <span class="stringliteral">&quot;Failed to save loan: Borrower not found with id: &quot;</span> + loan.getBorrower()));</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>        <span class="keywordflow">if</span> (borrower.hasPenalty()) {</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> RuntimeException(<span class="stringliteral">&quot;Cannot borrow items while under penalty.&quot;</span>);</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>        }</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        <span class="comment">// Validar item</span></div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        Item item = itemRepository.findById(loan.getItem())</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            .orElseThrow(() -&gt; <span class="keyword">new</span> RuntimeException(</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>                <span class="stringliteral">&quot;Failed to save loan: Item not found with id: &quot;</span> + loan.getItem()));</div>
 <div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        <span class="comment">// Validate item</span></div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        Optional&lt;Item&gt; itemOpt = itemRepository.findById(loan.getItem());</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        <span class="keywordflow">if</span> (itemOpt == <span class="keyword">null</span> || itemOpt.isEmpty()) {</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> RuntimeException(<span class="stringliteral">&quot;Failed to save loan with id &quot;</span> + loan.getId() + <span class="stringliteral">&quot;: Item not found with id: &quot;</span> + loan.getItem());</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        }</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        <span class="comment">// Check active loans limit on new loans</span></div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        <span class="keywordflow">if</span> (loan.getId() == <span class="keyword">null</span> &amp;&amp; loan.getLoanStatus() == Loan.Status.IN_USE) {</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>            <span class="keywordtype">int</span> activos = loanRepository.countByBorrowerAndLoanStatus(</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                loan.getBorrower(), Loan.Status.IN_USE);</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>            <span class="keywordflow">if</span> (activos &gt;= 3) {</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> RuntimeException(</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                    <span class="stringliteral">&quot;Failed to save loan with id &quot;</span> + loan.getId() + <span class="stringliteral">&quot;: You already have 3 items reserved. Return an item before booking another.&quot;</span></div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                );</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            }</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        }</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        loan.setLoanStatus(Loan.Status.IN_USE);</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        <span class="comment">// Mail to borrower</span></div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        notificationService.enviarCorreo(userRepository.findById(loan.getBorrower()).get().getEmail(),</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>                <span class="stringliteral">&quot;Loan Created&quot;</span>,</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>                <span class="stringliteral">&quot;You have succesfully made a loan!\nItem: &quot;</span></div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                        + itemRepository.findById(loan.getItem()).get().getName() + <span class="stringliteral">&quot;\nLender: &quot;</span></div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>                        + userRepository.findById(loan.getLender()).get().getName() + <span class="stringliteral">&quot;\nReturn date: &quot;</span></div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>                        + loan.getEstimatedReturnDate().toString() + <span class="stringliteral">&quot;\n\nThank you for using our service!&quot;</span>);</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span> </div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        <span class="comment">// Mail to lender</span></div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        notificationService.enviarCorreo(userRepository.findById(loan.getLender()).get().getEmail(), <span class="stringliteral">&quot;Item lended&quot;</span>,</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                <span class="stringliteral">&quot;Your item has succesfully been lended!\nItem: &quot;</span></div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                        + itemRepository.findById(loan.getItem()).get().getName() + <span class="stringliteral">&quot;\nBorrower: &quot;</span></div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                        + userRepository.findById(loan.getBorrower()).get().getName() + <span class="stringliteral">&quot;\nReturn date: &quot;</span></div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                        + loan.getEstimatedReturnDate().toString() + <span class="stringliteral">&quot;\n\nThank you for using our service!&quot;</span>);</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span> </div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        <span class="keywordflow">return</span> loanRepository.save(loan);</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    }</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        <span class="comment">// Comprobar límite de préstamos activos solo para nuevos préstamos en uso</span></div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        <span class="keywordflow">if</span> (loan.getId() == <span class="keyword">null</span> &amp;&amp; loan.getLoanStatus() == Loan.Status.IN_USE) {</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>            <span class="keywordtype">int</span> activos = loanRepository.countByBorrowerAndLoanStatus(loan.getBorrower(), Loan.Status.IN_USE);</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>            <span class="keywordflow">if</span> (activos &gt;= 3) {</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> ResponseStatusException(HttpStatus.BAD_REQUEST,</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                    <span class="stringliteral">&quot;You already have 3 items reserved. Return an item before booking another.&quot;</span>);</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>            }</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        }</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        <span class="comment">// Asegurar estado del préstamo</span></div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        loan.setLoanStatus(Loan.Status.IN_USE);</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span> </div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="comment">// Enviar correos una sola vez usando objetos ya cargados</span></div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        notificationService.enviarCorreo(</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            borrower.getEmail(),</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>            <span class="stringliteral">&quot;Loan Created&quot;</span>,</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            <span class="stringliteral">&quot;You have successfully made a loan!\nItem: &quot;</span> + item.getName() +</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            <span class="stringliteral">&quot;\nLender: &quot;</span> + lender.getName() +</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>            <span class="stringliteral">&quot;\nReturn date: &quot;</span> + loan.getEstimatedReturnDate().toString() +</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            <span class="stringliteral">&quot;\n\nThank you for using our service!&quot;</span></div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>        );</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span> </div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        notificationService.enviarCorreo(</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            lender.getEmail(),</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>            <span class="stringliteral">&quot;Item lended&quot;</span>,</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>            <span class="stringliteral">&quot;Your item has successfully been lended!\nItem: &quot;</span> + item.getName() +</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>            <span class="stringliteral">&quot;\nBorrower: &quot;</span> + borrower.getName() +</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            <span class="stringliteral">&quot;\nReturn date: &quot;</span> + loan.getEstimatedReturnDate().toString() +</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            <span class="stringliteral">&quot;\n\nThank you for using our service!&quot;</span></div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        );</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        <span class="comment">// Guardar préstamo</span></div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        <span class="keywordflow">return</span> loanRepository.save(loan);</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    }</div>
 </div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    </div>
-<div class="foldopen" id="foldopen00232" data-start="{" data-end="}">
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1service_1_1LoanService.html#ad3f259314b5d10f32fd16723bd9c1347">  232</a></span>    <span class="keyword">public</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classcom_1_1student__loan_1_1service_1_1LoanService.html#ad3f259314b5d10f32fd16723bd9c1347">deleteLoan</a>(Long <span class="keywordtype">id</span>) {</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        loanRepository.deleteById(<span class="keywordtype">id</span>);</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    }</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    </div>
+<div class="foldopen" id="foldopen00230" data-start="{" data-end="}">
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1service_1_1LoanService.html#ad3f259314b5d10f32fd16723bd9c1347">  230</a></span>    <span class="keyword">public</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classcom_1_1student__loan_1_1service_1_1LoanService.html#ad3f259314b5d10f32fd16723bd9c1347">deleteLoan</a>(Long <span class="keywordtype">id</span>) {</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        loanRepository.deleteById(<span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    }</div>
 </div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    </div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>}</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    </div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>}</div>
 </div>
 <div class="ttc" id="aclasscom_1_1student__loan_1_1service_1_1LoanService_html"><div class="ttname"><a href="classcom_1_1student__loan_1_1service_1_1LoanService.html">com.student_loan.service.LoanService</a></div><div class="ttdef"><b>Definition</b> <a href="LoanService_8java_source.html#l00028">LoanService.java:28</a></div></div>
 <div class="ttc" id="aclasscom_1_1student__loan_1_1service_1_1LoanService_html_a01565aaff96c10a0fb4b3faf5d13f2a6"><div class="ttname"><a href="classcom_1_1student__loan_1_1service_1_1LoanService.html#a01565aaff96c10a0fb4b3faf5d13f2a6">com.student_loan.service.LoanService.saveLoan</a></div><div class="ttdeci">Loan saveLoan(Loan loan)</div><div class="ttdef"><b>Definition</b> <a href="LoanService_8java_source.html#l00076">LoanService.java:76</a></div></div>
@@ -320,7 +318,7 @@ $(document).ready(function(){initNavTree('LoanService_8java_source.html',''); in
 <div class="ttc" id="aclasscom_1_1student__loan_1_1service_1_1LoanService_html_a6e2dc6c230a7ff905657202c129b28fb"><div class="ttname"><a href="classcom_1_1student__loan_1_1service_1_1LoanService.html#a6e2dc6c230a7ff905657202c129b28fb">com.student_loan.service.LoanService.getLoanById</a></div><div class="ttdeci">Optional&lt; Loan &gt; getLoanById(Long id)</div><div class="ttdef"><b>Definition</b> <a href="LoanService_8java_source.html#l00045">LoanService.java:45</a></div></div>
 <div class="ttc" id="aclasscom_1_1student__loan_1_1service_1_1LoanService_html_a6f85dbb0c0eb911518947833cfb2a114"><div class="ttname"><a href="classcom_1_1student__loan_1_1service_1_1LoanService.html#a6f85dbb0c0eb911518947833cfb2a114">com.student_loan.service.LoanService.returnLoan</a></div><div class="ttdeci">boolean returnLoan(Long itemId, Long borrowerId)</div><div class="ttdef"><b>Definition</b> <a href="LoanService_8java_source.html#l00125">LoanService.java:125</a></div></div>
 <div class="ttc" id="aclasscom_1_1student__loan_1_1service_1_1LoanService_html_a90d25085f4d9931cabfeca613a831d4d"><div class="ttname"><a href="classcom_1_1student__loan_1_1service_1_1LoanService.html#a90d25085f4d9931cabfeca613a831d4d">com.student_loan.service.LoanService.getLentItemsIdByUser</a></div><div class="ttdeci">List&lt; Long &gt; getLentItemsIdByUser(Long userId)</div><div class="ttdef"><b>Definition</b> <a href="LoanService_8java_source.html#l00057">LoanService.java:57</a></div></div>
-<div class="ttc" id="aclasscom_1_1student__loan_1_1service_1_1LoanService_html_ad3f259314b5d10f32fd16723bd9c1347"><div class="ttname"><a href="classcom_1_1student__loan_1_1service_1_1LoanService.html#ad3f259314b5d10f32fd16723bd9c1347">com.student_loan.service.LoanService.deleteLoan</a></div><div class="ttdeci">void deleteLoan(Long id)</div><div class="ttdef"><b>Definition</b> <a href="LoanService_8java_source.html#l00232">LoanService.java:232</a></div></div>
+<div class="ttc" id="aclasscom_1_1student__loan_1_1service_1_1LoanService_html_ad3f259314b5d10f32fd16723bd9c1347"><div class="ttname"><a href="classcom_1_1student__loan_1_1service_1_1LoanService.html#ad3f259314b5d10f32fd16723bd9c1347">com.student_loan.service.LoanService.deleteLoan</a></div><div class="ttdeci">void deleteLoan(Long id)</div><div class="ttdef"><b>Definition</b> <a href="LoanService_8java_source.html#l00230">LoanService.java:230</a></div></div>
 <div class="ttc" id="aclasscom_1_1student__loan_1_1service_1_1LoanService_html_ae374b51b7780d8ed372ff769add78301"><div class="ttname"><a href="classcom_1_1student__loan_1_1service_1_1LoanService.html#ae374b51b7780d8ed372ff769add78301">com.student_loan.service.LoanService.getBorrowedItemsIdByUser</a></div><div class="ttdeci">List&lt; Long &gt; getBorrowedItemsIdByUser(Long userId)</div><div class="ttdef"><b>Definition</b> <a href="LoanService_8java_source.html#l00066">LoanService.java:66</a></div></div>
 <div class="ttc" id="aclasscom_1_1student__loan_1_1service_1_1NotificationService_html"><div class="ttname"><a href="classcom_1_1student__loan_1_1service_1_1NotificationService.html">com.student_loan.service.NotificationService</a></div><div class="ttdef"><b>Definition</b> <a href="NotificationService_8java_source.html#l00012">NotificationService.java:12</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

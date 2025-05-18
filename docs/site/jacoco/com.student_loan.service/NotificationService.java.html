@@ -19,16 +19,16 @@ import org.springframework.stereotype.Service;
 <span class="fc" id="L19">    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);</span>
 
     public void enviarCorreo(String destinatario, String asunto, String cuerpo) {
-<span class="nc" id="L22">        SimpleMailMessage mensaje = new SimpleMailMessage();</span>
-<span class="nc" id="L23">        mensaje.setTo(destinatario);</span>
-<span class="nc" id="L24">        mensaje.setSubject(asunto);</span>
-<span class="nc" id="L25">        mensaje.setText(cuerpo);</span>
+<span class="fc" id="L22">        SimpleMailMessage mensaje = new SimpleMailMessage();</span>
+<span class="fc" id="L23">        mensaje.setTo(destinatario);</span>
+<span class="fc" id="L24">        mensaje.setSubject(asunto);</span>
+<span class="fc" id="L25">        mensaje.setText(cuerpo);</span>
         try {
-<span class="nc" id="L27">            mailSender.send(mensaje);</span>
-<span class="nc" id="L28">		} catch (Exception e) {</span>
-<span class="nc" id="L29">			logger.error(&quot;Error al enviar el correo: &quot; + e.getMessage());</span>
-<span class="nc" id="L30">		}</span>
-<span class="nc" id="L31">    }</span>
+<span class="fc" id="L27">            mailSender.send(mensaje);</span>
+<span class="fc" id="L28">		} catch (Exception e) {</span>
+<span class="fc" id="L29">			logger.error(&quot;Error al enviar el correo: &quot; + e.getMessage());</span>
+<span class="fc" id="L30">		}</span>
+<span class="fc" id="L31">    }</span>
     
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

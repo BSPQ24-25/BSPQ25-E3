@@ -136,17 +136,17 @@ import org.slf4j.LoggerFactory;
     /**
      * Creates a new loan.
      *
-     * @param loan  The loan data.
+     * @param loanRecord  The loan data.
      * @return ResponseEntity indicating the result of the operation.
      */
     @PostMapping(&quot;/create&quot;)
-    public ResponseEntity&lt;String&gt; createLoan(@RequestBody LoanRecord loan) {
+    public ResponseEntity&lt;String&gt; createLoan(@RequestBody LoanRecord loanRecord) {
 <span class="fc" id="L144">    	User user = getAuthenticatedUser();</span>
 <span class="fc bfc" id="L145" title="All 2 branches covered.">        if (user == null) {</span>
 <span class="fc" id="L146">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
 		}
 		
-<span class="fc" id="L149">		Loan loanEntity = convertToLoan(loan);</span>
+<span class="fc" id="L149">		Loan loanEntity = convertToLoan(loanRecord);</span>
 <span class="fc" id="L150">        loanEntity.setBorrower(user.getId());</span>
 		try {
 <span class="fc" id="L152">			loanService.createLoan(loanEntity);</span>
