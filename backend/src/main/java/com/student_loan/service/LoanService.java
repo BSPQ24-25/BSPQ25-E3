@@ -144,13 +144,21 @@ public class LoanService {
             loanRepository.save(loan);
             
             //Update lender ranking
-            User lender = userRepository.findById(loan.getLender()).get();
-            double currentRating = lender.getAverageRating()+0.1;
-			if (currentRating > 5) {
-				currentRating = 5;
-			}
-            lender.setAverageRating(currentRating);
-            userRepository.save(lender);
+            Optional<User> lenderOpt = userRepository.findById(loan.getLender());
+            if (lenderOpt.isPresent()) {
+            	User lender= lenderOpt.get();
+            	double currentRating = 0;
+                if(lender!=null && lender.getAverageRating() != null) {
+                     currentRating = lender.getAverageRating()+0.1;
+                    if (currentRating > 5) {
+        				currentRating = 5;
+        			}
+                }
+    			
+                lender.setAverageRating(currentRating);
+                userRepository.save(lender);
+            }
+        	
          // Mail to lender
             if(userRepository.findById(loan.getLender()).isPresent() && userRepository.findById(loan.getBorrower()).isPresent()) {
     		notificationService.enviarCorreo(userRepository.findById(loan.getLender()).get().getEmail(), "Item returned",

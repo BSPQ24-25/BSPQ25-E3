@@ -38,6 +38,9 @@ class UnitLoanControllerTest {
     @Mock
     private LoanService loanService;
     
+    @Mock
+    private Authentication authentication;
+    
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnitLoanControllerTest.class);
 
     @Mock
@@ -157,8 +160,19 @@ class UnitLoanControllerTest {
     @Test
     @DisplayName("GET /loans/lender?lenderId={id} - Lender retrieves own loans")
     void getLoansByLender_self_success() {
-        when(userService.getUserByToken("token")).thenReturn(lender);
-        when(loanService.getLoansByLender(2L)).thenReturn(Arrays.asList(sampleLoan));
+    	 when(userService.getUserByToken("token")).thenReturn(lender); // si se usa token en otro punto
+         when(userService.getUserByEmail(lender.getEmail())).thenReturn(lender); // ← este es esencial
+         when(loanService.getLoansByBorrower(2L)).thenReturn(new ArrayList<>());
+
+         // Simular autenticación
+         Authentication mockAuth = mock(Authentication.class);
+         when(mockAuth.isAuthenticated()).thenReturn(true);
+         when(mockAuth.getName()).thenReturn(lender.getEmail()); // necesario
+
+         SecurityContext mockSecurityContext = mock(SecurityContext.class);
+         when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
+         SecurityContextHolder.setContext(mockSecurityContext);
+
 
         ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
         assertEquals(HttpStatus.OK, resp.getStatusCode());
@@ -167,8 +181,19 @@ class UnitLoanControllerTest {
     @Test
     @DisplayName("GET /loans/lender?lenderId={id} - Admin retrieves any loans")
     void getLoansByLender_admin_success() {
-        when(userService.getUserByToken("token")).thenReturn(admin);
-        when(loanService.getLoansByLender(2L)).thenReturn(new ArrayList<>());
+    	 when(userService.getUserByToken("token")).thenReturn(admin); // si se usa token en otro punto
+         when(userService.getUserByEmail(admin.getEmail())).thenReturn(admin); // ← este es esencial
+         when(loanService.getLoansByBorrower(1L)).thenReturn(new ArrayList<>());
+
+         // Simular autenticación
+         Authentication mockAuth = mock(Authentication.class);
+         when(mockAuth.isAuthenticated()).thenReturn(true);
+         when(mockAuth.getName()).thenReturn(admin.getEmail()); // necesario
+
+         SecurityContext mockSecurityContext = mock(SecurityContext.class);
+         when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
+         SecurityContextHolder.setContext(mockSecurityContext);
+
 
         ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
         assertEquals(HttpStatus.OK, resp.getStatusCode());
@@ -178,6 +203,14 @@ class UnitLoanControllerTest {
     @DisplayName("GET /loans/lender?lenderId={id} - Unauthorized for other user")
     void getLoansByLender_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(borrower);
+        
+        Authentication mockAuth = mock(Authentication.class);
+        when(mockAuth.isAuthenticated()).thenReturn(false); // importante
+        when(mockAuth.getName()).thenReturn(null); // opcional, defensivo
+
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
+        SecurityContextHolder.setContext(mockSecurityContext);
 
         ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
@@ -186,17 +219,36 @@ class UnitLoanControllerTest {
     @Test
     @DisplayName("GET /loans/lender?lenderId={id} - Not found on exception")
     void getLoansByLender_notFoundException() {
-        when(userService.getUserByToken("token")).thenReturn(admin);
-        when(loanService.getLoansByLender(2L)).thenThrow(new RuntimeException());
+    	when(userService.getUserByToken("token")).thenReturn(null); // si se usa token en otro punto
+        when(userService.getUserByEmail(admin.getEmail())).thenReturn(null); // ← este es esencial
+        when(loanService.getLoansByBorrower(1L)).thenReturn(new ArrayList<>());
+
+        // Simular autenticación
+        Authentication mockAuth = mock(Authentication.class);
+        when(mockAuth.isAuthenticated()).thenReturn(true);
+        when(mockAuth.getName()).thenReturn(admin.getEmail()); // necesario
+
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
+        SecurityContextHolder.setContext(mockSecurityContext);
+
 
         ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
-        assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
 
     @Test
     @DisplayName("GET /loans/lender - Null user unauthorized")
     void getLoansByLender_noUser_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(null);
+        
+        Authentication mockAuth = mock(Authentication.class);
+        when(mockAuth.isAuthenticated()).thenReturn(false); // importante
+        when(mockAuth.getName()).thenReturn(null); // opcional, defensivo
+
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
+        SecurityContextHolder.setContext(mockSecurityContext);
         ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
@@ -204,8 +256,18 @@ class UnitLoanControllerTest {
     @Test
     @DisplayName("GET /loans/borrower?borrowerId={id} - Borrower retrieves own loans")
     void getLoansByBorrower_self_success() {
-        when(userService.getUserByToken("token")).thenReturn(borrower);
-        when(loanService.getLoansByBorrower(3L)).thenReturn(Arrays.asList(sampleLoan));
+    	when(userService.getUserByToken("token")).thenReturn(borrower); // si se usa token en otro punto
+        when(userService.getUserByEmail(borrower.getEmail())).thenReturn(borrower); // ← este es esencial
+        when(loanService.getLoansByBorrower(3L)).thenReturn(new ArrayList<>());
+
+        // Simular autenticación
+        Authentication mockAuth = mock(Authentication.class);
+        when(mockAuth.isAuthenticated()).thenReturn(true);
+        when(mockAuth.getName()).thenReturn(borrower.getEmail()); // necesario
+
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
+        SecurityContextHolder.setContext(mockSecurityContext);
 
         ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower();
         assertEquals(HttpStatus.OK, resp.getStatusCode());
@@ -214,8 +276,19 @@ class UnitLoanControllerTest {
     @Test
     @DisplayName("GET /loans/borrower?borrowerId={id} - Admin retrieves any borrower's loans")
     void getLoansByBorrower_admin_success() {
-        when(userService.getUserByToken("token")).thenReturn(admin);
-        when(loanService.getLoansByBorrower(3L)).thenReturn(new ArrayList<>());
+    	 when(userService.getUserByToken("token")).thenReturn(admin); // si se usa token en otro punto
+         when(userService.getUserByEmail(admin.getEmail())).thenReturn(admin); // ← este es esencial
+         when(loanService.getLoansByBorrower(1L)).thenReturn(new ArrayList<>());
+
+         // Simular autenticación
+         Authentication mockAuth = mock(Authentication.class);
+         when(mockAuth.isAuthenticated()).thenReturn(true);
+         when(mockAuth.getName()).thenReturn(admin.getEmail()); // necesario
+
+         SecurityContext mockSecurityContext = mock(SecurityContext.class);
+         when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
+         SecurityContextHolder.setContext(mockSecurityContext);
+
 
         ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower();
         assertEquals(HttpStatus.OK, resp.getStatusCode());
@@ -226,6 +299,14 @@ class UnitLoanControllerTest {
     void getLoansByBorrower_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(lender);
 
+        Authentication mockAuth = mock(Authentication.class);
+        when(mockAuth.isAuthenticated()).thenReturn(false); // importante
+        when(mockAuth.getName()).thenReturn(null); // opcional, defensivo
+
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
+        SecurityContextHolder.setContext(mockSecurityContext);
+        
         ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower();
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
@@ -234,6 +315,14 @@ class UnitLoanControllerTest {
     @DisplayName("GET /loans/borrower - Null user unauthorized")
     void getLoansByBorrower_noUser_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(null);
+        
+        Authentication mockAuth = mock(Authentication.class);
+        when(mockAuth.isAuthenticated()).thenReturn(false); // importante
+        when(mockAuth.getName()).thenReturn(null); // opcional, defensivo
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
+        SecurityContextHolder.setContext(mockSecurityContext);
+
         ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower();
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }

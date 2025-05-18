@@ -850,6 +850,9 @@ class UnitLoanServiceTest {
     void testReturnLoanSuccess() {
         Long itemId = 1L;
         Long borrowerId = 2L;
+        User borrower = new User();
+        borrower.setId(borrowerId);
+   
 
         Item item = new Item();
         item.setId(itemId);
@@ -865,6 +868,7 @@ class UnitLoanServiceTest {
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(loanRepository.save(any(Loan.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(userRepository.findById(borrowerId)).thenReturn(Optional.of(borrower));
 
         boolean result = loanService.returnLoan(itemId, borrowerId);
 
@@ -996,6 +1000,7 @@ class UnitLoanServiceTest {
         when(userRepository.findById(lenderId)).thenReturn(Optional.empty());
 
         User borrower = new User();
+        borrower.setAverageRating(2.4);
         borrower.setEmail("b@b.com");
         borrower.setName("Usuario");
         when(userRepository.findById(borrowerId)).thenReturn(Optional.of(borrower));
@@ -1032,6 +1037,10 @@ class UnitLoanServiceTest {
         lender.setEmail("lender@example.com");
         when(userRepository.findById(lenderId)).thenReturn(Optional.of(lender));
         when(userRepository.findById(borrowerId)).thenReturn(Optional.empty());
+        
+        User borrower = new User();
+        borrower.setAverageRating(2.4);
+        borrower.setId(borrowerId);
 
         boolean result = loanService.returnLoan(itemId, borrowerId);
 
