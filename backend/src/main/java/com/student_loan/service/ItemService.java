@@ -127,20 +127,25 @@ public class ItemService {
             .collect(Collectors.toList());
     }
 
-    public List<Item> getItemsBorrowedByUserWithActiveLoans(Long userId) {
+    public List<LoanAndItemDto> getItemsBorrowedByUserWithActiveLoans(Long userId) {
         List<Loan> loans = loanRepository.findByBorrowerAndLoanStatus(userId, Loan.Status.IN_USE);
-
-        // Extraer los IDs de los items
-        List<Long> itemIds = loans.stream()
-                                .map(Loan::getItem)
-                                .collect(Collectors.toList());
-
-        // Buscar los items en el repositorio de items
-        List<Item> items = itemRepository.findAllById(itemIds);
-
-        // Mapear a DTOs
-        return items.stream()
-                    .collect(Collectors.toList());
+        
+        return loans.stream()
+            .map(loan -> {
+                Item item = itemRepository.findById(loan.getItem())
+                                        .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+                LoanAndItemDto loanItemDto = new LoanAndItemDto();
+                loanItemDto.setLoanId(loan.getId());
+                loanItemDto.setBorrowerId(loan.getBorrower());
+                loanItemDto.setLenderId(loan.getLender());
+                loanItemDto.setStartDate(loan.getLoanDate());
+                loanItemDto.setEndDate(loan.getEstimatedReturnDate());
+                loanItemDto.setItemId(item.getId());
+                loanItemDto.setItemName(item.getName());
+                loanItemDto.setItemDescription(item.getDescription());
+                return loanItemDto;
+            })
+            .collect(Collectors.toList());
     }
     
 	/**
