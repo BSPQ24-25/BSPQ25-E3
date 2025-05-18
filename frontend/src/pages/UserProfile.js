@@ -28,7 +28,7 @@ function UserProfile() {
 
   useEffect(() => {
     Promise.all([
-      axiosInstance.get(`/users/${id}`),
+      axiosInstance.get(`/users/${id}/record`),   // <-- Cambiado aquí
       axiosInstance.get(`/items/lent`),
       axiosInstance.get(`/items/borrowed`),
     ])
@@ -72,10 +72,6 @@ function UserProfile() {
     );
   }
 
-  // Fallback en campo de teléfono si difiere el nombre del backend
-  const phone = user.telephoneNumber || user.phoneNumber || user.phone;
-  const address = user.address || user.location;
-
   const ItemList = ({ items, type }) => {
     if (!items.length) {
       return (
@@ -83,8 +79,8 @@ function UserProfile() {
           {t(
             type === 'lent' ? 'userProfile.noLentItems' : 'userProfile.noBorrowedItems',
             type === 'lent'
-              ? `No items lent by ${user.name}.`
-              : `No items borrowed by ${user.name}.`
+              ? `No items lent by ${user.name} ${user.lastName}.`
+              : `No items borrowed by ${user.name} ${user.lastName}.`
           )}
         </p>
       );
@@ -129,28 +125,37 @@ function UserProfile() {
 
         <div className="bg-white shadow-xl rounded-lg overflow-hidden">
           <div className="bg-gray-800 p-6">
-            <h1 className="text-3xl font-bold text-white text-center">{user.name}</h1>
+            <h1 className="text-3xl font-bold text-white text-center">
+              {user.name} {user.lastName}
+            </h1>
           </div>
 
           <div className="p-6 space-y-4">
+            {/* Email */}
             <div>
               <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t('userProfile.email', 'Email')}
               </h3>
               <p className="text-lg text-gray-900">{user.email}</p>
             </div>
+
+            {/* Phone */}
             <div>
               <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t('userProfile.phone', 'Phone Number')}
               </h3>
-              <p className="text-lg text-gray-900">{phone}</p>
+              <p className="text-lg text-gray-900">{user.telephoneNumber}</p>
             </div>
+
+            {/* Address */}
             <div>
               <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t('userProfile.address', 'Address')}
               </h3>
-              <p className="text-lg text-gray-900">{address}</p>
+              <p className="text-lg text-gray-900">{user.address}</p>
             </div>
+
+            {/* Degree */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -167,6 +172,8 @@ function UserProfile() {
                 <p className="text-lg text-gray-900">{user.degreeYear}</p>
               </div>
             </div>
+
+            {/* Penalties & Rating */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -178,15 +185,20 @@ function UserProfile() {
                 <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('userProfile.averageRating', 'Average Rating')}
                 </h3>
-                <p className="text-lg text-gray-900">{user.averageRating?.toFixed(2)}</p>
+                <p className="text-lg text-gray-900">
+                  {user.averageRating?.toFixed(2)}
+                </p>
               </div>
             </div>
           </div>
 
+          {/* Items Lent */}
           <div className="border-t border-gray-200">
             <div className="bg-gray-100 p-4 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-700">
-                {t('userProfile.itemsLentTitle', 'Items Lent by {{name}}', { name: user.name })}
+                {t('userProfile.itemsLentTitle', 'Items Lent by {{name}}', {
+                  name: `${user.name} ${user.lastName}`,
+                })}
               </h2>
             </div>
             <div className="p-6">
@@ -194,10 +206,13 @@ function UserProfile() {
             </div>
           </div>
 
+          {/* Items Borrowed */}
           <div className="border-t border-gray-200">
             <div className="bg-gray-100 p-4 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-700">
-                {t('userProfile.itemsBorrowedTitle', 'Items Borrowed by {{name}}', { name: user.name })}
+                {t('userProfile.itemsBorrowedTitle', 'Items Borrowed by {{name}}', {
+                  name: `${user.name} ${user.lastName}`,
+                })}
               </h2>
             </div>
             <div className="p-6">

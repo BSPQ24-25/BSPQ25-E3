@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.student_loan.model.User;
 import com.student_loan.service.UserService;
 import com.student_loan.dtos.UserRecord;
@@ -96,6 +98,30 @@ public class UserController {
 		UserDTO userDTO = new UserDTO(retrievedUser.getId(), retrievedUser.getName(), retrievedUser.getEmail());
 
     	return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves a user by their ID (versión completa usando UserRecord).
+     *
+     * GET /users/{id}/record
+     *
+     * @param id The ID of the user.
+     * @return ResponseEntity containing el UserRecord con todos los campos.
+     */
+    @GetMapping("/{id}/record")
+    public ResponseEntity<UserRecord> getUserRecordById(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User requester = userService.getUserByEmail(email);
+        if (requester == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        User target = userService.getUserById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return ResponseEntity.ok(userToUserRecord(target));
     }
 
 	/**
@@ -199,4 +225,25 @@ public class UserController {
 		
 		return user;
 	}
+
+    public UserRecord userToUserRecord(User user) {
+    String[] nameParts = user.getName().split(" ", 2);
+    String firstName = nameParts.length > 0 ? nameParts[0] : "";
+    String lastName = nameParts.length > 1 ? nameParts[1] : "";
+
+    return new UserRecord(
+        firstName,
+        lastName,
+        user.getEmail(),
+        user.getPassword(),
+        user.getTelephoneNumber(),
+        user.getAddress(),
+        user.getDegreeType().name(),
+        user.getDegreeYear(),
+        user.getPenalties(),
+        user.getAverageRating(),
+        user.getAdmin()
+    );
+}
+
 }
