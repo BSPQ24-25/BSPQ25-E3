@@ -13,6 +13,11 @@
       "firstName": "Vorname",
       "lastName": "Nachname",
       "email": "E-Mail-Adresse",
+      "telephoneNumber": "Telefonnummer",
+      "address": "Adresse",
+      "degreeType": "Abschlussart",
+      "selectDegreeType": "Wählen Sie den Abschlussart...",
+      "degreeYear": "Abschlussjahr",
       "password": "Passwort",
       "confirmPassword": "Passwort bestätigen",
       "passwordMismatch": "Passwörter stimmen nicht überein",
@@ -21,11 +26,18 @@
       "signIn": "Anmelden",
       "error": "Beim Registrieren ist ein Fehler aufgetreten"
     },
+    "degreeType": {
+      "universityDegree": "Hochschulabschluss",
+      "master": "Master",
+      "doctorate": "Doktorat"
+    },
     "navbar": {
       "browseItems": "Artikel durchsuchen",
       "myItems": "Meine Artikel",
       "logout": "Abmelden",
-      "signin": "Anmelden"
+      "signin": "Anmelden",
+      "ranking": "Rangliste",
+      "users": "Benutzer"
     },
     "myItems": {
       "title": "Meine Gegenstände",
@@ -54,11 +66,22 @@
     },
     "home": {
       "loading": "Verfügbare Artikel werden geladen...",
-      "availableItems": "Verfügbare Artikel"
+      "availableItems": "Verfügbare Artikel",
+      "errorLoading": "Fehler beim Laden verfügbarer Gegenstände"
     },
     "itemCard": {
       "lender": "Verleiher",
-      "borrow": "Ausleihen"
+      "borrow": "Ausleihen",
+      "category": "Kategorie",
+      "loanCreated": "Leihe erfolgreich erstellt!",
+      "penalty": "Du kannst keine weiteren Gegenstände ausleihen, solange du Strafpunkte hast.",
+      "tooManyLoans": "Du hast 3 aktive Ausleihen. Bitte gib einen Gegenstand zurück, bevor du einen weiteren ausleihst.",
+      "borrowerNotFound": "Ausleiher nicht gefunden. Überprüfe die Angaben zum Gegenstand.",
+      "lenderNotFound": "Benutzer nicht gefunden. Bitte melde dich erneut an.",
+      "itemNotFound": "Der Gegenstand, den du ausleihen möchtest, existiert nicht.",
+      "loanFailed": "Fehler beim Erstellen der Ausleihe",
+      "purchaseDate": "Kaufdatum",
+      "purchasePrice": "Kaufpreis"
     },
     "borrowModal": {
       "borrowItem": "{{itemName}} ausleihen",
@@ -72,19 +95,80 @@
       "itemDescription": "Artikelbeschreibung",
       "itemImage": "Artikelbild",
       "cancel": "Abbrechen",
-      "uploadItem": "Artikel Hochladen"
+      "uploadItem": "Artikel Hochladen",
+      "category": "Kategorie",
+      "purchaseDate": "Kaufdatum",
+      "purchasePrice": "Kaufpreis"
     },
     "returnModal": {
       "confirmReturn": "Rückgabe bestätigen",
       "cancel": "Abbrechen",
-      "sureReturn": "Bist du sicher, dass du zurückgeben möchtest '"
+      "sureReturn": "Bist du sicher, dass du zurückgeben möchtest '",
+      "placeholder": "Z. B.: Ausgezeichneter Service",
+      "error": "Ein Fehler ist aufgetreten",
+      "success": "Artikel erfolgreich zurückgegeben!" 
     },
     "reminderModal": {
       "sendReminder": "Erinnerung senden",
       "sureReminder": "Bist du sicher, dass du eine Erinnerung an ",
       "sureReminder2": " bezüglich der Rückgabe von senden möchtest '",
       "cancel": "Abbrechen"
-    }
+    },
+    "ranking": {
+      "fetchError": "Fehler beim Laden des Rankings",
+      "loading": "Wird geladen...",
+      "title": "Nutzer-Rangliste",
+      "rating": "Bewertung:",
+      "penalties": "Strafpunkte:",
+      "noDataTitle": "Noch keine Rangliste",
+      "noDataPlaceholder": "Schau später noch einmal vorbei, um die Bestenliste zu sehen!"
+    },
+    "users": {
+      "notAuthorized": "Sie sind nicht berechtigt, die Benutzerliste zu sehen.",
+      "fetchError": "Fehler beim Laden der Benutzer",
+      "loading": "Wird geladen...",
+      "title": "Benutzer",
+      "noUsers": "Keine Benutzer zum Anzeigen.",
+      "table": {
+        "id": "ID",
+        "name": "Name",
+        "email": "E-Mail",
+        "phone": "Telefonnummer",
+        "address": "Adresse",
+        "degreeType": "Abschlussart",
+        "degreeYear": "Abschlussjahr",
+        "penalties": "Strafpunkte",
+        "averageRating": "Durchschnittliche Bewertung"
+      }
+    },
+    "userProfile": {
+      "fetchError": "Fehler beim Laden des Profils",
+      "loading": "Profil wird geladen...",
+      "error": {
+        "notFoundTitle": "Benutzer nicht gefunden",
+        "notFoundDetails": "Kein Benutzer mit dieser ID gefunden.",
+        "backToUsers": "Zurück zur Benutzerliste"
+      },
+      "noLentItems": "Keine verliehenen Gegenstände von ",
+      "noBorrowedItems": "Keine ausgeliehenen Gegenstände von ",
+      "lentTo": "Verliehen an:",
+      "borrowedFrom": "Ausgeliehen von:",
+      "date": "Datum:",
+      "backToUsers": "Zurück zur Benutzerliste",
+      "email": "E-Mail",
+      "phone": "Telefonnummer",
+      "address": "Adresse",
+      "degreeType": "Abschlussart",
+      "degreeYear": "Abschlussjahr",
+      "penalties": "Strafpunkte",
+      "averageRating": "Durchschnittliche Bewertung",
+      "itemsLentTitle": "Verliehene Gegenstände von {{name}}",
+      "itemsBorrowedTitle": "Ausgeliehene Gegenstände von {{name}}"
+    },
+    "itemStatus": {
+      "returned": "Zurückgegeben",
+      "available": "Verfügbar"
+    }  
 
   }
   

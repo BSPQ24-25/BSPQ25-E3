@@ -13,6 +13,11 @@
       "firstName": "Nombre",
       "lastName": "Apellido",
       "email": "Correo electrónico",
+      "telephoneNumber": "Número de teléfono",
+      "address": "Dirección",
+      "degreeType": "Tipo de Título",
+      "selectDegreeType": "Seleccione el Tipo de Título...",
+      "degreeYear": "Curso",
       "password": "Contraseña",
       "confirmPassword": "Confirmar contraseña",
       "passwordMismatch": "Las contraseñas no coinciden",
@@ -22,11 +27,18 @@
       "error": "Ocurrió un error durante el registro",
       "emailExists": "Este email ya está registrado"
     },
+    "degreeType": {
+      "universityDegree": "Título Universitario",
+      "master": "Máster",
+      "doctorate": "Doctorado"
+    },
     "navbar": {
       "browseItems": "Explorar artículos",
       "myItems": "Mis artículos",
       "logout": "Cerrar sesión",
-      "signin": "Iniciar sesión"
+      "signin": "Iniciar sesión",
+      "ranking": "Ranking",
+      "users": "Usuarios"
     },
     "myItems": {
       "title": "Mis Artículos",
@@ -55,11 +67,22 @@
     },
     "home": {
       "loading": "Cargando Artículos Disponibles...",
-      "availableItems": "Artículos Disponibles"
+      "availableItems": "Artículos Disponibles",
+      "errorLoading": "Error al obtener los ítems disponibles"
     },
     "itemCard": {
       "lender": "Prestamista",
-      "borrow": "Pedir prestado"
+      "borrow": "Pedir prestado",
+      "category": "Categoría",
+      "loanCreated": "¡Préstamo creado correctamente!",
+      "penalty": "No puedes pedir más préstamos mientras tengas penalizaciones.",
+      "tooManyLoans": "Tienes 3 préstamos activos. Devuelve uno antes de pedir otro.",
+      "borrowerNotFound": "Prestador no encontrado. Revisa los detalles del ítem.",
+      "lenderNotFound": "Usuario no encontrado. Por favor, inicia sesión de nuevo.",
+      "itemNotFound": "El ítem que intentas pedir no existe.",
+      "loanFailed": "Error al crear el préstamo",
+      "purchaseDate": "Fecha de compra",
+      "purchasePrice": "Precio de compra"
     },
     "borrowModal": {
       "borrowItem": "Pedir prestado {{itemName}}",
@@ -73,19 +96,79 @@
       "itemDescription": "Descripción del Artículo",
       "itemImage": "Imagen del Artículo",
       "cancel": "Cancelar",
-      "uploadItem": "Subir Artículo"
+      "uploadItem": "Subir Artículo",
+      "category": "Categoría",
+      "purchaseDate": "Fecha de compra",
+      "purchasePrice": "Precio de compra"
     },
     "returnModal": {
       "confirmReturn": "Confirmar Devolución",
       "cancel": "Cancelar",
-      "sureReturn": "¿Estás seguro de que quieres devolver '"
+      "sureReturn": "¿Estás seguro de que quieres devolver '",
+      "placeholder": "Ej: Excelente servicio",
+      "error": "Ha ocurrido un error",
+      "success": "¡Articulo devuelto con éxito!"
     },
     "reminderModal": {
       "sendReminder": "Enviar Recordatorio",
       "sureReminder": "¿Estás seguro de que quieres enviar un recordatorio a ",
       "sureReminder2": " sobre la devolución de '",
       "cancel": "Cancelar"
+    },
+    "ranking": {
+      "fetchError": "Error cargando el ranking",
+      "loading": "Cargando...",
+      "title": "Clasificación de usuarios",
+      "rating": "Puntuación:",
+      "penalties": "Penalizaciones:",
+      "noDataTitle": "Aún no hay clasificaciones",
+      "noDataPlaceholder": "¡Vuelve más tarde para ver la tabla de posiciones!"
+    },
+    "users": {
+      "notAuthorized": "No estás autorizado para ver la lista de usuarios.",
+      "fetchError": "Error al cargar los usuarios",
+      "loading": "Cargando...",
+      "title": "Usuarios",
+      "noUsers": "No hay usuarios para mostrar.",
+      "table": {
+        "id": "ID",
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "phone": "Número de teléfono",
+        "address": "Dirección",
+        "degreeType": "Tipo de título",
+        "degreeYear": "Curso",
+        "penalties": "Penalizaciones",
+        "averageRating": "Puntuación media"
+      }
+    },
+    "userProfile": {
+      "fetchError": "Error cargando perfil",
+      "loading": "Cargando perfil...",
+      "error": {
+        "notFoundTitle": "Usuario no encontrado",
+        "notFoundDetails": "No se pudo encontrar un usuario con este ID.",
+        "backToUsers": "Volver a la lista de usuarios"
+      },
+      "noLentItems": "No hay objetos prestados por ",
+      "noBorrowedItems": "No hay objetos tomados prestados por ",
+      "lentTo": "Prestado a:",
+      "borrowedFrom": "Prestado por:",
+      "date": "Fecha:",
+      "backToUsers": "Volver a la lista de usuarios",
+      "email": "Correo electrónico",
+      "phone": "Número de teléfono",
+      "address": "Dirección",
+      "degreeType": "Tipo de título",
+      "degreeYear": "Curso",
+      "penalties": "Penalizaciones",
+      "averageRating": "Puntuación media",
+      "itemsLentTitle": "Objetos prestados por {{name}}",
+      "itemsBorrowedTitle": "Objetos tomados prestados por {{name}}"
+    },
+    "itemStatus": {
+      "returned": "Devuelto",
+      "available": "Disponible"
     }
-
   }
   

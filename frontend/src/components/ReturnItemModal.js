@@ -12,14 +12,14 @@ function ReturnItemModal({ isOpen, onClose, onConfirm, itemName }) {
     try {
       await onConfirm(observations);
       toast.success(
-        t('¡Articulo devuelto con éxito!', { item: itemName })
+        t('returnModal.success', { item: itemName })
       );
       setObservations('');
       onClose();
     } catch (err) {
       console.error('Error al confirmar devolución:', err);
       toast.error(
-        t('Ha ocurrido un error', { item: itemName })
+        t('returnModal.error', { item: itemName })
       );
     }
   };
@@ -40,7 +40,7 @@ function ReturnItemModal({ isOpen, onClose, onConfirm, itemName }) {
           id="observations"
           value={observations}
           onChange={(e) => setObservations(e.target.value)}
-          placeholder={t('Ej: Excelente servicio')}
+          placeholder={t('returnModal.placeholder')}
           className="w-full border border-gray-300 rounded-md p-2 mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
           rows={4}
         />
