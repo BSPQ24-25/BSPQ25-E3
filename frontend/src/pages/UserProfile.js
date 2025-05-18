@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft } from 'react-icons/fa';
-import axios from 'axios';
+import axiosInstance from '../axiosInstance';
 
 const formatDegreeType = (degreeType, t) => {
   switch (degreeType) {
@@ -28,9 +28,9 @@ function UserProfile() {
 
   useEffect(() => {
     Promise.all([
-      axios.get(`http://localhost:8080/api/users/${id}`, { withCredentials: true }),
-      axios.get(`http://localhost:8080/api/users/${id}/lent-items`, { withCredentials: true }),
-      axios.get(`http://localhost:8080/api/users/${id}/borrowed-items`, { withCredentials: true }),
+      axiosInstance.get(`/users/${id}`),
+      axiosInstance.get(`/items/lent`),
+      axiosInstance.get(`/items/borrowed`),
     ])
       .then(([uRes, lentRes, borRes]) => {
         setUser(uRes.data);
@@ -71,6 +71,10 @@ function UserProfile() {
       </div>
     );
   }
+
+  // Fallback en campo de teléfono si difiere el nombre del backend
+  const phone = user.telephoneNumber || user.phoneNumber || user.phone;
+  const address = user.address || user.location;
 
   const ItemList = ({ items, type }) => {
     if (!items.length) {
@@ -139,13 +143,13 @@ function UserProfile() {
               <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t('userProfile.phone', 'Phone Number')}
               </h3>
-              <p className="text-lg text-gray-900">{user.phoneNumber}</p>
+              <p className="text-lg text-gray-900">{phone}</p>
             </div>
             <div>
               <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t('userProfile.address', 'Address')}
               </h3>
-              <p className="text-lg text-gray-900">{user.address}</p>
+              <p className="text-lg text-gray-900">{address}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -161,6 +165,20 @@ function UserProfile() {
                   {t('userProfile.degreeYear', 'Degree Year')}
                 </h3>
                 <p className="text-lg text-gray-900">{user.degreeYear}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('userProfile.penalties', 'Penalties')}
+                </h3>
+                <p className="text-lg text-gray-900">{user.penalties}</p>
+              </div>
+              <div>
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('userProfile.averageRating', 'Average Rating')}
+                </h3>
+                <p className="text-lg text-gray-900">{user.averageRating?.toFixed(2)}</p>
               </div>
             </div>
           </div>
