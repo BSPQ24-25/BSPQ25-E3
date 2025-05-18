@@ -42,3 +42,9 @@ buildNumber.properties
 
 # misc
 .DS_Store
+
+# images folder
+uploads/
+
+# node modules
+/node_modules
