@@ -175,7 +175,8 @@ import java.util.Optional;
         );
 
         assertEquals(HttpStatus.CREATED, cLoan.getStatusCode());
-                
+        
+        // 6. Fetch loans as borrower
         HttpHeaders headersGet = new HttpHeaders();
         headersGet.setBearerAuth(tokenB);
 

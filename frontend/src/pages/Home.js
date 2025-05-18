@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 function Home() {
   const { t } = useTranslation();
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,29 +13,13 @@ function Home() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        // Obtener el ID del usuario autenticado desde /users/me
-        let currentUserId = null;
-        try {
-          const meResponse = await axiosInstance.get('/users/me');
-          currentUserId = meResponse.data.id;
-        } catch (meError) {
-          console.warn('No se pudo obtener /users/me, se mostrarán todos los ítems', meError);
-        }
-
-        // Obtener ítems disponibles
         const response = await axiosInstance.get('/items/available');
         const availableItems = response.data;
 
-        // Filtrar propios si tenemos currentUserId
-        const filteredItems = currentUserId
-          ? availableItems.filter(item => item.owner !== currentUserId)
-          : availableItems;
-
-        // Mapear con nombre del prestador
         const itemsWithOwnerNames = await Promise.all(
-          filteredItems.map(async item => {
+          availableItems.map(async (item) => {
             try {
-              const ownerRes = await axiosInstance.get(`/users/${item.owner}`);
+              const ownerResponse = await axiosInstance.get(`/users/${item.owner}`);
               return {
                 id: item.id,
                 name: item.name,
@@ -44,9 +29,10 @@ function Home() {
                 purchasePrice: item.purchasePrice || 0,
                 imageUrl: item.image,
                 lenderId: item.owner,
-                lenderName: ownerRes.data.username,
+                lenderName: ownerResponse.data.username,
               };
-            } catch {
+            } catch (ownerError) {
+              console.error(`Error fetching owner for item ${item.id}:`, ownerError);
               return {
                 id: item.id,
                 name: item.name,
@@ -65,7 +51,7 @@ function Home() {
         setItems(itemsWithOwnerNames);
       } catch (err) {
         console.error('Error fetching available items:', err);
-        setError(t('home.errorLoading'));
+        setError(t('home.errorLoading')); // new translation key
       } finally {
         setLoading(false);
       }
@@ -74,17 +60,21 @@ function Home() {
     fetchItems();
   }, [t]);
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-gray-700 text-lg">{t('home.loading')}</div>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-700 text-lg">{t('home.loading')}</div>
+      </div>
+    );
+  }
 
-  if (error) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-red-600 text-lg">{error}</div>
-    </div>
-  );
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-600 text-lg">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -97,7 +87,9 @@ function Home() {
             <ItemCard
               key={item.id}
               item={item}
-              onLoanCreated={() => setItems(prev => prev.filter(i => i.id !== item.id))}
+              onLoanCreated={() => {
+                setItems(prev => prev.filter(i => i.id !== item.id));
+              }}
             />
           ))}
         </div>
