@@ -1,15 +1,20 @@
 package com.student_loan.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.student_loan.model.Item;
-import com.student_loan.model.Item.ItemStatus;
-import com.student_loan.repository.ItemRepository;
-import com.student_loan.repository.UserRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.student_loan.model.Item;
+import com.student_loan.model.Item.ItemStatus;
+import com.student_loan.model.Loan;
+import com.student_loan.repository.ItemRepository;
+import com.student_loan.repository.LoanRepository;
+import com.student_loan.repository.UserRepository;
+import com.student_loan.dtos.LoanAndItemDto;
 
 /**
  * Service class for managing items in the system.
@@ -21,6 +26,8 @@ public class ItemService {
     private ItemRepository itemRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private LoanRepository loanRepository;
     
     /**
      * Retrieves all items from the repository.
@@ -88,8 +95,6 @@ public class ItemService {
      * @return The saved item.
      * @throws RuntimeException if the item's owner does not exist.
      */
-
-
 	public List<Item> getItemsByAvailability(ItemStatus status) {
 		return itemRepository.findByStatus(status);
 	}
@@ -99,6 +104,43 @@ public class ItemService {
     	}else {
 	        return itemRepository.save(item);
 	    }
+    }
+
+    public List<LoanAndItemDto> getItemsLentByUserWithActiveLoans(Long userId) {
+        List<Loan> loans = loanRepository.findByLenderAndLoanStatus(userId, Loan.Status.IN_USE);
+        
+        return loans.stream()
+            .map(loan -> {
+                Item item = itemRepository.findById(loan.getItem())
+                                        .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+                LoanAndItemDto loanItemDto = new LoanAndItemDto();
+                loanItemDto.setLoanId(loan.getId());
+                loanItemDto.setBorrowerId(loan.getBorrower());
+                loanItemDto.setLenderId(loan.getLender());
+                loanItemDto.setStartDate(loan.getLoanDate());
+                loanItemDto.setEndDate(loan.getEstimatedReturnDate());
+                loanItemDto.setItemId(item.getId());
+                loanItemDto.setItemName(item.getName());
+                loanItemDto.setItemDescription(item.getDescription());
+                return loanItemDto;
+            })
+            .collect(Collectors.toList());
+    }
+
+    public List<Item> getItemsBorrowedByUserWithActiveLoans(Long userId) {
+        List<Loan> loans = loanRepository.findByBorrowerAndLoanStatus(userId, Loan.Status.IN_USE);
+
+        // Extraer los IDs de los items
+        List<Long> itemIds = loans.stream()
+                                .map(Loan::getItem)
+                                .collect(Collectors.toList());
+
+        // Buscar los items en el repositorio de items
+        List<Item> items = itemRepository.findAllById(itemIds);
+
+        // Mapear a DTOs
+        return items.stream()
+                    .collect(Collectors.toList());
     }
     
 	/**

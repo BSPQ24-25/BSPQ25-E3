@@ -7,10 +7,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.student_loan.model.Item;
 import com.student_loan.model.User;
+import com.student_loan.service.ItemService;
 import com.student_loan.service.UserService;
 import com.student_loan.dtos.UserRecord;
 import com.student_loan.dtos.CredentialsDTO;
+import com.student_loan.dtos.LoanAndItemDto;
 import com.student_loan.dtos.RegistrationRecord;
 import com.student_loan.dtos.UserDTO;
 
@@ -28,13 +31,16 @@ public class UserController {
     
 
     private UserService userService;
+
+    private ItemService itemService;
     /**
      * Constructor for UserController.
      *
      * @param userService Service for user operations.
      */
-	public UserController(UserService userService) {
+	public UserController(UserService userService, ItemService itemService) {
         this.userService = userService;
+        this.itemService = itemService;
     }
 	  /**
      * Retrieves all users in the system.
@@ -122,6 +128,20 @@ public class UserController {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return ResponseEntity.ok(userToUserRecord(target));
+    }
+
+    // Ítems prestados por un usuario
+    @GetMapping("/{userId}/items/lent")
+    public ResponseEntity<List<LoanAndItemDto>> getItemsLentByUser(@PathVariable Long userId) {
+        List<LoanAndItemDto> items = itemService.getItemsLentByUserWithActiveLoans(userId);
+        return ResponseEntity.ok(items);
+    }
+
+    // Ítems tomados prestados por un usuario
+    @GetMapping("/{userId}/items/borrowed")
+    public ResponseEntity<List<Item>> getItemsBorrowedByUser(@PathVariable Long userId) {
+        List<Item> items = itemService.getItemsBorrowedByUserWithActiveLoans(userId);
+        return ResponseEntity.ok(items);
     }
 
 	/**
