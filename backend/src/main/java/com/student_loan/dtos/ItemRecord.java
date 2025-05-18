@@ -5,7 +5,8 @@ public record ItemRecord(
 		
 		String name,
 		String description,
-		String category, 
+		String category,
+		String purchasePrice, 
 		String imageUrl,
 		String status,
 		String condition) {}
