@@ -11,22 +11,20 @@ package com.student_loan.integration;
  import com.fasterxml.jackson.databind.SerializationFeature;
  import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
  import org.junit.jupiter.api.Test;
- import org.springframework.web.client.RestTemplate;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.boot.test.context.SpringBootTest;
  import org.springframework.boot.test.web.client.TestRestTemplate;
  import org.springframework.http.*;
  
- import java.time.LocalDate;
- import java.util.Optional;
- import java.util.Map;
- import java.util.List;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
  
  import static org.junit.jupiter.api.Assertions.*;
  import org.springframework.test.context.ActiveProfiles;
  
+  @ActiveProfiles("test")
  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
- @ActiveProfiles("test")
  class StudentLoanIntegrationTest {
  
      @Autowired
@@ -34,10 +32,9 @@ package com.student_loan.integration;
  
      @Autowired
      private UserRepository userRepository;
- 
      @Autowired
      private ItemRepository itemRepository;
- 
+
      @Autowired
      private LoanRepository loanRepository;
  
@@ -60,15 +57,35 @@ package com.student_loan.integration;
         }
 
         // 1. Register lender and borrower
-        Map<String,String> lenderReg = Map.of(
-            "name","Unai","lastName","Gonzalez","email","unai.gonzalez@example.com","password","UnaiPass1!"
-        );
+        Map<String,Object> lenderReg = new java.util.HashMap<>();
+        lenderReg.put("name", "Unai");
+        lenderReg.put("lastName", "Gonzalez");
+        lenderReg.put("email", "unai.gonzalez@example.com");
+        lenderReg.put("password", "UnaiPass1!");
+        lenderReg.put("telephoneNumber", "600123456");
+        lenderReg.put("address", "Calle Falsa 123");
+        lenderReg.put("degreeType", "UNIVERSITY_DEGREE");
+        lenderReg.put("degreeYear", 4);
+        lenderReg.put("penalties", 0);
+        lenderReg.put("averageRating", 0.0);
+        lenderReg.put("admin", false);
+
         ResponseEntity<String> regL = restTemplate.postForEntity("/users/register", lenderReg, String.class);
         assertEquals(HttpStatus.OK, regL.getStatusCode());
 
-        Map<String,String> borrowerReg = Map.of(
-            "name","Amaia","lastName","Lopez","email","amaia.lopez@example.com","password","AmaiaPass2!"
-        );
+        Map<String,Object> borrowerReg = new java.util.HashMap<>();
+        borrowerReg.put("name", "Amaia");
+        borrowerReg.put("lastName", "Lopez");
+        borrowerReg.put("email", "amaia.lopez@example.com");
+        borrowerReg.put("password", "AmaiaPass2!");
+        borrowerReg.put("telephoneNumber", "600654321");
+        borrowerReg.put("address", "Avenida Principal 45");
+        borrowerReg.put("degreeType", "MASTER");
+        borrowerReg.put("degreeYear", 1);
+        borrowerReg.put("penalties", 0);
+        borrowerReg.put("averageRating", 0.0);
+        borrowerReg.put("admin", false);
+
         ResponseEntity<String> regB = restTemplate.postForEntity("/users/register", borrowerReg, String.class);
         assertEquals(HttpStatus.OK, regB.getStatusCode());
 
@@ -136,11 +153,25 @@ package com.student_loan.integration;
             "item", itemId,
             "loanDate", LocalDate.now().toString(),
             "estimatedReturnDate", LocalDate.now().plusDays(7).toString(),
+            "realReturnDate", LocalDate.now().plusDays(7).toString(),
+            "loanStatus", Loan.Status.IN_USE,
+            "rating", 5.0,
             "observations", "Test loan"
         );
 
-        ResponseEntity<String> cLoan = restTemplate.postForEntity(
-            "/loans?token=" + tokenB, loanReq, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(tokenB);
+
+        HttpEntity<Map<String,Object>> requestEntity = new HttpEntity<>(loanReq, headers);
+        String url = "/loans/create";
+
+        ResponseEntity<String> cLoan = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            requestEntity,
+            String.class
+        );
 
         assertEquals(HttpStatus.CREATED, cLoan.getStatusCode());
 
@@ -160,43 +191,43 @@ package com.student_loan.integration;
                 
         System.out.println("INTEGRATION TEST FINISHED");
 
-        // // 7. Return loan
-        // Map<String,Object> returnLoanRequest = Map.of(
-        //     "realReturnDate",      LocalDate.now().plusDays(5).toString(),
-        //     "loanStatus",          Loan.Status.RETURNED.toString(),
-        //     "rating",              4.5,
-        //     "observations",        "Good condition"
-        // );
+        // 7. Return loan
+        Map<String,Object> returnLoanRequest = Map.of(
+            "realReturnDate",      LocalDate.now().plusDays(5).toString(),
+            "loanStatus",          Loan.Status.RETURNED.toString(),
+            "rating",              4.5,
+            "observations",        "Good condition"
+        );
 
-        // HttpHeaders headers = new HttpHeaders();
-        // headers.setContentType(MediaType.APPLICATION_JSON);
-        // headers.setBearerAuth(tokenB);
+        HttpHeaders headersR = new HttpHeaders();
+        headersR.setContentType(MediaType.APPLICATION_JSON);
+        headersR.setBearerAuth(tokenB);
 
-        // HttpEntity<Map<String,Object>> requestEntity =
-        //     new HttpEntity<>(returnLoanRequest, headers);
+        HttpEntity<Map<String,Object>> requestEntityR =
+            new HttpEntity<>(returnLoanRequest, headersR);
 
-        // ResponseEntity<String> returnLoanResponse = restTemplate.exchange(
-        //     "/loans/" + loanId,
-        //     HttpMethod.PUT,
-        //     requestEntity,
-        //     String.class
-        // );
+        ResponseEntity<String> returnLoanResponse = restTemplate.exchange(
+            "/loans/" + loanId,
+            HttpMethod.PUT,
+            requestEntityR,
+            String.class
+        );
 
-        // assertEquals(HttpStatus.OK, returnLoanResponse.getStatusCode());
+        assertEquals(HttpStatus.OK, returnLoanResponse.getStatusCode());
 
-        // // Step 8: Verify loan status is updated
-        // Optional<Loan> updatedLoanOpt = loanRepository.findById(loanId);
-        // assertTrue(updatedLoanOpt.isPresent());
+        // Step 8: Verify loan status is updated
+        Optional<Loan> updatedLoanOpt = loanRepository.findById(loanId);
+        assertTrue(updatedLoanOpt.isPresent());
 
-        // Loan updatedLoan = updatedLoanOpt.get();
-        // assertEquals(Loan.Status.RETURNED, updatedLoan.getLoanStatus());
+        Loan updatedLoan = updatedLoanOpt.get();
+        assertEquals(Loan.Status.RETURNED, updatedLoan.getLoanStatus());
 
         // 9. Cleanup
-        // restTemplate.exchange("/loans/"+loanId+"?token="+tokenB, HttpMethod.DELETE, null, Void.class);
-        // restTemplate.exchange("/items/"+itemId+"?token="+tokenL, HttpMethod.DELETE, null, Void.class);
+        restTemplate.exchange("/loans/"+loanId+"?token="+tokenB, HttpMethod.DELETE, null, Void.class);
+        restTemplate.exchange("/items/"+itemId+"?token="+tokenL, HttpMethod.DELETE, null, Void.class);
 
         // 10. Verify item and loan deletion
-        // assertFalse(itemRepository.existsById(itemId));
-        // assertFalse(userRepository.existsById(loanId));
+        assertFalse(itemRepository.existsById(itemId));
+        assertFalse(userRepository.existsById(loanId));
     }
 }
