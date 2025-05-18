@@ -128,9 +128,10 @@ import java.util.Optional;
             "name", "Test SmartWatch",
             "description", "Dell XPS 13",
             "category", "Electronics",
+            "purchasePrice", "1200.0",
+            "imageBase64", "base64Image",
             "status", "AVAILABLE",
-            "condition", "LIKE_NEW",
-            "imageUrl", "http://example.com/xps.jpg"
+            "condition", "NEW"
         );
 
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(
@@ -175,9 +176,17 @@ import java.util.Optional;
 
         assertEquals(HttpStatus.CREATED, cLoan.getStatusCode());
                 
-        // 6. Verify the status of a loan
-        ResponseEntity<Loan[]> respLoans = restTemplate.getForEntity(
-            "/loans/borrower",Loan[].class);
+        HttpHeaders headersGet = new HttpHeaders();
+        headersGet.setBearerAuth(tokenB);
+
+        HttpEntity<Void> entityGet = new HttpEntity<>(headersGet);
+
+        ResponseEntity<Loan[]> respLoans = restTemplate.exchange(
+            "/loans/borrower",
+            HttpMethod.GET,
+            entityGet,
+            Loan[].class
+        );
         
         assertEquals(HttpStatus.OK, respLoans.getStatusCode());
         assertNotNull(respLoans.getBody());
