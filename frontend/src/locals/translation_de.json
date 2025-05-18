@@ -149,8 +149,8 @@
         "notFoundDetails": "Kein Benutzer mit dieser ID gefunden.",
         "backToUsers": "Zurück zur Benutzerliste"
       },
-      "noLentItems": "Keine verliehenen Gegenstände von ",
-      "noBorrowedItems": "Keine ausgeliehenen Gegenstände von ",
+      "noLentItems": "Keine verliehenen Gegenstände",
+      "noBorrowedItems": "Keine ausgeliehenen Gegenstände",
       "lentTo": "Verliehen an:",
       "borrowedFrom": "Ausgeliehen von:",
       "date": "Datum:",

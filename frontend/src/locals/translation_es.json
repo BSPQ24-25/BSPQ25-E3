@@ -150,8 +150,8 @@
         "notFoundDetails": "No se pudo encontrar un usuario con este ID.",
         "backToUsers": "Volver a la lista de usuarios"
       },
-      "noLentItems": "No hay objetos prestados por ",
-      "noBorrowedItems": "No hay objetos tomados prestados por ",
+      "noLentItems": "No hay objetos prestados",
+      "noBorrowedItems": "No hay objetos tomados prestados",
       "lentTo": "Prestado a:",
       "borrowedFrom": "Prestado por:",
       "date": "Fecha:",

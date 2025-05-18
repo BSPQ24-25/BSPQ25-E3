@@ -149,8 +149,8 @@
       "notFoundDetails": "Could not find a user with this ID.",
       "backToUsers": "Back to Users List"
     },
-    "noLentItems": "No items lent by ",
-    "noBorrowedItems": "No items borrowed by ",
+    "noLentItems": "No items lent",
+    "noBorrowedItems": "No items borrowed",
     "lentTo": "Lent to:",
     "borrowedFrom": "Borrowed from:",
     "date": "Date:",
