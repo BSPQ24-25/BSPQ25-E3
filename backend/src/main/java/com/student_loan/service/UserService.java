@@ -63,48 +63,57 @@ public class UserService {
      * @return The updated user.
      * @throws RuntimeException if user is not found.
      */
-    public User updateUser(Long id, User updatedUserData) {
-        Optional<User> existingUserOptional = userRepository.findById(id);
+    public User updateUser(Long id, User newData) {
+        User existing = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (existingUserOptional.isPresent()) {
-            User existingUser = existingUserOptional.get();
-            // Update only the fields that are not null in the updatedUserData
-            String newName = updatedUserData.getName() == null ? existingUser.getName() : updatedUserData.getName();
-            existingUser.setName(newName);
-            String newEmail = updatedUserData.getEmail() == null ? existingUser.getEmail() : updatedUserData.getEmail();
-            existingUser.setEmail(newEmail);
-            String newTelephoneNumber = updatedUserData.getTelephoneNumber() == null ? existingUser.getTelephoneNumber() : updatedUserData.getTelephoneNumber();
-            existingUser.setTelephoneNumber(newTelephoneNumber);
-            String newAddress = updatedUserData.getAddress() == null ? existingUser.getAddress() : updatedUserData.getAddress();
-            existingUser.setAddress(newAddress);
-            String newpassword = updatedUserData.getPassword() == null ? existingUser.getPassword() : updatedUserData.getPassword();
-            existingUser.setPassword(newpassword);
-            DegreeType newDegreeType = updatedUserData.getDegreeType() == null ? existingUser.getDegreeType() : updatedUserData.getDegreeType();
-            existingUser.setDegreeType(newDegreeType);
-            Integer newDegreeYear = updatedUserData.getDegreeYear() == null ? existingUser.getDegreeYear() : updatedUserData.getDegreeYear();
-            existingUser.setDegreeYear(newDegreeYear);
-            Integer newPenalties = updatedUserData.getPenalties() == null ? existingUser.getPenalties() : updatedUserData.getPenalties();
-            int previousPenalties = existingUser.getPenalties();
-			if (newPenalties != null && newPenalties > previousPenalties) {
-				notificationService.enviarCorreo(existingUser.getEmail(), "NEW PENALTY!", "You ha been punished by a penalty, please respect return dates and item conditions."
-						+ " \nYour current penalty count is: "+ newPenalties);
-			}
-            existingUser.setPenalties(newPenalties);
-            Double newAverageRating = updatedUserData.getAverageRating() == null ? existingUser.getAverageRating() : updatedUserData.getAverageRating();
-            existingUser.setAverageRating(newAverageRating);
-            Boolean newAdmin = updatedUserData.getAdmin() == null ? existingUser.getAdmin() : updatedUserData.getAdmin();
-            existingUser.setAdmin(newAdmin);
-            
-
-            if (updatedUserData.getPassword() != null && !updatedUserData.getPassword().isEmpty()) {
-                existingUser.setPassword(passwordEncoder.encode(updatedUserData.getPassword()));
-            }
-            
-            return userRepository.save(existingUser);
-        } else {
-            throw new RuntimeException("User not found with id: " + id);
+        if (newData.getName() != null) {
+            existing.setName(newData.getName());
         }
+        if (newData.getEmail() != null) {
+            existing.setEmail(newData.getEmail());
+        }
+        if (newData.getTelephoneNumber() != null) {
+            existing.setTelephoneNumber(newData.getTelephoneNumber());
+        }
+        if (newData.getAddress() != null) {
+            existing.setAddress(newData.getAddress());
+        }
+        if (newData.getDegreeType() != null) {
+            existing.setDegreeType(newData.getDegreeType());
+        }
+        if (newData.getDegreeYear() != null) {
+            existing.setDegreeYear(newData.getDegreeYear());
+        }
+        if (newData.getAverageRating() != null) {
+            existing.setAverageRating(newData.getAverageRating());
+        }
+
+        String rawPass = newData.getPassword();
+        if (rawPass != null && !rawPass.isBlank()) {
+            existing.setPassword(passwordEncoder.encode(rawPass));
+        }
+
+        Integer previousPenalties = existing.getPenalties();
+        Integer newPenalties      = newData.getPenalties();
+        
+        if (newPenalties != null) {
+            if (newPenalties > previousPenalties) {
+                notificationService.enviarCorreo(
+                    existing.getEmail(),
+                    "NEW PENALTY!",
+                    "Your penalty count increased to " + newPenalties
+                );
+            }
+            existing.setPenalties(newPenalties);
+        } else {
+            existing.setPenalties(previousPenalties);
+        }
+        existing.setAdmin(newData.getAdmin());
+
+        return userRepository.save(existing);
     }
+
 
     /**
      * Registers a new user after checking for email uniqueness.

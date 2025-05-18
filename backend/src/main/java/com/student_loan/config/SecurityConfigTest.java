@@ -39,9 +39,9 @@ public class SecurityConfigTest {
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/users", "/users/**",
-                    "/items", "/items/**",
-                    "/loans", "/loans/**"
+                    "/users/**",
+                    "/items/**",
+                    "/loans/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             );

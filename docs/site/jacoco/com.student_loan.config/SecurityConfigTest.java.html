@@ -39,9 +39,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 <span class="fc" id="L39">            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)</span>
 <span class="fc" id="L40">            .authorizeHttpRequests(auth -&gt; auth</span>
 <span class="fc" id="L41">                .requestMatchers(</span>
-                    &quot;/users&quot;, &quot;/users/**&quot;,
-                    &quot;/items&quot;, &quot;/items/**&quot;,
-                    &quot;/loans&quot;, &quot;/loans/**&quot;
+                    &quot;/users/**&quot;,
+                    &quot;/items/**&quot;,
+                    &quot;/loans/**&quot;
 <span class="fc" id="L45">                ).permitAll()</span>
 <span class="fc" id="L46">                .anyRequest().authenticated()</span>
             );
