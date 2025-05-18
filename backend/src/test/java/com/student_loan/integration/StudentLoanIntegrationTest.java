@@ -188,8 +188,6 @@ import java.util.Optional;
         Long loanId = loans[0].getId();
         assertEquals(Loan.Status.IN_USE, loans[0].getLoanStatus());
         assertEquals(loanId, loans[0].getId());
-                
-        System.out.println("INTEGRATION TEST FINISHED");
 
         // 7. Return loan
         Map<String,Object> returnLoanRequest = Map.of(
@@ -229,5 +227,7 @@ import java.util.Optional;
         // 10. Verify item and loan deletion
         assertFalse(itemRepository.existsById(itemId));
         assertFalse(userRepository.existsById(loanId));
+
+        System.out.println("INTEGRATION TEST FINISHED");
     }
 }
