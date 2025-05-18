@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
 
 import com.student_loan.dtos.ItemRecord;
 import com.student_loan.model.Item;
@@ -15,6 +16,7 @@ import com.student_loan.model.User;
 import com.student_loan.service.ItemService;
 import com.student_loan.service.LoanService;
 import com.student_loan.service.UserService;
+import com.student_loan.utils.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.Optional;
 @RequestMapping(&quot;/items&quot;)
 public class ItemController {
 	
-<span class="fc" id="L32">    private static final Logger logger = LoggerFactory.getLogger(ItemController.class);</span>
+<span class="fc" id="L34">    private static final Logger logger = LoggerFactory.getLogger(ItemController.class);</span>
 
     @Autowired
     private ItemService itemService;
@@ -46,11 +48,11 @@ public class ItemController {
 	 * @param loanService Service for loan operations.
 	 */
 	@Autowired
-<span class="fc" id="L49">	public ItemController(ItemService itemService, UserService userService, LoanService loanService) {</span>
-<span class="fc" id="L50">		this.itemService = itemService;</span>
-<span class="fc" id="L51">		this.userService = userService;</span>
-<span class="fc" id="L52">		this.loanService = loanService;</span>
-<span class="fc" id="L53">	}</span>
+<span class="fc" id="L51">	public ItemController(ItemService itemService, UserService userService, LoanService loanService) {</span>
+<span class="fc" id="L52">		this.itemService = itemService;</span>
+<span class="fc" id="L53">		this.userService = userService;</span>
+<span class="fc" id="L54">		this.loanService = loanService;</span>
+<span class="fc" id="L55">	}</span>
 
 	/**
 	 * Retrieves the authenticated user from the SecurityContext.
@@ -58,9 +60,9 @@ public class ItemController {
 	 * @return The authenticated user.
 	 */
 	private User getAuthenticatedUser() {
-<span class="fc" id="L61">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="fc" id="L62">        String email = authentication.getName();</span>
-<span class="fc" id="L63">        return userService.getUserByEmail(email);</span>
+<span class="fc" id="L63">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L64">        String email = authentication.getName();</span>
+<span class="fc" id="L65">        return userService.getUserByEmail(email);</span>
     }
 
 	/**
@@ -70,15 +72,15 @@ public class ItemController {
 	 */
     @GetMapping
     public ResponseEntity&lt;List&lt;Item&gt;&gt; getAllItems() {
-<span class="fc" id="L73">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="fc" id="L74">		String email = authentication.getName();</span>
+<span class="fc" id="L75">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L76">		String email = authentication.getName();</span>
 
-<span class="fc" id="L76">    	User user = userService.getUserByEmail(email);</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (user == null) { // || user.getAdmin()==false) {  Temporal</span>
-<span class="fc" id="L78">			return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L78">    	User user = userService.getUserByEmail(email);</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (user == null) { // || user.getAdmin()==false) {  Temporal</span>
+<span class="fc" id="L80">			return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED);</span>
         }
     	
-<span class="fc" id="L81">    	return new ResponseEntity&lt;&gt;(itemService.getAllItems(),HttpStatus.OK);</span>
+<span class="fc" id="L83">    	return new ResponseEntity&lt;&gt;(itemService.getAllItems(),HttpStatus.OK);</span>
     }
 
     /**
@@ -92,15 +94,15 @@ public class ItemController {
     
     @GetMapping(&quot;/available&quot;)
     public ResponseEntity&lt;List&lt;Item&gt;&gt; getAvailableItems() {
-<span class="fc" id="L95">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="fc" id="L96">		String email = authentication.getName();</span>
+<span class="fc" id="L97">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L98">		String email = authentication.getName();</span>
 
-<span class="fc" id="L98">    	User user = userService.getUserByEmail(email);</span>
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (user == null) {</span>
-<span class="fc" id="L100">			return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L100">    	User user = userService.getUserByEmail(email);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (user == null) {</span>
+<span class="fc" id="L102">			return new ResponseEntity&lt;&gt;(new ArrayList&lt;&gt;(),HttpStatus.UNAUTHORIZED);</span>
         }
     	
-<span class="fc" id="L103">    	return new ResponseEntity&lt;&gt;(itemService.getAvailableItems(),HttpStatus.OK);</span>
+<span class="fc" id="L105">    	return new ResponseEntity&lt;&gt;(itemService.getAvailableItems(),HttpStatus.OK);</span>
     }
 
 	
@@ -112,19 +114,19 @@ public class ItemController {
      */
     @GetMapping(&quot;/user/{id}&quot;)
     public ResponseEntity&lt;List&lt;Item&gt;&gt; getItemsByUser(@PathVariable Long id) {
-<span class="fc" id="L115">    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="fc" id="L116">		String email = authentication.getName();</span>
+<span class="fc" id="L117">    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L118">		String email = authentication.getName();</span>
 
-<span class="fc" id="L118">    	User user = userService.getUserByEmail(email);</span>
+<span class="fc" id="L120">    	User user = userService.getUserByEmail(email);</span>
 		
-<span class="fc bfc" id="L120" title="All 2 branches covered.">        if (user == null) { // || (user.getAdmin()==false &amp;&amp; user.getId()!=id)) { TODO Uncomment to enable a user only to see its own items</span>
-<span class="fc" id="L121">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (user == null) { // || (user.getAdmin()==false &amp;&amp; user.getId()!=id)) { TODO Uncomment to enable a user only to see its own items</span>
+<span class="fc" id="L123">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
         }else {
         	try {
-<span class="fc" id="L124">    			List&lt;Item&gt; items = itemService.getItemsByUser(id);</span>
-<span class="fc" id="L125">    			return new ResponseEntity&lt;&gt;(items, HttpStatus.OK);</span>
-<span class="fc" id="L126">			} catch (RuntimeException e) {</span>
-<span class="fc" id="L127">				return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L126">    			List&lt;Item&gt; items = itemService.getItemsByUser(id);</span>
+<span class="fc" id="L127">    			return new ResponseEntity&lt;&gt;(items, HttpStatus.OK);</span>
+<span class="fc" id="L128">			} catch (RuntimeException e) {</span>
+<span class="fc" id="L129">				return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);</span>
 			}
         }
     }
@@ -147,31 +149,31 @@ public class ItemController {
 	 */
    
     
-/**
- * Retrieves an item by its ID.
- *
- * @param id The ID of the item.
- * @return ResponseEntity containing the item.
- */
+	/**
+	 * Retrieves an item by its ID.
+	 *
+	 * @param id The ID of the item.
+	 * @return ResponseEntity containing the item.
+	 */
     @GetMapping(&quot;/{id}&quot;)
 	public ResponseEntity&lt;Item&gt; getItemById(@PathVariable Long id) {
-<span class="fc" id="L158">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="fc" id="L159">		String email = authentication.getName();</span>
+<span class="fc" id="L160">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L161">		String email = authentication.getName();</span>
 
-<span class="fc" id="L161">		User user = userService.getUserByEmail(email);</span>
-<span class="fc" id="L162">		Optional&lt;Item&gt; optionalItem = itemService.getItemById(id);</span>
+<span class="fc" id="L163">		User user = userService.getUserByEmail(email);</span>
+<span class="fc" id="L164">		Optional&lt;Item&gt; optionalItem = itemService.getItemById(id);</span>
 
-<span class="fc bfc" id="L164" title="All 4 branches covered.">		if (user == null || optionalItem.isEmpty()) {</span>
-<span class="fc" id="L165">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED); // o 404 si prefieres</span>
+<span class="fc bfc" id="L166" title="All 4 branches covered.">		if (user == null || optionalItem.isEmpty()) {</span>
+<span class="fc" id="L167">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED); // o 404 si prefieres</span>
 		}
 
-<span class="fc" id="L168">		Item item = optionalItem.get();</span>
+<span class="fc" id="L170">		Item item = optionalItem.get();</span>
 
-<span class="fc bfc" id="L170" title="All 2 branches covered.">		if (!item.getOwner().equals(user.getId())) { // TODO &amp;&amp; !user.getAdmin()) {</span>
-<span class="fc" id="L171">			return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">		if (!item.getOwner().equals(user.getId())) { // TODO &amp;&amp; !user.getAdmin()) {</span>
+<span class="fc" id="L173">			return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
 		}
 
-<span class="fc" id="L174">		return new ResponseEntity&lt;&gt;(item, HttpStatus.OK);</span>
+<span class="fc" id="L176">		return new ResponseEntity&lt;&gt;(item, HttpStatus.OK);</span>
 	}
     
     /**
@@ -179,28 +181,27 @@ public class ItemController {
      *
      * @return ResponseEntity containing a list of lent items.
      */
-
 	@GetMapping(&quot;/lent&quot;)
 	public ResponseEntity&lt;List&lt;Item&gt;&gt; getLentItemsByUser() {
 		// Obtener el usuario autenticado desde el SecurityContext
-<span class="fc" id="L186">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="fc" id="L187">		String email = authentication.getName(); // Usamos el email como identificador</span>
+<span class="fc" id="L187">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L188">		String email = authentication.getName(); // Usamos el email como identificador</span>
 
 		// Buscar al usuario por el email
-<span class="fc" id="L190">		User user = userService.getUserByEmail(email);</span>
-<span class="fc bfc" id="L191" title="All 2 branches covered.">		if (user == null) {</span>
-<span class="fc" id="L192">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L191">		User user = userService.getUserByEmail(email);</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">		if (user == null) {</span>
+<span class="fc" id="L193">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
 		}
 
 		try {
 			// Obtener los items que el usuario ha prestado
-<span class="fc" id="L197">			List&lt;Long&gt; lentItemsId = loanService.getLentItemsIdByUser(user.getId());</span>
-<span class="fc" id="L198">			List&lt;Item&gt; lentItems = itemService.getItemsById(lentItemsId);</span>
+<span class="fc" id="L198">			List&lt;Long&gt; lentItemsId = loanService.getLentItemsIdByUser(user.getId());</span>
+<span class="fc" id="L199">			List&lt;Item&gt; lentItems = itemService.getItemsById(lentItemsId);</span>
 
-<span class="fc" id="L200">			return new ResponseEntity&lt;&gt;(lentItems, HttpStatus.OK);</span>
-<span class="fc" id="L201">		} catch (RuntimeException e) {</span>
+<span class="fc" id="L201">			return new ResponseEntity&lt;&gt;(lentItems, HttpStatus.OK);</span>
+<span class="fc" id="L202">		} catch (RuntimeException e) {</span>
 			// Si ocurre un error, devolvemos un error 500
-<span class="fc" id="L203">			return new ResponseEntity&lt;&gt;(HttpStatus.INTERNAL_SERVER_ERROR);</span>
+<span class="fc" id="L204">			return new ResponseEntity&lt;&gt;(HttpStatus.INTERNAL_SERVER_ERROR);</span>
 		}
 	}
 
@@ -212,24 +213,24 @@ public class ItemController {
 	@GetMapping(&quot;/borrowed&quot;)
 	public ResponseEntity&lt;List&lt;Item&gt;&gt; getBorrowedItemsByUser() {
 		// Obtener el usuario autenticado desde el SecurityContext
-<span class="fc" id="L215">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="fc" id="L216">		String email = authentication.getName(); // Usamos el email como identificador</span>
+<span class="fc" id="L216">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L217">		String email = authentication.getName(); // Usamos el email como identificador</span>
 
 		// Buscar al usuario por el email
-<span class="fc" id="L219">		User user = userService.getUserByEmail(email);</span>
-<span class="fc bfc" id="L220" title="All 2 branches covered.">		if (user == null) {</span>
-<span class="fc" id="L221">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L220">		User user = userService.getUserByEmail(email);</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">		if (user == null) {</span>
+<span class="fc" id="L222">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
 		}
 
 		try {
 			// Obtener los items que el usuario ha prestado
-<span class="fc" id="L226">			List&lt;Long&gt; lentItemsId = loanService.getBorrowedItemsIdByUser(user.getId());</span>
-<span class="fc" id="L227">			List&lt;Item&gt; lentItems = itemService.getItemsById(lentItemsId);</span>
+<span class="fc" id="L227">			List&lt;Long&gt; lentItemsId = loanService.getBorrowedItemsIdByUser(user.getId());</span>
+<span class="fc" id="L228">			List&lt;Item&gt; lentItems = itemService.getItemsById(lentItemsId);</span>
 
-<span class="fc" id="L229">			return new ResponseEntity&lt;&gt;(lentItems, HttpStatus.OK);</span>
-<span class="fc" id="L230">		} catch (RuntimeException e) {</span>
+<span class="fc" id="L230">			return new ResponseEntity&lt;&gt;(lentItems, HttpStatus.OK);</span>
+<span class="fc" id="L231">		} catch (RuntimeException e) {</span>
 			// Si ocurre un error, devolvemos un error 500
-<span class="fc" id="L232">			return new ResponseEntity&lt;&gt;(HttpStatus.INTERNAL_SERVER_ERROR);</span>
+<span class="fc" id="L233">			return new ResponseEntity&lt;&gt;(HttpStatus.INTERNAL_SERVER_ERROR);</span>
 		}
 	}
 
@@ -239,24 +240,29 @@ public class ItemController {
      * @param itemRecord The item data.
      * @return ResponseEntity indicating the result of the operation.
      */
-
-
     @PostMapping(&quot;/create&quot;)
     public ResponseEntity&lt;String&gt; createItem(@RequestBody ItemRecord itemRecord) {
-<span class="fc" id="L246">        User user = getAuthenticatedUser();</span>
-<span class="fc bfc" id="L247" title="All 2 branches covered."> 		if (user == null) {</span>
-<span class="fc" id="L248"> 			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L245">        User user = getAuthenticatedUser();</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered."> 		if (user == null) {</span>
+<span class="fc" id="L247"> 			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
  		}
  		
-<span class="fc" id="L251"> 		Item item = convertToItem(itemRecord);</span>
-<span class="fc" id="L252"> 		item.setOwner(user.getId());</span>
+<span class="fc" id="L250"> 		Item item = convertToItem(itemRecord);</span>
+<span class="fc" id="L251"> 		item.setOwner(user.getId());</span>
  		try {
-<span class="fc" id="L254"> 			itemService.saveItem(item);</span>
-<span class="fc" id="L255">        } catch (RuntimeException e) {</span>
-<span class="fc" id="L256">             return new ResponseEntity&lt;&gt;(e.getMessage(), HttpStatus.BAD_REQUEST);</span>
-<span class="fc" id="L257">         }</span>
+<span class="pc bpc" id="L253" title="2 of 4 branches missed.">			if (itemRecord.imageBase64() != null &amp;&amp; !itemRecord.imageBase64().isEmpty()) {</span>
+<span class="fc" id="L254">				String imageUrl = ImageUtil.saveBase64Image(itemRecord.imageBase64(), &quot;uploads&quot;);</span>
+<span class="fc" id="L255">				item.setImage(imageUrl); // Esto será &quot;/images/xxxx.png&quot;</span>
+			}
+<span class="fc" id="L257"> 			itemService.saveItem(item);</span>
+<span class="nc" id="L258">        } catch (IOException e) {</span>
+			// Captura la excepción y responde con error 500
+<span class="nc" id="L260">			return new ResponseEntity&lt;&gt;(&quot;Error al guardar la imagen: &quot; + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);</span>
+<span class="fc" id="L261">		} catch (RuntimeException e) {</span>
+<span class="fc" id="L262">             return new ResponseEntity&lt;&gt;(e.getMessage(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L263">         }</span>
  		// If the item is created successfully, return a 201 Created response
-<span class="fc" id="L259"> 		return new ResponseEntity&lt;&gt;(HttpStatus.CREATED);</span>
+<span class="fc" id="L265"> 		return new ResponseEntity&lt;&gt;(HttpStatus.CREATED);</span>
     }
 
 	
@@ -270,18 +276,18 @@ public class ItemController {
      */
 	@PostMapping(params = &quot;token&quot;)
      public ResponseEntity&lt;String&gt; createItem(@RequestBody ItemRecord itemRecord, @RequestParam(&quot;token&quot;) String token) {
-<span class="fc" id="L273">         User user = userService.getUserByToken(token);</span>
-<span class="fc bfc" id="L274" title="All 2 branches covered.">         if (user == null) {</span>
-<span class="fc" id="L275">             return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L279">         User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">         if (user == null) {</span>
+<span class="fc" id="L281">             return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
          }
-<span class="fc" id="L277">         Item item = convertToItem(itemRecord);</span>
-<span class="fc" id="L278">         item.setOwner(user.getId());</span>
+<span class="fc" id="L283">         Item item = convertToItem(itemRecord);</span>
+<span class="fc" id="L284">         item.setOwner(user.getId());</span>
          try {
-<span class="fc" id="L280">             itemService.saveItem(item);</span>
-<span class="fc" id="L281">         } catch (RuntimeException e) {</span>
-<span class="fc" id="L282">             return new ResponseEntity&lt;&gt;(e.getMessage(), HttpStatus.BAD_REQUEST);</span>
-<span class="fc" id="L283">         }</span>
-<span class="fc" id="L284">         return new ResponseEntity&lt;&gt;(HttpStatus.CREATED);</span>
+<span class="fc" id="L286">             itemService.saveItem(item);</span>
+<span class="fc" id="L287">         } catch (RuntimeException e) {</span>
+<span class="fc" id="L288">             return new ResponseEntity&lt;&gt;(e.getMessage(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L289">         }</span>
+<span class="fc" id="L290">         return new ResponseEntity&lt;&gt;(HttpStatus.CREATED);</span>
      }
 
 	
@@ -295,14 +301,14 @@ public class ItemController {
 	
     @DeleteMapping(&quot;/{id}&quot;)
     public ResponseEntity&lt;String&gt; deleteItem(@PathVariable Long id, @RequestParam(&quot;token&quot;) String token) {
-<span class="fc" id="L298">        User user = userService.getUserByToken(token);</span>
-<span class="fc bfc" id="L299" title="All 6 branches covered.">        if (user == null || user.getAdmin()==false &amp;&amp; user.getId()!=itemService.getItemById(id).get().getOwner()) {</span>
-<span class="fc" id="L300">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L304">        User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L305" title="All 6 branches covered.">        if (user == null || user.getAdmin()==false &amp;&amp; user.getId()!=itemService.getItemById(id).get().getOwner()) {</span>
+<span class="fc" id="L306">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
 		
         }
     	
-<span class="fc" id="L304">    	itemService.deleteItem(id);</span>
-<span class="fc" id="L305">    	return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
+<span class="fc" id="L310">    	itemService.deleteItem(id);</span>
+<span class="fc" id="L311">    	return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
     }
     
     /**
@@ -315,23 +321,23 @@ public class ItemController {
      */
     @PutMapping(&quot;/{id}&quot;)
 	public ResponseEntity&lt;String&gt; updateItem(@PathVariable Long id, @RequestBody ItemRecord item, @RequestParam(&quot;token&quot;) String token) {
-<span class="fc" id="L318">    	User user = userService.getUserByToken(token);</span>
-<span class="fc bfc" id="L319" title="All 6 branches covered.">		if (user == null || user.getId()!=Long.valueOf(itemService.getItemById(id).get().getOwner()) &amp;&amp; user.getAdmin()!=true) {</span>
-<span class="fc" id="L320">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
+<span class="fc" id="L324">    	User user = userService.getUserByToken(token);</span>
+<span class="fc bfc" id="L325" title="All 6 branches covered.">		if (user == null || user.getId()!=Long.valueOf(itemService.getItemById(id).get().getOwner()) &amp;&amp; user.getAdmin()!=true) {</span>
+<span class="fc" id="L326">			return new ResponseEntity&lt;&gt;(HttpStatus.UNAUTHORIZED);</span>
 		}
 		
     	try {
-<span class="fc" id="L324">    		Item itemToModify = itemService.getItemById(id).get();</span>
-<span class="fc bfc" id="L325" title="All 2 branches covered.">			itemToModify.setName(item.name() == null ? itemToModify.getName() : item.name() );</span>
-<span class="fc bfc" id="L326" title="All 2 branches covered.">			itemToModify.setDescription(item.description() == null ? itemToModify.getDescription() : item.description() );</span>
-<span class="fc bfc" id="L327" title="All 2 branches covered.">			itemToModify.setCategory(item.category() == null ? itemToModify.getCategory() : item.category());</span>
-<span class="fc bfc" id="L328" title="All 2 branches covered.">			itemToModify.setImage(item.imageUrl() == null ? itemToModify.getImage() : item.imageUrl());</span>
-<span class="fc bfc" id="L329" title="All 2 branches covered.">			itemToModify.setStatus(Item.ItemStatus.valueOf(item.status()==null ? itemToModify.getStatus().toString() : item.status()));</span>
-<span class="fc bfc" id="L330" title="All 2 branches covered.">			itemToModify.setCondition(Item.ItemCondition.valueOf(item.condition()==null ? itemToModify.getCondition().toString() : item.condition()));</span>
-<span class="fc" id="L331">			itemService.saveItem(itemToModify);</span>
-<span class="fc" id="L332">			return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
-<span class="fc" id="L333">		} catch (RuntimeException e) {</span>
-<span class="fc" id="L334">			return new ResponseEntity&lt;&gt;(e.getMessage(),HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L330">    		Item itemToModify = itemService.getItemById(id).get();</span>
+<span class="fc bfc" id="L331" title="All 2 branches covered.">			itemToModify.setName(item.name() == null ? itemToModify.getName() : item.name() );</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">			itemToModify.setDescription(item.description() == null ? itemToModify.getDescription() : item.description() );</span>
+<span class="fc bfc" id="L333" title="All 2 branches covered.">			itemToModify.setCategory(item.category() == null ? itemToModify.getCategory() : item.category());</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">			itemToModify.setImage(item.imageBase64() == null ? itemToModify.getImage() : item.imageBase64());</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">			itemToModify.setStatus(Item.ItemStatus.valueOf(item.status()==null ? itemToModify.getStatus().toString() : item.status()));</span>
+<span class="fc bfc" id="L336" title="All 2 branches covered.">			itemToModify.setCondition(Item.ItemCondition.valueOf(item.condition()==null ? itemToModify.getCondition().toString() : item.condition()));</span>
+<span class="fc" id="L337">			itemService.saveItem(itemToModify);</span>
+<span class="fc" id="L338">			return new ResponseEntity&lt;&gt;(HttpStatus.OK);</span>
+<span class="fc" id="L339">		} catch (RuntimeException e) {</span>
+<span class="fc" id="L340">			return new ResponseEntity&lt;&gt;(e.getMessage(),HttpStatus.NOT_FOUND);</span>
 		}
 	}
 
@@ -342,16 +348,16 @@ public class ItemController {
      * @return The converted Item entity.
      */
     private Item convertToItem(ItemRecord itemRecord) {
-<span class="fc" id="L345">		Item item = new Item();</span>
-<span class="fc" id="L346">		item.setName(itemRecord.name());</span>
-<span class="fc" id="L347">		item.setDescription(itemRecord.description());</span>
-<span class="fc" id="L348">		item.setCategory(itemRecord.category());</span>
-<span class="fc" id="L349">		item.setImage(itemRecord.imageUrl());</span>
-<span class="fc" id="L350">		item.setStatus(Item.ItemStatus.valueOf(itemRecord.status().toUpperCase()));</span>
-<span class="fc" id="L351">		item.setPurchaseDate(new java.util.Date());</span>
-<span class="fc" id="L352">		item.setPurchasePrice(0.0);</span>
-<span class="fc" id="L353">		item.setCondition(Item.ItemCondition.NEW);</span>
-<span class="fc" id="L354">		return item;</span>
+<span class="fc" id="L351">		Item item = new Item();</span>
+<span class="fc" id="L352">		item.setName(itemRecord.name());</span>
+<span class="fc" id="L353">		item.setDescription(itemRecord.description());</span>
+<span class="fc" id="L354">		item.setCategory(itemRecord.category());</span>
+<span class="fc" id="L355">		item.setImage(itemRecord.imageBase64());</span>
+<span class="fc" id="L356">		item.setStatus(Item.ItemStatus.valueOf(itemRecord.status().toUpperCase()));</span>
+<span class="fc" id="L357">		item.setPurchaseDate(new java.util.Date());</span>
+<span class="fc" id="L358">		item.setPurchasePrice(Double.valueOf(itemRecord.purchasePrice()));</span>
+<span class="fc" id="L359">		item.setCondition(Item.ItemCondition.valueOf(itemRecord.condition().toUpperCase()));</span>
+<span class="fc" id="L360">		return item;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -4,6 +4,7 @@ var hierarchy =
     [ "com.student_loan.dtos.CredentialsDTO", "classcom_1_1student__loan_1_1dtos_1_1CredentialsDTO.html", null ],
     [ "com.student_loan.DataInitializer", "classcom_1_1student__loan_1_1DataInitializer.html", null ],
     [ "com.student_loan.model.User.DegreeType", "enumcom_1_1student__loan_1_1model_1_1User_1_1DegreeType.html", null ],
+    [ "com.student_loan.utils.ImageUtil", "classcom_1_1student__loan_1_1utils_1_1ImageUtil.html", null ],
     [ "com.student_loan.model.Item", "classcom_1_1student__loan_1_1model_1_1Item.html", null ],
     [ "com.student_loan.model.Item.ItemCondition", "enumcom_1_1student__loan_1_1model_1_1Item_1_1ItemCondition.html", null ],
     [ "com.student_loan.controller.ItemController", "classcom_1_1student__loan_1_1controller_1_1ItemController.html", null ],

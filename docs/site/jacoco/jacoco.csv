@@ -1,6 +1,7 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 StudentLoanManagement,com.student_loan.security,JwtFilter,0,58,0,6,0,14,0,5,0,2
 StudentLoanManagement,com.student_loan.security,JwtUtil,0,53,0,0,0,18,0,4,0,4
+StudentLoanManagement,com.student_loan.utils,ImageUtil,7,48,1,1,1,8,2,1,1,1
 StudentLoanManagement,com.student_loan,StudentLoanManagementApplication,5,3,0,0,2,1,1,1,1,1
 StudentLoanManagement,com.student_loan,DataInitializer,3067,0,38,0,201,0,75,0,56,0
 StudentLoanManagement,com.student_loan.model,Loan,0,146,0,4,0,49,0,25,0,23
@@ -16,12 +17,12 @@ StudentLoanManagement,com.student_loan.dtos,CredentialsDTO,0,26,0,0,0,12,0,6,0,6
 StudentLoanManagement,com.student_loan.dtos,RegistrationRecord,0,51,0,0,0,1,0,9,0,9
 StudentLoanManagement,com.student_loan.dtos,LoanRecord,0,63,0,0,0,1,0,11,0,11
 StudentLoanManagement,com.student_loan.dtos,RankingDTO,0,27,0,0,0,10,0,5,0,5
-StudentLoanManagement,com.student_loan.dtos,ItemRecord,0,39,0,0,0,1,0,7,0,7
-StudentLoanManagement,com.student_loan.controller,ItemController,0,518,0,44,0,109,0,36,0,14
+StudentLoanManagement,com.student_loan.dtos,ItemRecord,0,45,0,0,0,1,0,8,0,8
+StudentLoanManagement,com.student_loan.controller,ItemController,9,537,2,46,2,112,2,36,0,14
 StudentLoanManagement,com.student_loan.controller,UserController,0,372,0,28,0,82,0,27,0,13
-StudentLoanManagement,com.student_loan.controller,LoanController,0,498,0,70,0,85,0,47,0,12
+StudentLoanManagement,com.student_loan.controller,LoanController,6,453,0,62,2,82,0,43,0,12
 StudentLoanManagement,com.student_loan.controller,RankingController,0,13,0,0,0,5,0,2,0,2
-StudentLoanManagement,com.student_loan.service,LoanService,0,485,0,46,0,97,0,38,0,15
+StudentLoanManagement,com.student_loan.service,LoanService,12,517,4,50,3,105,3,39,0,15
 StudentLoanManagement,com.student_loan.service,RankingService,0,10,0,0,0,4,0,2,0,2
 StudentLoanManagement,com.student_loan.service,UserService,0,236,0,34,0,57,0,28,0,11
 StudentLoanManagement,com.student_loan.service,ItemService,0,134,0,10,0,26,0,15,0,10

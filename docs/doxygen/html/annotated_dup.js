@@ -39,6 +39,9 @@ var annotated_dup =
           [ "RankingService", "classcom_1_1student__loan_1_1service_1_1RankingService.html", "classcom_1_1student__loan_1_1service_1_1RankingService" ],
           [ "UserService", "classcom_1_1student__loan_1_1service_1_1UserService.html", "classcom_1_1student__loan_1_1service_1_1UserService" ]
         ] ],
+        [ "utils", "namespacecom_1_1student__loan_1_1utils.html", [
+          [ "ImageUtil", "classcom_1_1student__loan_1_1utils_1_1ImageUtil.html", null ]
+        ] ],
         [ "DataInitializer", "classcom_1_1student__loan_1_1DataInitializer.html", "classcom_1_1student__loan_1_1DataInitializer" ],
         [ "StudentLoanManagementApplication", "classcom_1_1student__loan_1_1StudentLoanManagementApplication.html", null ]
       ] ]
