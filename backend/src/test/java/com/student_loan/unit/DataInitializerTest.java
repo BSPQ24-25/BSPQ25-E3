@@ -7,6 +7,8 @@ import com.student_loan.model.User;
 import com.student_loan.repository.ItemRepository;
 import com.student_loan.repository.LoanRepository;
 import com.student_loan.repository.UserRepository;
+import com.student_loan.service.NotificationService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +46,11 @@ public class DataInitializerTest {
 
     @Mock
     private LoanRepository loanRepository;
+    
+    @Mock
+    private NotificationService notificationService;
+    
+    
 
     @InjectMocks
     private DataInitializer initializer;
@@ -70,7 +77,7 @@ public class DataInitializerTest {
 
     @Test
     void testInitData_RunsSuccessfullyAndSavesEntities() {
-        CommandLineRunner runner = initializer.initData(userRepository, itemRepository, loanRepository);
+        CommandLineRunner runner = initializer.initData(userRepository, itemRepository, loanRepository,notificationService);
         assertDoesNotThrow(() -> runner.run());
 
         // Verify users saved
@@ -113,7 +120,7 @@ public class DataInitializerTest {
 
         Loan newLoan = new Loan();
         newLoan.setItem(1L);
-        initializer.saveLoans(Collections.singletonList(newLoan), loanRepository);
+        initializer.saveLoans(Collections.singletonList(newLoan), loanRepository, notificationService,userRepository, itemRepository);
         verify(loanRepository, never()).save(newLoan);
     }
 }

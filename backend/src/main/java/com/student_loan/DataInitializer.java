@@ -6,19 +6,26 @@ import com.student_loan.model.User;
 import com.student_loan.repository.ItemRepository;
 import com.student_loan.repository.LoanRepository;
 import com.student_loan.repository.UserRepository;
+import com.student_loan.service.NotificationService;
 
+import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DataInitializer {
+	
+	//Logger
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DataInitializer.class);
    @Bean
-    public CommandLineRunner initData(UserRepository userRepository, ItemRepository itemRepository, LoanRepository loanRepository) {
+	public CommandLineRunner initData(UserRepository userRepository, ItemRepository itemRepository, LoanRepository loanRepository ,NotificationService notificationService) {
+
       return args -> {
          System.out.println("Initializing data...");
          List<User> users = createUsers();
@@ -28,7 +35,7 @@ public class DataInitializer {
          saveItems(items, itemRepository);
 
          List<Loan> loans = createLoans(userRepository, itemRepository);
-         saveLoans(loans, loanRepository);
+         saveLoans(loans, loanRepository, notificationService, userRepository, itemRepository);
 
          System.out.println("Data initialized successfully.");
       };
@@ -53,7 +60,7 @@ public class DataInitializer {
       users.add(new User(null, "Elena López", "elena.lopez@email.com", "qZ5#V7tJ3kL2A*1", "659 321 987", "Carrer de Sants, 58, 08014 Barcelona", User.DegreeType.MASTER, 1, 0, 4.8, false));
       users.add(new User(null, "Juan Pérez", "juan.perez@email.com", "kF3uT0hS7!pVbD2", "656 789 432", "Calle de Santiago, 14, 37001 Salamanca", User.DegreeType.DOCTORATE, 4, 0, 5.0, false));
       users.add(new User(null, "Sara García", "sara.garcia@email.com", "contra123", "602 123 654", "Calle del Sol, 22, 46001 Valencia", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));
-
+      users.add(new User(null, "Alex", "alexoladom@gmail.com", "123", "602 123 654", "Calle del Sol, 22, 46001 Valencia", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));
       // Admin users
       users.add(new User(null, "Sabin Luja", "sabin.luja@opendeusto.es", "sabin", "602 153 654", "Hermanos Aguirre Kalea, 2, 48014 Bilbao", User.DegreeType.UNIVERSITY_DEGREE, 4, 0, 5.0, true));
       
@@ -166,6 +173,7 @@ public class DataInitializer {
       Long user_loan8 = userRepository.findById(8L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
       Long user_loan9 = userRepository.findById(9L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
       Long user_loan10 = userRepository.findById(10L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
+      Long user_Alex =userRepository.findById(24L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
 
       // Get the ID of the Item
       Long item_loan1 = itemRepository.findById(1L).map(Item::getId).orElseThrow(() -> new RuntimeException("Item not found"));
@@ -211,11 +219,14 @@ public class DataInitializer {
       loans.add(new Loan(null, user_loan3, user_loan9, item_loan33, new Date(125, 2, 17), new Date(125, 3, 24), null, Loan.Status.IN_USE, null, ""));
       loans.add(new Loan(null, user_loan4, user_loan10, item_loan34, new Date(125, 2, 11), new Date(125, 2, 20), new Date(125, 2, 20), Loan.Status.RETURNED, 5.0, "Excellent return"));
       loans.add(new Loan(null, user_loan5, user_loan5, item_loan35, new Date(125, 1, 1), new Date(125, 1, 14), new Date(125, 1, 13), Loan.Status.RETURNED, 4.2, "Returned without issues"));
-      
+      loans.add(new Loan(null, user_loan6, user_loan3, item_loan31, new Date(125, 0, 5), new Date(125, 0, 12), null, Loan.Status.IN_USE, null, ""));
+      loans.add(new Loan(null, user_loan6, user_Alex, item_loan35, new Date(125, 0, 5), new Date(125, 4, 19), null, Loan.Status.IN_USE, null, ""));
+
       return loans;
    }
 
-   public void saveLoans(List<Loan> loans, LoanRepository loanRepository) {
+   public void saveLoans(List<Loan> loans, LoanRepository loanRepository, NotificationService notificationService, UserRepository userRepository, ItemRepository itemRepo) {
+
       for (Loan loan : loans) {
          List<Loan> itemLoans = loanRepository.findByItem(loan.getItem());
           
@@ -229,6 +240,34 @@ public class DataInitializer {
   
          if (!hasActiveLoan) {
             loanRepository.save(loan);
+         }
+      }
+      
+      List<Loan> allLoans = loanRepository.findAll();
+      for (Loan loan : allLoans) {
+         if (loan.getLoanStatus() == Loan.Status.IN_USE) {
+            Date returnDate = loan.getEstimatedReturnDate();
+            Date currentDate = new Date();
+            long diffInMillies = returnDate.getTime() - currentDate.getTime();
+            long diffInDays = diffInMillies / (1000 * 60 * 60 * 24);
+            if (diffInDays<10) {
+            	User u=userRepository.findById(loan.getBorrower()).get();
+				Item i= itemRepo.findById(loan.getItem()).get();
+				if (u.getEmail().contains("gmail.com")|| u.getEmail().contains("opendeusto.es")){
+					if (diffInDays<10 && diffInDays>0) {
+	    				notificationService.enviarCorreo(u.getEmail(), "RETURN REMINDER", "Return reminder:\n you have "+ (diffInDays+1)+" days to return the item "+i.getName()+".\nDo not be late!");		
+	    			}else if( diffInDays<0) {
+	    				notificationService.enviarCorreo(u.getEmail(), "RETURN OVERDUE",
+	    						"Return overdue:\n you have to return the item " + i.getName()
+	    								+ ". You are "+(Math.abs(diffInDays))+" days late!Please do it as soon as possible!");
+	    			}else if(diffInDays==0) {
+	    				notificationService.enviarCorreo(u.getEmail(), "RETURN TODAY",
+	    						"Return today:\n You have to return the item " + i.getName() + ".\nPlease do it today!");
+	    			}
+				}
+            	
+            }
+			
          }
       }
    }   

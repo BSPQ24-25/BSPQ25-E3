@@ -26,6 +26,12 @@
 	</properties>
 
 	<dependencies>
+	
+	    <!-- Spring Boot Starter Web for Mail Notifications -->
+		<dependency>
+	   		<groupId>org.springframework.boot</groupId>
+	    	<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
         <!-- @Transactional Dependencies -->
         <dependency>
             <groupId>javax.transaction</groupId>
