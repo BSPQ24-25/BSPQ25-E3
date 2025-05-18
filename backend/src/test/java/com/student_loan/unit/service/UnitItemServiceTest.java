@@ -15,6 +15,7 @@ import com.student_loan.service.ItemService;
 
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -99,6 +100,21 @@ class UnitItemServiceTest {
         });
 
         assertTrue(ex.getMessage().contains("User not found with id: 99"));
+    }
+
+    @Test
+    @DisplayName("getItemsByAvailability - returns items with given status")
+    void testGetItemsByAvailability() {
+        Item availableItem1 = new Item(7L, "Book", "Title1", "Category", ItemStatus.AVAILABLE, 1L, new Date(), 10.0, ItemCondition.GOOD, "img1.jpg");
+        Item availableItem2 = new Item(8L, "DVD", "Title2", "Media", ItemStatus.AVAILABLE, 2L, new Date(), 5.0, ItemCondition.NEW, "img2.jpg");
+        when(itemRepository.findByStatus(ItemStatus.AVAILABLE)).thenReturn(Arrays.asList(availableItem1, availableItem2));
+
+        List<Item> result = itemService.getItemsByAvailability(ItemStatus.AVAILABLE);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(availableItem1));
+        assertTrue(result.contains(availableItem2));
+        verify(itemRepository, times(1)).findByStatus(ItemStatus.AVAILABLE);
     }
 
     @Test

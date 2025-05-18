@@ -8,6 +8,7 @@ import com.student_loan.security.JwtUtil;
 import com.student_loan.service.NotificationService;
 import com.student_loan.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +18,9 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class UnitUserServiceTest {
@@ -38,6 +42,7 @@ public class UnitUserServiceTest {
 
     private User user1;
     private User user2;
+    private User existing;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -46,6 +51,8 @@ public class UnitUserServiceTest {
                           DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.5, false);
         user2 = new User(2L, "Luis Perez", "luis@example.com", "encodedPass2", "+341234568", "Barcelona",
                           DegreeType.MASTER, 3, 1, 4.8, true);
+        existing = new User(1L, "User Name", "user@example.com", "oldPass", "123456", "Old Address",
+                             DegreeType.MASTER, 2020, 1, 3.5, false);
 
         Field tokensField = UserService.class.getDeclaredField("tokens");
         tokensField.setAccessible(true);
@@ -233,6 +240,95 @@ public class UnitUserServiceTest {
     public void testUpdateUser_UserDoesNotExist() {
         when(userRepository.findById(5L)).thenReturn(Optional.empty());
         assertThrows(RuntimeException.class, () -> userService.updateUser(5L, new User()));
+    }
+
+    @Test
+    @DisplayName("updateUser - Penalties increase triggers email notification")
+    void testUpdateUser_PenaltiesIncrease_TriggersEmail() {
+        User updated = new User();
+        updated.setPenalties(3);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateUser(1L, updated);
+
+        assertEquals(3, result.getPenalties());
+        verify(notificationService, times(1)).enviarCorreo(
+            eq(existing.getEmail()), eq("NEW PENALTY!"), contains("3")
+        );
+    }
+
+    @Test
+    @DisplayName("updateUser - Penalties minimal increment triggers email notification")
+    void testUpdateUser_PenaltiesIncrementByOne_TriggersEmail() {
+        User updated = new User();
+        int incremented = existing.getPenalties() + 1;
+        updated.setPenalties(incremented);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateUser(1L, updated);
+
+        assertEquals(incremented, result.getPenalties());
+        verify(notificationService, times(1)).enviarCorreo(
+            eq(existing.getEmail()), eq("NEW PENALTY!"), contains(String.valueOf(incremented))
+        );
+    }
+
+
+    @Test
+    @DisplayName("updateUser - Penalties decrease does not trigger notification")
+    void testUpdateUser_PenaltiesDecrease_NoEmail() {
+        User updated = new User();
+        updated.setPenalties(0);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateUser(1L, updated);
+
+        assertEquals(0, result.getPenalties());
+        verify(notificationService, never()).enviarCorreo(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("updateUser - Penalties equal does not trigger notification")
+    void testUpdateUser_PenaltiesEqual_NoEmail() {
+        User updated = new User();
+        updated.setPenalties(existing.getPenalties());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateUser(1L, updated);
+
+        assertEquals(existing.getPenalties(), result.getPenalties());
+        verify(notificationService, never()).enviarCorreo(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("updateUser - Null newPenalties does not trigger notification and leaves original value")
+    void testUpdateUser_PenaltiesNull_NoEmail() {
+        User updated = new User();
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateUser(1L, updated);
+
+        assertEquals(existing.getPenalties(), result.getPenalties());
+        verify(notificationService, never()).enviarCorreo(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("updateUser - Negative newPenalties does not trigger notification and sets value")
+    void testUpdateUser_NegativePenalties_NoEmail() {
+        User updated = new User();
+        updated.setPenalties(-5);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateUser(1L, updated);
+
+        assertEquals(-5, result.getPenalties());
+        verify(notificationService, never()).enviarCorreo(anyString(), anyString(), anyString());
     }
 
     @Test

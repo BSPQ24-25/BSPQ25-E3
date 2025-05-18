@@ -1,6 +1,11 @@
 package com.student_loan.unit.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -22,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.student_loan.controller.UserController;
 import com.student_loan.dtos.CredentialsDTO;
@@ -282,6 +288,120 @@ class UnitUserControllerTest {
 
         ResponseEntity<String> response = userController.deleteUser(10L, ADMIN_TOKEN);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("GET /users/{id}/record - Unauthorized when no authenticated user")
+    void testGetUserRecordById_Unauthorized() {
+        when(userService.getUserByEmail("ana@example.com")).thenReturn(null);
+
+        ResponseEntity<UserRecord> response = userController.getUserRecordById(123L);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+        @Test
+    @DisplayName("GET /users/{id}/record - Not Found when target user missing")
+    void testGetUserRecordById_NotFound() {
+        User requester = new User();
+        when(userService.getUserByEmail("ana@example.com")).thenReturn(requester);
+        when(userService.getUserById(123L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> userController.getUserRecordById(123L)
+        );
+        assertEquals("404 NOT_FOUND", ex.getStatusCode().toString());
+    }
+
+    @Test
+    @DisplayName("GET /users/{id}/record - Success returns full record")
+    void testGetUserRecordById_Success() {
+        User requester = new User(); requester.setId(1L);
+        when(userService.getUserByEmail("ana@example.com")).thenReturn(requester);
+
+        User target = new User();
+        target.setId(42L);
+        target.setName("Alice Wonderland");
+        target.setEmail("alice@wonder.land");
+        target.setPassword("secretHash");
+        target.setTelephoneNumber("123456789");
+        target.setAddress("Rabbit Hole St.");
+        target.setDegreeType(User.DegreeType.MASTER);
+        target.setDegreeYear(2020);
+        target.setPenalties(2);
+        target.setAverageRating(4.5);
+        target.setAdmin(true);
+        when(userService.getUserById(42L)).thenReturn(Optional.of(target));
+
+        ResponseEntity<UserRecord> response = userController.getUserRecordById(42L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        UserRecord r = response.getBody();
+        assertNotNull(r);
+        assertEquals("Alice", r.name());
+        assertEquals("Wonderland", r.lastName());
+        assertEquals("alice@wonder.land", r.email());
+        assertEquals("secretHash", r.password());
+        assertEquals("123456789", r.telephoneNumber());
+        assertEquals("Rabbit Hole St.", r.address());
+        assertEquals("MASTER", r.degreeType());
+        assertEquals(2020, r.degreeYear());
+        assertEquals(2, r.penalties());
+        assertEquals(4.5, r.averageRating());
+        assertTrue(r.admin());
+    }
+
+    @Test
+    @DisplayName("userToUserRecord - Full name splits into first and last")
+    void testUserToUserRecord_FullName() {
+        User u = new User();
+        u.setName("Bob Builder");
+        u.setEmail("bob@build.it");
+        u.setPassword("pw");
+        u.setTelephoneNumber("000");
+        u.setAddress("Site");
+        u.setDegreeType(User.DegreeType.UNIVERSITY_DEGREE);
+        u.setDegreeYear(2018);
+        u.setPenalties(1);
+        u.setAverageRating(3.1);
+        u.setAdmin(false);
+
+        UserRecord rec = userController.userToUserRecord(u);
+
+        assertEquals("Bob", rec.name());
+        assertEquals("Builder", rec.lastName());
+        assertEquals("bob@build.it", rec.email());
+        assertEquals("pw", rec.password());
+        assertEquals("000", rec.telephoneNumber());
+        assertEquals("Site", rec.address());
+        assertEquals("UNIVERSITY_DEGREE", rec.degreeType());
+        assertEquals(2018, rec.degreeYear());
+        assertEquals(1, rec.penalties());
+        assertEquals(3.1, rec.averageRating());
+        assertFalse(rec.admin());
+    }
+
+        @Test
+    @DisplayName("userToUserRecord - Single name yields empty lastName")
+    void testUserToUserRecord_SingleName() {
+        User u = new User();
+        u.setName("Madonna");
+        u.setEmail("m@ono.name");
+        u.setPassword("pw");
+        u.setTelephoneNumber("000");
+        u.setAddress("Site");
+        u.setDegreeType(User.DegreeType.UNIVERSITY_DEGREE);
+        u.setDegreeYear(2021);
+        u.setPenalties(0);
+        u.setAverageRating(5.0);
+        u.setAdmin(false);
+
+        UserRecord rec = userController.userToUserRecord(u);
+
+        assertEquals("Madonna", rec.name());
+        assertEquals("", rec.lastName());
     }
 
     @Test
