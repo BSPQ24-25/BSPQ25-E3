@@ -1,6 +1,7 @@
 package com.student_loan.unit.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +16,7 @@ import com.student_loan.repository.ItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -683,6 +685,140 @@ class UnitLoanServiceTest {
     }
 
     @Test
+    @DisplayName("createLoan - Borrower under penalty → RuntimeException")
+    void testCreateLoan_BorrowerUnderPenalty() {
+        Loan loan = new Loan();
+        loan.setId(null);
+        loan.setLender(1L);
+        loan.setBorrower(2L);
+        loan.setItem(3L);
+
+        User lender   = new User(); lender.setId(1L);
+        User borrower = mock(User.class);
+        when(borrower.hasPenalty()).thenReturn(true);
+
+        when(loanRepository.findById(null)).thenReturn(null);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(borrower));
+
+        RuntimeException ex = assertThrows(
+            RuntimeException.class,
+            () -> loanService.createLoan(loan)
+        );
+        assertEquals("Cannot borrow items while under penalty.", ex.getMessage());
+
+        verify(loanRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("createLoan - Active loans ≥ 3 for new IN_USE loan → ResponseStatusException")
+    void testCreateLoan_ActiveLoansLimitReached() {
+        Loan loan = new Loan();
+        loan.setId(null);
+        loan.setLoanStatus(Loan.Status.IN_USE);
+        loan.setLender(1L);
+        loan.setBorrower(2L);
+        loan.setItem(3L);
+
+        User lender   = new User(); lender.setId(1L);
+        User borrower = mock(User.class);
+        when(borrower.hasPenalty()).thenReturn(false);
+
+        when(loanRepository.findById(null)).thenReturn(null);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(3L)).thenReturn(Optional.of(new Item()));
+
+        when(loanRepository.countByBorrowerAndLoanStatus(
+            2L, Loan.Status.IN_USE
+        )).thenReturn(3);
+
+        ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> loanService.createLoan(loan)
+        );
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("You already have 3 items reserved"));
+        
+        verify(loanRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("createLoan - Active loans < 3 for new IN_USE loan → Success")
+    void testCreateLoan_ActiveLoansUnderLimit() {
+        Loan loan = new Loan();
+        loan.setId(null);
+        loan.setLoanStatus(Loan.Status.IN_USE);
+        loan.setLender(1L);
+        loan.setBorrower(2L);
+        loan.setItem(3L);
+
+        User lender   = new User(); lender.setId(1L);
+        User borrower = mock(User.class);
+        when(borrower.hasPenalty()).thenReturn(false);
+
+        Item item = new Item(); item.setId(3L);
+
+        when(loanRepository.findById(null)).thenReturn(null);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(3L)).thenReturn(Optional.of(item));
+
+        when(loanRepository.countByBorrowerAndLoanStatus(
+            2L, Loan.Status.IN_USE
+        )).thenReturn(2);
+
+        when(loanRepository.save(any())).thenAnswer(inv -> {
+            Loan saved = inv.getArgument(0);
+            saved.setId(99L);
+            return saved;
+        });
+
+        Loan created = loanService.createLoan(loan);
+
+        assertNotNull(created);
+        assertEquals(99L, created.getId());
+        assertEquals(Loan.Status.IN_USE, created.getLoanStatus());
+        verify(loanRepository).save(loan);
+    }
+
+    @Test
+    @DisplayName("createLoan - Non-IN_USE status skips limit check → Success")
+    void testCreateLoan_NonInUseSkipsLimit() {
+        Loan loan = new Loan();
+        loan.setId(null);
+        loan.setLoanStatus(Loan.Status.RETURNED);
+        loan.setLender(1L);
+        loan.setBorrower(2L);
+        loan.setItem(3L);
+
+        User lender   = new User(); lender.setId(1L);
+        User borrower = mock(User.class);
+        when(borrower.hasPenalty()).thenReturn(false);
+
+        Item item = new Item(); item.setId(3L);
+
+        when(loanRepository.findById(null)).thenReturn(null);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(borrower));
+        when(itemRepository.findById(3L)).thenReturn(Optional.of(item));
+
+        when(loanRepository.save(any())).thenAnswer(inv -> {
+            Loan saved = inv.getArgument(0);
+            saved.setId(123L);
+            return saved;
+        });
+
+        Loan created = loanService.createLoan(loan);
+
+        assertNotNull(created);
+        assertEquals(123L, created.getId());
+        assertEquals(Loan.Status.IN_USE, created.getLoanStatus(),
+                    "Debe forzar siempre IN_USE incluso si venía otro estado");
+        verify(loanRepository).save(loan);
+    }
+
+    @Test
     void testGetLentItemsIdByUser() {
         Loan l1 = new Loan(); l1.setId(1L); l1.setLender(100L); l1.setItem(10L); l1.setLoanStatus(Loan.Status.IN_USE);
         Loan l2 = new Loan(); l2.setId(2L); l2.setLender(100L); l2.setItem(20L); l2.setLoanStatus(Loan.Status.IN_USE);
@@ -777,6 +913,131 @@ class UnitLoanServiceTest {
 
         boolean result = loanService.returnLoan(itemId, borrowerId);
         assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("returnLoan - Both lender and borrower exist → send two emails")
+    void testReturnLoan_NotificationsSent() {
+        Long itemId     = 1L;
+        Long borrowerId = 2L;
+        Long lenderId   = 3L;
+
+        Loan loan = new Loan();
+        loan.setLoanStatus(Loan.Status.IN_USE);
+        loan.setItem(itemId);
+        loan.setBorrower(borrowerId);
+        loan.setLender(lenderId);
+        when(loanRepository.findByBorrowerAndItemAndLoanStatus(
+            borrowerId, itemId, Loan.Status.IN_USE
+        )).thenReturn(Optional.of(loan));
+
+        Item item = new Item();
+        item.setId(itemId);
+        item.setName("Libro de Prueba");
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(itemRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        User lender = new User();
+        lender.setEmail("lender@example.com");
+        lender.setName("Prestamista Uno");
+        when(userRepository.findById(lenderId)).thenReturn(Optional.of(lender));
+
+        User borrower = new User();
+        borrower.setEmail("borrower@example.com");
+        borrower.setName("Prestatario Dos");
+        when(userRepository.findById(borrowerId)).thenReturn(Optional.of(borrower));
+
+        when(loanRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        boolean result = loanService.returnLoan(itemId, borrowerId);
+
+        assertTrue(result);
+        assertEquals(Loan.Status.RETURNED, loan.getLoanStatus());
+        assertNotNull(loan.getRealReturnDate());
+
+        ArgumentCaptor<String> toCaptor    = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> subjectCap  = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> bodyCaptor  = ArgumentCaptor.forClass(String.class);
+
+        verify(notificationService, times(2)).enviarCorreo(
+            toCaptor.capture(),
+            subjectCap.capture(),
+            bodyCaptor.capture()
+        );
+
+        List<String> toAddresses = toCaptor.getAllValues();
+
+        assertTrue(toAddresses.contains("lender@example.com"));
+        assertTrue(toAddresses.contains("borrower@example.com"));
+    }
+
+    @Test
+    @DisplayName("returnLoan - Missing lender or borrower → no emails sent")
+    void testReturnLoan_MissingUser_NoNotifications() {
+        Long itemId     = 1L;
+        Long borrowerId = 2L;
+        Long lenderId   = 3L;
+
+        Loan loan = new Loan();
+        loan.setLoanStatus(Loan.Status.IN_USE);
+        loan.setItem(itemId);
+        loan.setBorrower(borrowerId);
+        loan.setLender(lenderId);
+        when(loanRepository.findByBorrowerAndItemAndLoanStatus(
+            borrowerId, itemId, Loan.Status.IN_USE
+        )).thenReturn(Optional.of(loan));
+
+        Item item = new Item();
+        item.setId(itemId);
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(itemRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(loanRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        when(userRepository.findById(lenderId)).thenReturn(Optional.empty());
+
+        User borrower = new User();
+        borrower.setEmail("b@b.com");
+        borrower.setName("Usuario");
+        when(userRepository.findById(borrowerId)).thenReturn(Optional.of(borrower));
+
+        boolean result = loanService.returnLoan(itemId, borrowerId);
+        assertTrue(result);
+
+        verify(notificationService, never()).enviarCorreo(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("returnLoan - Lender exists but borrower missing → no emails sent")
+    void testReturnLoan_BorrowerMissing_NoNotifications() {
+        Long itemId     = 1L;
+        Long borrowerId = 2L;
+        Long lenderId   = 3L;
+
+        Loan loan = new Loan();
+        loan.setLoanStatus(Loan.Status.IN_USE);
+        loan.setItem(itemId);
+        loan.setBorrower(borrowerId);
+        loan.setLender(lenderId);
+        when(loanRepository.findByBorrowerAndItemAndLoanStatus(
+            borrowerId, itemId, Loan.Status.IN_USE
+        )).thenReturn(Optional.of(loan));
+
+        Item item = new Item();
+        item.setId(itemId);
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(itemRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(loanRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        User lender = new User();
+        lender.setEmail("lender@example.com");
+        when(userRepository.findById(lenderId)).thenReturn(Optional.of(lender));
+        when(userRepository.findById(borrowerId)).thenReturn(Optional.empty());
+
+        boolean result = loanService.returnLoan(itemId, borrowerId);
+
+        assertTrue(result, "Debe devolver true aunque no envíe correos");
+        verify(notificationService, never())
+            .enviarCorreo(anyString(), anyString(), anyString());
     }
 
     @Test
