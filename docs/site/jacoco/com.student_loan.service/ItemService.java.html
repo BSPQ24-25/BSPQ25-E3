@@ -127,20 +127,25 @@ import com.student_loan.dtos.LoanAndItemDto;
 <span class="nc" id="L127">            .collect(Collectors.toList());</span>
     }
 
-    public List&lt;Item&gt; getItemsBorrowedByUserWithActiveLoans(Long userId) {
+    public List&lt;LoanAndItemDto&gt; getItemsBorrowedByUserWithActiveLoans(Long userId) {
 <span class="nc" id="L131">        List&lt;Loan&gt; loans = loanRepository.findByBorrowerAndLoanStatus(userId, Loan.Status.IN_USE);</span>
-
-        // Extraer los IDs de los items
-<span class="nc" id="L134">        List&lt;Long&gt; itemIds = loans.stream()</span>
-<span class="nc" id="L135">                                .map(Loan::getItem)</span>
-<span class="nc" id="L136">                                .collect(Collectors.toList());</span>
-
-        // Buscar los items en el repositorio de items
-<span class="nc" id="L139">        List&lt;Item&gt; items = itemRepository.findAllById(itemIds);</span>
-
-        // Mapear a DTOs
-<span class="nc" id="L142">        return items.stream()</span>
-<span class="nc" id="L143">                    .collect(Collectors.toList());</span>
+        
+<span class="nc" id="L133">        return loans.stream()</span>
+<span class="nc" id="L134">            .map(loan -&gt; {</span>
+<span class="nc" id="L135">                Item item = itemRepository.findById(loan.getItem())</span>
+<span class="nc" id="L136">                                        .orElseThrow(() -&gt; new RuntimeException(&quot;Item no encontrado&quot;));</span>
+<span class="nc" id="L137">                LoanAndItemDto loanItemDto = new LoanAndItemDto();</span>
+<span class="nc" id="L138">                loanItemDto.setLoanId(loan.getId());</span>
+<span class="nc" id="L139">                loanItemDto.setBorrowerId(loan.getBorrower());</span>
+<span class="nc" id="L140">                loanItemDto.setLenderId(loan.getLender());</span>
+<span class="nc" id="L141">                loanItemDto.setStartDate(loan.getLoanDate());</span>
+<span class="nc" id="L142">                loanItemDto.setEndDate(loan.getEstimatedReturnDate());</span>
+<span class="nc" id="L143">                loanItemDto.setItemId(item.getId());</span>
+<span class="nc" id="L144">                loanItemDto.setItemName(item.getName());</span>
+<span class="nc" id="L145">                loanItemDto.setItemDescription(item.getDescription());</span>
+<span class="nc" id="L146">                return loanItemDto;</span>
+            })
+<span class="nc" id="L148">            .collect(Collectors.toList());</span>
     }
     
 	/**
@@ -153,14 +158,14 @@ import com.student_loan.dtos.LoanAndItemDto;
 	 */
     
 	public Item createItem(Item item) {
-<span class="fc" id="L156">		Optional&lt;Item&gt; optionalItem = itemRepository.findById(item.getId());</span>
-<span class="fc bfc" id="L157" title="All 2 branches covered.">		if (optionalItem.isPresent()) {</span>
-<span class="fc" id="L158">			throw new RuntimeException(</span>
-<span class="fc" id="L159">					&quot;Failed to create item with id &quot; + item.getId() + &quot;: Item already exists with id: &quot; + item.getId());</span>
-<span class="fc bfc" id="L160" title="All 2 branches covered.">		}else if(!userRepository.findById(item.getOwner()).isPresent()) {</span>
-<span class="fc" id="L161">    		throw new RuntimeException(&quot;Failed to save item with id &quot;+ item.getId()+&quot;: Owner not found with id: &quot; + item.getOwner());</span>
+<span class="fc" id="L161">		Optional&lt;Item&gt; optionalItem = itemRepository.findById(item.getId());</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">		if (optionalItem.isPresent()) {</span>
+<span class="fc" id="L163">			throw new RuntimeException(</span>
+<span class="fc" id="L164">					&quot;Failed to create item with id &quot; + item.getId() + &quot;: Item already exists with id: &quot; + item.getId());</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">		}else if(!userRepository.findById(item.getOwner()).isPresent()) {</span>
+<span class="fc" id="L166">    		throw new RuntimeException(&quot;Failed to save item with id &quot;+ item.getId()+&quot;: Owner not found with id: &quot; + item.getOwner());</span>
     	}
-<span class="fc" id="L163">		return itemRepository.save(item);</span>
+<span class="fc" id="L168">		return itemRepository.save(item);</span>
 	}
 	    
 	
@@ -170,7 +175,7 @@ import com.student_loan.dtos.LoanAndItemDto;
      * @param id The ID of the item to delete.
      */
     public void deleteItem(Long id) {
-<span class="fc" id="L173">        itemRepository.deleteById(id);</span>
-<span class="fc" id="L174">    }</span>
+<span class="fc" id="L178">        itemRepository.deleteById(id);</span>
+<span class="fc" id="L179">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

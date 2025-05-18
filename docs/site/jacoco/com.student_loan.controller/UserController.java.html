@@ -139,8 +139,8 @@ public class UserController {
 
     // Ítems tomados prestados por un usuario
     @GetMapping(&quot;/{userId}/items/borrowed&quot;)
-    public ResponseEntity&lt;List&lt;Item&gt;&gt; getItemsBorrowedByUser(@PathVariable Long userId) {
-<span class="nc" id="L143">        List&lt;Item&gt; items = itemService.getItemsBorrowedByUserWithActiveLoans(userId);</span>
+    public ResponseEntity&lt;List&lt;LoanAndItemDto&gt;&gt; getItemsBorrowedByUser(@PathVariable Long userId) {
+<span class="nc" id="L143">        List&lt;LoanAndItemDto&gt; items = itemService.getItemsBorrowedByUserWithActiveLoans(userId);</span>
 <span class="nc" id="L144">        return ResponseEntity.ok(items);</span>
     }
 
