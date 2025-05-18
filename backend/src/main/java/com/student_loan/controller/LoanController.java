@@ -136,17 +136,17 @@ public class LoanController {
     /**
      * Creates a new loan.
      *
-     * @param loan  The loan data.
+     * @param loanRecord  The loan data.
      * @return ResponseEntity indicating the result of the operation.
      */
     @PostMapping("/create")
-    public ResponseEntity<String> createLoan(@RequestBody LoanRecord loan) {
+    public ResponseEntity<String> createLoan(@RequestBody LoanRecord loanRecord) {
     	User user = getAuthenticatedUser();
         if (user == null) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
-		Loan loanEntity = convertToLoan(loan);
+		Loan loanEntity = convertToLoan(loanRecord);
         loanEntity.setBorrower(user.getId());
 		try {
 			loanService.createLoan(loanEntity);

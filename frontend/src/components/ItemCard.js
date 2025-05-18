@@ -33,11 +33,11 @@ function ItemCard({ item, onClick, onLoanCreated }) {
         loanDate: formatDate(currentDate),
         estimatedReturnDate: endDate,
       };
-
+      // For debugging
+      //console.log(newLoanData);
       await axiosInstance.post('/loans/create', newLoanData, {
         headers: { 'Content-Type': 'application/json' },
       });
-
       toast.success(t('itemCard.loanCreated', '¡Préstamo creado correctamente!'));
       setIsModalOpen(false);
 

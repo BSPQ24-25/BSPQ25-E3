@@ -163,68 +163,66 @@ public class LoanService {
 
 
     public Loan createLoan(Loan loan) {
-        // Check existing loan
-        Optional<Loan> existing = loanRepository.findById(loan.getId());
-        if (existing != null && existing.isPresent()) {
-            throw new RuntimeException("Loan already exists with id: " + loan.getId());
-        }
-
-		 // Validate lender first to satisfy tests
-        Optional<User> lenderOpt = userRepository.findById(loan.getLender());
-        if (lenderOpt == null || lenderOpt.isEmpty()) {
-            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Lender not found with id: " + loan.getLender());
-        }
-
-        // Validate borrower
-        Optional<User> borrowerOpt = userRepository.findById(loan.getBorrower());
-        if (borrowerOpt == null || borrowerOpt.isEmpty()) {
-            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Borrower not found with id: " + loan.getBorrower());
-        }
-        User borrower = borrowerOpt.get();
-
-        if (borrower.hasPenalty()) {
-            throw new RuntimeException(
-                "Cannot borrow items while under penalty."
-            );
-        }
-
-        // Validate item
-        Optional<Item> itemOpt = itemRepository.findById(loan.getItem());
-        if (itemOpt == null || itemOpt.isEmpty()) {
-            throw new RuntimeException("Failed to save loan with id " + loan.getId() + ": Item not found with id: " + loan.getItem());
-        }
-
-        // Check active loans limit on new loans
-        if (loan.getId() == null && loan.getLoanStatus() == Loan.Status.IN_USE) {
-            int activos = loanRepository.countByBorrowerAndLoanStatus(
-                loan.getBorrower(), Loan.Status.IN_USE);
-            if (activos >= 3) {
-                throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Failed to save loan with id " + loan.getId() + ": You already have 3 items reserved. Return an item before booking another."
-                );
+        // Validar que el ID no exista solo si se envía (nuevo préstamo no debería tener ID)
+        if (loan.getId() != null) {
+            if (loanRepository.existsById(loan.getId())) {
+                throw new RuntimeException("Loan already exists with id: " + loan.getId());
             }
         }
-		loan.setLoanStatus(Loan.Status.IN_USE);
 
-		// Mail to borrower
-		notificationService.enviarCorreo(userRepository.findById(loan.getBorrower()).get().getEmail(),
-				"Loan Created",
-				"You have succesfully made a loan!\nItem: "
-						+ itemRepository.findById(loan.getItem()).get().getName() + "\nLender: "
-						+ userRepository.findById(loan.getLender()).get().getName() + "\nReturn date: "
-						+ loan.getEstimatedReturnDate().toString() + "\n\nThank you for using our service!");
+        // Validar lender
+        User lender = userRepository.findById(loan.getLender())
+            .orElseThrow(() -> new RuntimeException(
+                "Failed to save loan: Lender not found with id: " + loan.getLender()));
 
-		// Mail to lender
-		notificationService.enviarCorreo(userRepository.findById(loan.getLender()).get().getEmail(), "Item lended",
-				"Your item has succesfully been lended!\nItem: "
-						+ itemRepository.findById(loan.getItem()).get().getName() + "\nBorrower: "
-						+ userRepository.findById(loan.getBorrower()).get().getName() + "\nReturn date: "
-						+ loan.getEstimatedReturnDate().toString() + "\n\nThank you for using our service!");
+        // Validar borrower
+        User borrower = userRepository.findById(loan.getBorrower())
+            .orElseThrow(() -> new RuntimeException(
+                "Failed to save loan: Borrower not found with id: " + loan.getBorrower()));
 
-		return loanRepository.save(loan);
+        if (borrower.hasPenalty()) {
+            throw new RuntimeException("Cannot borrow items while under penalty.");
+        }
 
-	}
+        // Validar item
+        Item item = itemRepository.findById(loan.getItem())
+            .orElseThrow(() -> new RuntimeException(
+                "Failed to save loan: Item not found with id: " + loan.getItem()));
+
+        // Comprobar límite de préstamos activos solo para nuevos préstamos en uso
+        if (loan.getId() == null && loan.getLoanStatus() == Loan.Status.IN_USE) {
+            int activos = loanRepository.countByBorrowerAndLoanStatus(loan.getBorrower(), Loan.Status.IN_USE);
+            if (activos >= 3) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "You already have 3 items reserved. Return an item before booking another.");
+            }
+        }
+
+        // Asegurar estado del préstamo
+        loan.setLoanStatus(Loan.Status.IN_USE);
+
+        // Enviar correos una sola vez usando objetos ya cargados
+        notificationService.enviarCorreo(
+            borrower.getEmail(),
+            "Loan Created",
+            "You have successfully made a loan!\nItem: " + item.getName() +
+            "\nLender: " + lender.getName() +
+            "\nReturn date: " + loan.getEstimatedReturnDate().toString() +
+            "\n\nThank you for using our service!"
+        );
+
+        notificationService.enviarCorreo(
+            lender.getEmail(),
+            "Item lended",
+            "Your item has successfully been lended!\nItem: " + item.getName() +
+            "\nBorrower: " + borrower.getName() +
+            "\nReturn date: " + loan.getEstimatedReturnDate().toString() +
+            "\n\nThank you for using our service!"
+        );
+
+        // Guardar préstamo
+        return loanRepository.save(loan);
+    }
     
 	public void deleteLoan(Long id) {
 		loanRepository.deleteById(id);
