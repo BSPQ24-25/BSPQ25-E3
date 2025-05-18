@@ -90,7 +90,6 @@ public class DataInitializer {
       Long owner11Id = userRepository.findById(11L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
       Long owner12Id = userRepository.findById(12L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
       Long owner13Id = userRepository.findById(13L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
-   
       Long owner14Id = userRepository.findById(14L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
       Long owner15Id = userRepository.findById(15L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
 
