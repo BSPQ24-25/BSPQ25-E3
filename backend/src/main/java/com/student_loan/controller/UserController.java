@@ -227,9 +227,9 @@ public class UserController {
 	}
 
     public UserRecord userToUserRecord(User user) {
-        String[] nameParts = user.getName().split(" ", 2);
-        String firstName = nameParts.length > 0 ? nameParts[0] : "";
-        String lastName = nameParts.length > 1 ? nameParts[1] : "";
+        String[] nameParts = user.getName().split(" ");
+        String firstName = nameParts[0];
+        String lastName  = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
 
         return new UserRecord(
             firstName,

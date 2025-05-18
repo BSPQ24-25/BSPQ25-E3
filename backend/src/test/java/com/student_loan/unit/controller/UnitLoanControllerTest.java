@@ -160,7 +160,7 @@ class UnitLoanControllerTest {
         when(userService.getUserByToken("token")).thenReturn(lender);
         when(loanService.getLoansByLender(2L)).thenReturn(Arrays.asList(sampleLoan));
 
-        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender("token", 2L);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
         assertEquals(HttpStatus.OK, resp.getStatusCode());
     }
 
@@ -170,7 +170,7 @@ class UnitLoanControllerTest {
         when(userService.getUserByToken("token")).thenReturn(admin);
         when(loanService.getLoansByLender(2L)).thenReturn(new ArrayList<>());
 
-        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender("token", 2L);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
         assertEquals(HttpStatus.OK, resp.getStatusCode());
     }
 
@@ -179,7 +179,7 @@ class UnitLoanControllerTest {
     void getLoansByLender_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(borrower);
 
-        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender("token", 2L);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
 
@@ -189,7 +189,7 @@ class UnitLoanControllerTest {
         when(userService.getUserByToken("token")).thenReturn(admin);
         when(loanService.getLoansByLender(2L)).thenThrow(new RuntimeException());
 
-        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender("token", 2L);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
         assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
     }
 
@@ -197,7 +197,7 @@ class UnitLoanControllerTest {
     @DisplayName("GET /loans/lender - Null user unauthorized")
     void getLoansByLender_noUser_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(null);
-        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender("token", 2L);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByLender();
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
 
@@ -207,7 +207,7 @@ class UnitLoanControllerTest {
         when(userService.getUserByToken("token")).thenReturn(borrower);
         when(loanService.getLoansByBorrower(3L)).thenReturn(Arrays.asList(sampleLoan));
 
-        ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower("token", 3L);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower();
         assertEquals(HttpStatus.OK, resp.getStatusCode());
     }
 
@@ -217,7 +217,7 @@ class UnitLoanControllerTest {
         when(userService.getUserByToken("token")).thenReturn(admin);
         when(loanService.getLoansByBorrower(3L)).thenReturn(new ArrayList<>());
 
-        ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower("token", 3L);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower();
         assertEquals(HttpStatus.OK, resp.getStatusCode());
     }
 
@@ -226,7 +226,7 @@ class UnitLoanControllerTest {
     void getLoansByBorrower_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(lender);
 
-        ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower("token", 3L);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower();
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
 
@@ -234,7 +234,7 @@ class UnitLoanControllerTest {
     @DisplayName("GET /loans/borrower - Null user unauthorized")
     void getLoansByBorrower_noUser_unauthorized() {
         when(userService.getUserByToken("token")).thenReturn(null);
-        ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower("token", 3L);
+        ResponseEntity<List<Loan>> resp = loanController.getLoansByBorrower();
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
 

@@ -2,7 +2,6 @@ package com.student_loan.performance.service;
 
 import com.github.noconnor.junitperf.JUnitPerfTest;
 import com.github.noconnor.junitperf.JUnitPerfTestActiveConfig;
-import com.github.noconnor.junitperf.JUnitPerfInterceptor;
 import com.github.noconnor.junitperf.JUnitPerfReportingConfig;
 import com.github.noconnor.junitperf.JUnitPerfTestRequirement;
 import com.github.noconnor.junitperf.reporting.providers.HtmlReportGenerator;
@@ -16,13 +15,11 @@ import com.student_loan.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;

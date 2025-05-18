@@ -227,9 +227,9 @@ $(document).ready(function(){initNavTree('UserController_8java_source.html','');
 <div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span> </div>
 <div class="foldopen" id="foldopen00229" data-start="{" data-end="}">
 <div class="line"><a id="l00229" name="l00229"></a><span class="lineno"><a class="line" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a537cc70c319604966018579277d01c6f">  229</a></span>    <span class="keyword">public</span> UserRecord <a class="code hl_function" href="classcom_1_1student__loan_1_1controller_1_1UserController.html#a537cc70c319604966018579277d01c6f">userToUserRecord</a>(User user) {</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        String[] nameParts = user.getName().split(<span class="stringliteral">&quot; &quot;</span>, 2);</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        String firstName = nameParts.length &gt; 0 ? nameParts[0] : <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        String lastName = nameParts.length &gt; 1 ? nameParts[1] : <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        String[] nameParts = user.getName().split(<span class="stringliteral">&quot; &quot;</span>);</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        String firstName = nameParts[0];</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        String lastName  = nameParts.length &gt; 1 ? nameParts[nameParts.length - 1] : <span class="stringliteral">&quot;&quot;</span>;</div>
 <div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
 <div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> UserRecord(</div>
 <div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            firstName,</div>

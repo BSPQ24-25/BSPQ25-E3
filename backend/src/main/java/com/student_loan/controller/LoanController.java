@@ -95,13 +95,13 @@ public class LoanController {
      * @return ResponseEntity containing a list of loans by the lender.
      */
     @GetMapping("/lender")
-    public ResponseEntity<List<Loan>> getLoansByLender(@RequestParam("token") String token, @RequestParam("lenderId") Long lenderId) {
-    	User user = userService.getUserByToken(token);
-        if (user == null || user.getId()!=lenderId && user.getAdmin()==false) {
-			return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<List<Loan>> getLoansByLender() {
+    	User user = getAuthenticatedUser();
+		if (user == null) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
         try {
-			List<Loan> loans = loanService.getLoansByLender(lenderId);
+			List<Loan> loans = loanService.getLoansByLender(user.getId());
 			return new ResponseEntity<>(loans, HttpStatus.OK);
 			
 			} catch (RuntimeException e) {
@@ -117,19 +117,14 @@ public class LoanController {
      * @return ResponseEntity containing a list of loans by the borrower.
      */
     @GetMapping("/borrower")
-	public ResponseEntity<List<Loan>> getLoansByBorrower(
-			@RequestParam("token") String token,
-			@RequestParam("borrowerId") Long borrowerId) {
+	public ResponseEntity<List<Loan>> getLoansByBorrower() {
 
-		User user = userService.getUserByToken(token);
-
-		if (user == null || (!user.getAdmin() && !Objects.equals(user.getId(), borrowerId))) {
-			logger.warn("Unauthorized access: token='{}' yielded user={}, trying to query borrowerId={}",
-						token, user, borrowerId);
+    	User user = getAuthenticatedUser();
+		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		List<Loan> loans = loanService.getLoansByBorrower(borrowerId);
+		List<Loan> loans = loanService.getLoansByBorrower(user.getId());
 		return new ResponseEntity<>(loans, HttpStatus.OK);
 	}
 
