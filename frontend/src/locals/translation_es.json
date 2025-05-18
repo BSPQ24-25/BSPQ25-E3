@@ -139,7 +139,7 @@
         "degreeType": "Tipo de título",
         "degreeYear": "Curso",
         "penalties": "Penalizaciones",
-        "averageRating": "Puntuación media"
+        "averageRating": "Valoración media"
       }
     },
     "userProfile": {
@@ -162,7 +162,7 @@
       "degreeType": "Tipo de título",
       "degreeYear": "Curso",
       "penalties": "Penalizaciones",
-      "averageRating": "Puntuación media",
+      "averageRating": "Valoración media",
       "itemsLentTitle": "Objetos prestados por {{name}}",
       "itemsBorrowedTitle": "Objetos tomados prestados por {{name}}"
     },
