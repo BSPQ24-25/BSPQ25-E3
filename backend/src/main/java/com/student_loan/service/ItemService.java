@@ -89,6 +89,10 @@ public class ItemService {
      * @throws RuntimeException if the item's owner does not exist.
      */
 
+
+	public List<Item> getItemsByAvailability(ItemStatus status) {
+		return itemRepository.findByStatus(status);
+	}
     public Item saveItem(Item item) {
     	if(!userRepository.findById(item.getOwner()).isPresent()) {
     		throw new RuntimeException("Failed to save item with id "+ item.getId()+": Owner not found with id: " + item.getOwner());

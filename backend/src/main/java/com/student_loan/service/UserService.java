@@ -24,10 +24,14 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -80,6 +84,11 @@ public class UserService {
             Integer newDegreeYear = updatedUserData.getDegreeYear() == null ? existingUser.getDegreeYear() : updatedUserData.getDegreeYear();
             existingUser.setDegreeYear(newDegreeYear);
             Integer newPenalties = updatedUserData.getPenalties() == null ? existingUser.getPenalties() : updatedUserData.getPenalties();
+            int previousPenalties = existingUser.getPenalties();
+			if (newPenalties != null && newPenalties > previousPenalties) {
+				notificationService.enviarCorreo(existingUser.getEmail(), "NEW PENALTY!", "You ha been punished by a penalty, please respect return dates and item conditions."
+						+ " \nYour current penalty count is: "+ newPenalties);
+			}
             existingUser.setPenalties(newPenalties);
             Double newAverageRating = updatedUserData.getAverageRating() == null ? existingUser.getAverageRating() : updatedUserData.getAverageRating();
             existingUser.setAverageRating(newAverageRating);

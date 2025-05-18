@@ -85,9 +85,8 @@ public class ItemController {
      * Retrieves all available items in the system.
      *
      * @return ResponseEntity containing a list of available items.
-     */
-
-	@GetMapping("/available")
+     * 
+     * @GetMapping("/available")
     public ResponseEntity<List<Item>> getAvailableItems() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String email = authentication.getName();
@@ -100,6 +99,9 @@ public class ItemController {
     	return new ResponseEntity<>(itemService.getAvailableItems(),HttpStatus.OK);
     }
 
+     */
+
+	
 	 /**
      * Retrieves all items owned by a specific user.
      *
@@ -125,12 +127,28 @@ public class ItemController {
         }
     }
     
-    /**
-     * Retrieves an item by its ID.
-     *
-     * @param id The ID of the item.
-     * @return ResponseEntity containing the item.
-     */
+	/**
+	 * Retrieves all available items in the system using a token for authentication.
+	 *
+	 * @param token The authentication token.
+	 * @return ResponseEntity containing a list of available items.
+	 */
+    @GetMapping("/available")
+    public ResponseEntity<List<Item>> getAvailableItems(@RequestParam("token") String token) {
+    	User user = userService.getUserByToken(token);
+        if (user == null) {
+        	return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
+        }
+        List<Item> items = itemService.getItemsByAvailability(Item.ItemStatus.AVAILABLE);
+        return new ResponseEntity<>(items, HttpStatus.OK);
+    }
+    
+/**
+ * Retrieves an item by its ID.
+ *
+ * @param id The ID of the item.
+ * @return ResponseEntity containing the item.
+ */
     @GetMapping("/{id}")
 	public ResponseEntity<Item> getItemById(@PathVariable Long id) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
