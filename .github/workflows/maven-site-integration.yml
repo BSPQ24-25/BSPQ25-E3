@@ -81,11 +81,11 @@ jobs:
         working-directory: backend
       
       - name: Run Integration Tests
-        run: mvn test -Pintegration
+        run: mvn verify -Pintegration
         working-directory: backend
 
       - name: Run Performance Tests
-        run: mvn test -Pperformance 
+        run: mvn verify -Pperformance 
         working-directory: backend
 
       - name: Generate Maven Site
