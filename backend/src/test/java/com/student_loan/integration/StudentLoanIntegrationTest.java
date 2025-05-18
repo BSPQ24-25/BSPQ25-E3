@@ -174,10 +174,10 @@ import java.util.Optional;
         );
 
         assertEquals(HttpStatus.CREATED, cLoan.getStatusCode());
-
+                
         // 6. Verify the status of a loan
         ResponseEntity<Loan[]> respLoans = restTemplate.getForEntity(
-            "/loans/borrower?token=" + tokenB + "&borrowerId=" + borrowerId, Loan[].class);
+            "/loans/borrower",Loan[].class);
         
         assertEquals(HttpStatus.OK, respLoans.getStatusCode());
         assertNotNull(respLoans.getBody());
