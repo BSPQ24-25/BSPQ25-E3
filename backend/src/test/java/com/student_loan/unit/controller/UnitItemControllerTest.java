@@ -223,7 +223,7 @@ class UnitItemControllerTest {
         when(userService.getUserByEmail("user@example.com")).thenReturn(null);
 
         ResponseEntity<String> resp = itemController.createItem(
-            new ItemRecord("n","d","c","u","AVAILABLE","NEW")
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW")
         );
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
@@ -237,7 +237,7 @@ class UnitItemControllerTest {
         when(itemService.saveItem(any())).thenReturn(saved);
 
         ResponseEntity<String> resp = itemController.createItem(
-            new ItemRecord("n","d","c","u","AVAILABLE","NEW")
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW")
         );
         assertEquals(HttpStatus.CREATED, resp.getStatusCode());
     }
@@ -250,7 +250,7 @@ class UnitItemControllerTest {
         when(itemService.saveItem(any())).thenThrow(new RuntimeException("oops"));
 
         ResponseEntity<String> resp = itemController.createItem(
-            new ItemRecord("n","d","c","u","AVAILABLE","NEW")
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW")
         );
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
         assertEquals("oops", resp.getBody());
@@ -262,7 +262,7 @@ class UnitItemControllerTest {
         when(userService.getUserByToken("bad")).thenReturn(null);
 
         ResponseEntity<String> resp = itemController.createItem(
-            new ItemRecord("n","d","c","u","AVAILABLE","NEW"), "bad"
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW"), "bad"
         );
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
     }
@@ -276,7 +276,7 @@ class UnitItemControllerTest {
         when(itemService.saveItem(any())).thenReturn(saved);
 
         ResponseEntity<String> resp = itemController.createItem(
-            new ItemRecord("n","d","c","u","AVAILABLE","NEW"), "tok"
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW"), "tok"
         );
         assertEquals(HttpStatus.CREATED, resp.getStatusCode());
     }
@@ -289,7 +289,7 @@ class UnitItemControllerTest {
         when(itemService.saveItem(any())).thenThrow(new RuntimeException("fail"));
 
         ResponseEntity<String> resp = itemController.createItem(
-            new ItemRecord("n","d","c","u","AVAILABLE","NEW"), "tok"
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW"), "tok"
         );
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
         assertEquals("fail", resp.getBody());
@@ -302,7 +302,7 @@ class UnitItemControllerTest {
 
         ResponseEntity<String> resp = itemController.updateItem(
             1L,
-            new ItemRecord("n","d","c","u","AVAILABLE","NEW"),
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW"),
             "bad"
         );
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
@@ -319,7 +319,7 @@ class UnitItemControllerTest {
 
         ResponseEntity<String> resp = itemController.updateItem(
             5L,
-            new ItemRecord("n","d","c","u","AVAILABLE","NEW"),
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW"),
             "tok"
         );
         assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
@@ -337,7 +337,7 @@ class UnitItemControllerTest {
 
         ResponseEntity<String> resp = itemController.updateItem(
             7L,
-            new ItemRecord("n","d","c","u","AVAILABLE","NEW"),
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW"),
             "tok"
         );
         assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
@@ -356,7 +356,7 @@ class UnitItemControllerTest {
 
         ResponseEntity<String> resp = itemController.updateItem(
             8L,
-            new ItemRecord("new","new","new","new","AVAILABLE","NEW"),
+            new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW"),
             "tok"
         );
         assertEquals(HttpStatus.OK, resp.getStatusCode());
@@ -369,7 +369,7 @@ class UnitItemControllerTest {
         when(userService.getUserByToken("t")).thenReturn(u);
         Item existing = new Item(); existing.setOwner(2L);
         when(itemService.getItemById(3L)).thenReturn(Optional.of(existing));
-        ItemRecord rec = new ItemRecord(null, null, null, null, "XYZ", null);
+        ItemRecord rec = new ItemRecord(null, null, null, null, null,"XYZ", null);
 
         ResponseEntity<String> resp = itemController.updateItem(3L, rec, "t");
         assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
@@ -388,7 +388,7 @@ class UnitItemControllerTest {
 
         ResponseEntity<String> resp = itemController.updateItem(
             9L,
-            new ItemRecord("new","new","new","new","AVAILABLE","NEW"),
+            new ItemRecord("new","new","new","new", "new", "AVAILABLE","NEW"),
             "tok"
         );
         assertEquals(HttpStatus.OK, resp.getStatusCode());
@@ -409,7 +409,7 @@ class UnitItemControllerTest {
         existing.setCondition(Item.ItemCondition.NEW);
         when(itemService.getItemById(5L)).thenReturn(Optional.of(existing));
 
-        ItemRecord rec = new ItemRecord("newName", null, null, null, null, null);
+        ItemRecord rec = new ItemRecord("newName", null, null, null, null, null, null);
         when(itemService.saveItem(any())).thenReturn(existing);
 
         ResponseEntity<String> resp = itemController.updateItem(5L, rec, "tok");
@@ -429,7 +429,7 @@ class UnitItemControllerTest {
 
         assertThrows(NoSuchElementException.class, () ->
             itemController.updateItem(6L,
-                new ItemRecord("n","d","c","u","AVAILABLE","NEW"),
+                new ItemRecord("n","d","c","u", "f","AVAILABLE","NEW"),
                 "tok"
             )
         );

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
 
 import com.student_loan.dtos.ItemRecord;
 import com.student_loan.model.Item;
@@ -15,6 +16,7 @@ import com.student_loan.model.User;
 import com.student_loan.service.ItemService;
 import com.student_loan.service.LoanService;
 import com.student_loan.service.UserService;
+import com.student_loan.utils.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,12 +149,12 @@ public class ItemController {
 	 */
    
     
-/**
- * Retrieves an item by its ID.
- *
- * @param id The ID of the item.
- * @return ResponseEntity containing the item.
- */
+	/**
+	 * Retrieves an item by its ID.
+	 *
+	 * @param id The ID of the item.
+	 * @return ResponseEntity containing the item.
+	 */
     @GetMapping("/{id}")
 	public ResponseEntity<Item> getItemById(@PathVariable Long id) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -179,7 +181,6 @@ public class ItemController {
      *
      * @return ResponseEntity containing a list of lent items.
      */
-
 	@GetMapping("/lent")
 	public ResponseEntity<List<Item>> getLentItemsByUser() {
 		// Obtener el usuario autenticado desde el SecurityContext
@@ -239,8 +240,6 @@ public class ItemController {
      * @param itemRecord The item data.
      * @return ResponseEntity indicating the result of the operation.
      */
-
-
     @PostMapping("/create")
     public ResponseEntity<String> createItem(@RequestBody ItemRecord itemRecord) {
         User user = getAuthenticatedUser();
@@ -251,8 +250,15 @@ public class ItemController {
  		Item item = convertToItem(itemRecord);
  		item.setOwner(user.getId());
  		try {
+			if (itemRecord.imageBase64() != null && !itemRecord.imageBase64().isEmpty()) {
+				String imageUrl = ImageUtil.saveBase64Image(itemRecord.imageBase64(), "uploads");
+				item.setImage(imageUrl); // Esto será "/images/xxxx.png"
+			}
  			itemService.saveItem(item);
-        } catch (RuntimeException e) {
+        } catch (IOException e) {
+			// Captura la excepción y responde con error 500
+			return new ResponseEntity<>("Error al guardar la imagen: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (RuntimeException e) {
              return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
          }
  		// If the item is created successfully, return a 201 Created response
@@ -325,7 +331,7 @@ public class ItemController {
 			itemToModify.setName(item.name() == null ? itemToModify.getName() : item.name() );
 			itemToModify.setDescription(item.description() == null ? itemToModify.getDescription() : item.description() );
 			itemToModify.setCategory(item.category() == null ? itemToModify.getCategory() : item.category());
-			itemToModify.setImage(item.imageUrl() == null ? itemToModify.getImage() : item.imageUrl());
+			itemToModify.setImage(item.imageBase64() == null ? itemToModify.getImage() : item.imageBase64());
 			itemToModify.setStatus(Item.ItemStatus.valueOf(item.status()==null ? itemToModify.getStatus().toString() : item.status()));
 			itemToModify.setCondition(Item.ItemCondition.valueOf(item.condition()==null ? itemToModify.getCondition().toString() : item.condition()));
 			itemService.saveItem(itemToModify);
@@ -346,11 +352,11 @@ public class ItemController {
 		item.setName(itemRecord.name());
 		item.setDescription(itemRecord.description());
 		item.setCategory(itemRecord.category());
-		item.setImage(itemRecord.imageUrl());
+		item.setImage(itemRecord.imageBase64());
 		item.setStatus(Item.ItemStatus.valueOf(itemRecord.status().toUpperCase()));
 		item.setPurchaseDate(new java.util.Date());
-		item.setPurchasePrice(0.0);
-		item.setCondition(Item.ItemCondition.NEW);
+		item.setPurchasePrice(Double.valueOf(itemRecord.purchasePrice()));
+		item.setCondition(Item.ItemCondition.valueOf(itemRecord.condition().toUpperCase()));
 		return item;
     }
 }

@@ -33,17 +33,17 @@ class DtoTests {
     @DisplayName("ItemRecord should return correct values and have proper equals/hashCode/toString")
     void testItemRecord() {
         ItemRecord item = new ItemRecord(
-            "Item1", "Desc", "Cat", "http://img", "Available", "New"
+            "Item1", "Desc", "Cat", "5","http://img", "Available", "New"
         );
         assertEquals("Item1", item.name());
         assertEquals("Desc", item.description());
         assertEquals("Cat", item.category());
-        assertEquals("http://img", item.imageUrl());
+        assertEquals("http://img", item.imageBase64());
         assertEquals("Available", item.status());
         assertEquals("New", item.condition());
 
         ItemRecord same = new ItemRecord(
-            "Item1", "Desc", "Cat", "http://img", "Available", "New"
+            "Item1", "Desc", "Cat", "5","http://img", "Available", "New"
         );
         assertEquals(item, same);
         assertEquals(item.hashCode(), same.hashCode());
