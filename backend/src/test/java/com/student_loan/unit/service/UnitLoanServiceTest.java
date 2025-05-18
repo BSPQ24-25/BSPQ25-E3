@@ -24,6 +24,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 
 class UnitLoanServiceTest {
+	
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnitLoanServiceTest.class);
 
     @Mock
     private LoanRepository loanRepository;
@@ -440,9 +442,10 @@ class UnitLoanServiceTest {
     @Test
     void testCreateLoanAlreadyExists() {
         Loan loan = new Loan(); loan.setId(1L);
-        when(loanRepository.findById(1L)).thenReturn(Optional.of(loan));
+        when(loanRepository.existsById(loan.getId())).thenReturn(true);
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.createLoan(loan));
+        logger.info(ex.getMessage());
         assertTrue(ex.getMessage().contains("Loan already exists"));
     }
 
@@ -599,7 +602,7 @@ class UnitLoanServiceTest {
         loan.setItem(37L);
 
         when(loanRepository.findById(7L)).thenReturn(Optional.empty());
-        when(userRepository.findById(17L)).thenReturn(null);
+        when(userRepository.findById(17L)).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.createLoan(loan));
         assertTrue(ex.getMessage().contains("Lender not found"));
@@ -620,9 +623,10 @@ class UnitLoanServiceTest {
 
         when(loanRepository.findById(8L)).thenReturn(Optional.empty());
         when(userRepository.findById(18L)).thenReturn(Optional.of(lender));
-        when(userRepository.findById(28L)).thenReturn(null);
+        when(userRepository.findById(28L)).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.createLoan(loan));
+        logger.info(ex.getMessage());
         assertTrue(ex.getMessage().contains("Borrower not found"));
 
         verify(loanRepository, never()).save(any());
@@ -643,7 +647,7 @@ class UnitLoanServiceTest {
         when(loanRepository.findById(9L)).thenReturn(Optional.empty());
         when(userRepository.findById(19L)).thenReturn(Optional.of(lender));
         when(userRepository.findById(29L)).thenReturn(Optional.of(borrower));
-        when(itemRepository.findById(39L)).thenReturn(null);
+        when(itemRepository.findById(39L)).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> loanService.createLoan(loan));
         assertTrue(ex.getMessage().contains("Item not found with id: 39"));
