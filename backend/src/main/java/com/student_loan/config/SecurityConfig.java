@@ -37,9 +37,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
         cfg.setAllowedOrigins(List.of("http://localhost:3000"));
-        cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        cfg.setAllowedMethods(List.of("GET",    "POST","PUT","DELETE","OPTIONS"));
         cfg.setAllowedHeaders(List.of("Authorization","Content-Type"));
         cfg.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cfg);
         return source;
@@ -51,8 +52,15 @@ public class SecurityConfig {
             .cors().and()
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/login", "/users/register").permitAll()
-                .anyRequest().authenticated()
+            .requestMatchers(
+                "/users/login",
+                "/users/register",
+                "/api/ranking",
+                "/images/**",
+                "/items/**",
+                "/users"
+            ).permitAll()
+            .anyRequest().authenticated()
             )
             .addFilterBefore(
                new JwtFilter(jwtUtil),

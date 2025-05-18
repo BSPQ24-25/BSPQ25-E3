@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">StudentLoanManagement</a> &gt; <a href="index.source.html" class="el_package">com.student_loan.security</a> &gt; <span class="el_source">JwtUtil.java</span></div><h1>JwtUtil.java</h1><pre class="source lang-java linenums">package com.student_loan.security;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+import java.security.Key;
+import java.util.Date;
+
+import javax.crypto.SecretKey;
+
+import java.util.Base64;
+
+@Component
+<span class="fc" id="L14">public class JwtUtil {</span>
+    // Not the best practice to put the secret key in the code
+    // We will do it this way for now to ease the process
+    private static final String SECRET_KEY = &quot;c29tZXZlcnlzZWN1cmVhbmRsb25nYmFzZTY0a2V5MTIzNDU2&quot;;
+    private static final long EXPIRATION_TIME = 86400000; // 1 day in miliseconds
+
+<span class="fc" id="L20">    private final Key key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY));</span>
+
+    public String generateToken(String email) {
+<span class="fc" id="L23">        return Jwts.builder()</span>
+<span class="fc" id="L24">                .setSubject(email)</span>
+<span class="fc" id="L25">                .setIssuedAt(new Date())</span>
+<span class="fc" id="L26">                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))</span>
+<span class="fc" id="L27">                .signWith(key, SignatureAlgorithm.HS256)</span>
+<span class="fc" id="L28">                .compact();</span>
+    }
+
+    public String extractEmail(String token) {
+<span class="fc" id="L32">        return Jwts.parserBuilder()</span>
+<span class="fc" id="L33">                .setSigningKey(key)</span>
+<span class="fc" id="L34">                .build()</span>
+<span class="fc" id="L35">                .parseClaimsJws(token)</span>
+<span class="fc" id="L36">                .getBody()</span>
+<span class="fc" id="L37">                .getSubject();</span>
+    }
+
+    public boolean validateToken(String token) {
+        try {
+<span class="fc" id="L42">            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);</span>
+<span class="fc" id="L43">            return true;</span>
+<span class="fc" id="L44">        } catch (Exception e) {</span>
+<span class="fc" id="L45">            return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

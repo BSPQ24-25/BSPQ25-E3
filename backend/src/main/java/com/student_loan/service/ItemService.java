@@ -60,7 +60,7 @@ public class ItemService {
 		List<Item> items = new ArrayList<>();
 		for (Long id : itemsId) {
 			Optional<Item> optionalItem = getItemById(id);
-			optionalItem.ifPresent(items::add); // Solo agregar si existe
+			optionalItem.ifPresent(items::add);
 		}
 		return items;
 	}

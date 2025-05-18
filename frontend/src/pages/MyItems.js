@@ -3,10 +3,10 @@ import axiosInstance from '../axiosInstance';
 import ReturnItemModal from '../components/ReturnItemModal';
 import ReminderModal from '../components/ReminderModal';
 import UploadItemModal from '../components/UploadItemModal';
-import { useTranslation } from 'react-i18next'; // <-- añadido para traducción
+import { useTranslation } from 'react-i18next';
 
 function MyItems() {
-  const { t } = useTranslation(); // <-- añadido para traducción
+  const { t } = useTranslation();
 
   const [borrowedItems, setBorrowedItems] = useState([]);
   const [lentItems, setLentItems] = useState([]);
@@ -21,8 +21,8 @@ function MyItems() {
   const fetchItems = async () => {
     try {
       const [borrowedResponse, lentResponse] = await Promise.all([
-        axiosInstance.get('/items/borrowed'), // endpoint de los items que tomaste prestados
-        axiosInstance.get('/items/lent') // endpoint de los items que prestaste
+        axiosInstance.get('/items/borrowed'),
+        axiosInstance.get('/items/lent')
       ]);
 
       const borrowed = borrowedResponse.data.map((item) => ({

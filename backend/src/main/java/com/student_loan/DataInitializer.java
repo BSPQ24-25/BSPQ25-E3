@@ -24,7 +24,8 @@ public class DataInitializer {
 	//Logger
 	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DataInitializer.class);
    @Bean
-    CommandLineRunner initData(UserRepository userRepository, ItemRepository itemRepository, LoanRepository loanRepository ,NotificationService notificationService) {
+	public CommandLineRunner initData(UserRepository userRepository, ItemRepository itemRepository, LoanRepository loanRepository ,NotificationService notificationService) {
+
       return args -> {
          System.out.println("Initializing data...");
          List<User> users = createUsers();
@@ -61,12 +62,12 @@ public class DataInitializer {
       users.add(new User(null, "Sara García", "sara.garcia@email.com", "contra123", "602 123 654", "Calle del Sol, 22, 46001 Valencia", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));
       users.add(new User(null, "Alex", "alexoladom@gmail.com", "123", "602 123 654", "Calle del Sol, 22, 46001 Valencia", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));
       // Admin users
-      users.add(new User(null, "Sabin Luja", "sabin.luja@opendeusto.es", "sabin", "602 123 654", "Hermanos Aguirre Kalea, 2, 48014 Bilbao", User.DegreeType.UNIVERSITY_DEGREE, 4, 0, 5.0, true));
+      users.add(new User(null, "Sabin Luja", "sabin.luja@opendeusto.es", "sabin", "602 153 654", "Hermanos Aguirre Kalea, 2, 48014 Bilbao", User.DegreeType.UNIVERSITY_DEGREE, 4, 0, 5.0, true));
       
       return users;
    }
 
-   private void saveUsers(List<User> users, UserRepository userRepository) {
+   public void saveUsers(List<User> users, UserRepository userRepository) {
       for (User user : users) {
          if (userRepository.findByEmail(user.getEmail()) == null) {
                userRepository.save(user);
@@ -152,7 +153,7 @@ public class DataInitializer {
       return items;
    }
 
-   private void saveItems(List<Item> items, ItemRepository itemRepository) {
+   public void saveItems(List<Item> items, ItemRepository itemRepository) {
       for (Item item : items) {
          if (itemRepository.findByName(item.getName()) == null) {
                itemRepository.save(item);
@@ -224,7 +225,8 @@ public class DataInitializer {
       return loans;
    }
 
-   private void saveLoans(List<Loan> loans, LoanRepository loanRepository, NotificationService notificationService, UserRepository userRepository, ItemRepository itemRepo) {
+   public void saveLoans(List<Loan> loans, LoanRepository loanRepository, NotificationService notificationService, UserRepository userRepository, ItemRepository itemRepo) {
+
       for (Loan loan : loans) {
          List<Loan> itemLoans = loanRepository.findByItem(loan.getItem());
           
@@ -252,7 +254,6 @@ public class DataInitializer {
             	User u=userRepository.findById(loan.getBorrower()).get();
 				Item i= itemRepo.findById(loan.getItem()).get();
 				if (u.getEmail().contains("gmail.com")|| u.getEmail().contains("opendeusto.es")){
-		            logger.info("Day difference:"+ diffInDays+ "Email: "+u.getEmail());
 					if (diffInDays<10 && diffInDays>0) {
 	    				notificationService.enviarCorreo(u.getEmail(), "RETURN REMINDER", "Return reminder:\n you have "+ (diffInDays+1)+" days to return the item "+i.getName()+".\nDo not be late!");		
 	    			}else if( diffInDays<0) {

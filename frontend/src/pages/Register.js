@@ -23,6 +23,21 @@ function Register() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'telephoneNumber') {
+      const re = /^[0-9+ ]*$/;
+      if (!re.test(value)) return;
+      const plusCount = (value.match(/\+/g) || []).length;
+      if (plusCount > 1) return;
+    }
+
+    if (name === 'degreeYear') {
+      if (value === '' || (Number(value) >= 1 && Number(value) <= 5)) {
+      } else {
+        return;
+      }
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }));
     setError('');
   };
@@ -54,7 +69,14 @@ function Register() {
       login(loginResponse.token, loginResponse.user);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || err.message || t('register.error'));
+      const msg = err.response?.data || err.message || '';
+      const lower = msg.toLowerCase();
+
+      if (lower.includes('user already exists')) {
+        setError(t('register.alreadyHaveAccount'));
+      } else {
+        setError(msg || t('register.error'));
+      }
     }
 
     console.log('Registration attempt:', formData);
@@ -127,7 +149,7 @@ function Register() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus;border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -144,7 +166,9 @@ function Register() {
                   autoComplete="tel"
                   value={formData.telephoneNumber}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  pattern="[0-9+ ]*"
+                  placeholder="+34 600 123 456"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus;border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -161,7 +185,7 @@ function Register() {
                   autoComplete="street-address"
                   value={formData.address}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus;border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -178,7 +202,7 @@ function Register() {
                     value={formData.degreeType}
                     onChange={handleChange}
                     required
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus;border-blue-500 sm:text-sm"
                   >
                     <option value="" disabled>{t('register.selectDegreeType', 'Select Degree Type...')}</option>
                     <option value="UNIVERSITY_DEGREE">{t('degreeType.universityDegree', 'University Degree')}</option>
@@ -197,9 +221,13 @@ function Register() {
                     id="degreeYear"
                     name="degreeYear"
                     type="number"
+                    min="1"
+                    max="5"
+                    step="1"
                     value={formData.degreeYear}
                     onChange={handleChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="e.g. 3"
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus;border-blue-500 sm:text-sm"
                   />
                 </div>
               </div>
@@ -218,7 +246,7 @@ function Register() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus;border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -236,7 +264,7 @@ function Register() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus;border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
@@ -254,7 +282,7 @@ function Register() {
           <div className="mt-6">
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white text-gray-500">
-                {t('register.alreadyHaveAccount')}{' '}
+                {t('register.alreadyHaveAccount')} {' '}
                 <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
                   {t('register.signIn')}
                 </Link>

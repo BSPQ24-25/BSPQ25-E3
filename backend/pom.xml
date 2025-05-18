@@ -225,65 +225,62 @@
 			        </execution>
 			    </executions>
 			</plugin>
+
             <!-- JaCoCo plugin for coverage -->
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
-                <configuration>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<configuration>
 					<excludes>
-						<exclude>com/student_loan/StudentLoanManagementApplication.class</exclude>
+					<exclude>com/student_loan/StudentLoanManagementApplication.class</exclude>
+					<exclude>**/DataInitializer*</exclude>
 					</excludes>
 				</configuration>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${project.build.directory}/jacoco.exec</destFile>
-                            <propertyName>surefireArgLine</propertyName>
-                        </configuration>
-                    </execution>
-                    
-                    <execution>
-                        <id>default-report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-						<id>jacoco-check</id>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<rule>
-									<element>BUNDLE</element>
-									<limits>
-										<limit>
-											<counter>LINE</counter>
-											<value>COVEREDRATIO</value>
-											<minimum>0.5</minimum>
-										</limit>
-									</limits>
-								</rule>
-							</rules>
-							<excludes>
-								<exclude>com/student_loan/config/**</exclude>
-								<exclude>com/student_loan/StudentLoanManagementApplication*.*</exclude>
-							</excludes>
-						</configuration>
+				<executions>
+					<execution>
+					<id>prepare-agent</id>
+					<goals><goal>prepare-agent</goal></goals>
+					<configuration>
+						<destFile>${project.build.directory}/jacoco.exec</destFile>
+						<propertyName>surefireArgLine</propertyName>
+					</configuration>
 					</execution>
-                </executions>
-            </plugin>
+					<execution>
+					<id>report</id>
+					<phase>verify</phase>
+					<goals><goal>report</goal></goals>
+					<configuration>
+						<excludes>
+						<exclude>com/student_loan/StudentLoanManagementApplication.class</exclude>
+						<exclude>**/DataInitializer*</exclude>
+						</excludes>
+					</configuration>
+					</execution>
+					<execution>
+					<id>check</id>
+					<goals><goal>check</goal></goals>
+					<configuration>
+						<rules>
+						<rule>
+							<element>BUNDLE</element>
+							<limits>
+							<limit>
+								<counter>LINE</counter>
+								<value>COVEREDRATIO</value>
+								<minimum>0.7</minimum>
+							</limit>
+							</limits>
+						</rule>
+						</rules>
+						<excludes>
+						<exclude>com/student_loan/config/**</exclude>
+						<exclude>com/student_loan/StudentLoanManagementApplication*.*</exclude>
+						</excludes>
+					</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<!-- JDepend for design quality metrics -->
 			<!-- <plugin>
@@ -407,7 +404,7 @@
 								</configuration>
 							</execution>
 
-												<!-- Copy Doxygen content into docs/doxygen/ -->
+							<!-- Copy Doxygen content into docs/doxygen/ -->
 							<execution>
 								<id>copy-doxygen-site-to-docs</id>
 								<phase>post-site</phase> <!-- After doxygen generation too -->
@@ -415,7 +412,7 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${basedir}/docs/doxygen</outputDirectory> <!-- 🔥 target doxygen folder -->
+									<outputDirectory>${basedir}/docs/doxygen</outputDirectory> <!--  target doxygen folder -->
 									<resources>
 										<resource>
 											<directory>${project.build.directory}/doxygen/html</directory> <!-- source -->

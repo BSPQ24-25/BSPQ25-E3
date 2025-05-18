@@ -1,0 +1,27 @@
+var classcom_1_1student__loan_1_1model_1_1Loan =
+[
+    [ "Status", "enumcom_1_1student__loan_1_1model_1_1Loan_1_1Status.html", "enumcom_1_1student__loan_1_1model_1_1Loan_1_1Status" ],
+    [ "Loan", "classcom_1_1student__loan_1_1model_1_1Loan.html#aad63a91722e881892ceef3c565743afd", null ],
+    [ "Loan", "classcom_1_1student__loan_1_1model_1_1Loan.html#a4e13ba36a2cf8e6dcf9f90ce2bdb311a", null ],
+    [ "getBorrower", "classcom_1_1student__loan_1_1model_1_1Loan.html#ae2bf51b8f48696cf6e6cdfacecd97db4", null ],
+    [ "getEstimatedReturnDate", "classcom_1_1student__loan_1_1model_1_1Loan.html#a2699390f0fe65d5460e9dcd420158fae", null ],
+    [ "getId", "classcom_1_1student__loan_1_1model_1_1Loan.html#ae837ce55ff12641d325e2b2c77ae8812", null ],
+    [ "getItem", "classcom_1_1student__loan_1_1model_1_1Loan.html#a3eefa4f48a229e438af60531a275bf01", null ],
+    [ "getLender", "classcom_1_1student__loan_1_1model_1_1Loan.html#ab42421f8e8e7a3b4179be28cc7cbd60d", null ],
+    [ "getLoanDate", "classcom_1_1student__loan_1_1model_1_1Loan.html#ab303a379d69c6cbbb89ce0ffa777ae2c", null ],
+    [ "getLoanStatus", "classcom_1_1student__loan_1_1model_1_1Loan.html#a69740bdc17beb05a37534cfba59d21e6", null ],
+    [ "getObservations", "classcom_1_1student__loan_1_1model_1_1Loan.html#a182e19d921eb4bf05410f4dc74067989", null ],
+    [ "getRating", "classcom_1_1student__loan_1_1model_1_1Loan.html#a680c52bbd4c22ff9f467de34644d076b", null ],
+    [ "getRealReturnDate", "classcom_1_1student__loan_1_1model_1_1Loan.html#a0cf89f44c8214157e52e8c0c6462678d", null ],
+    [ "setBorrower", "classcom_1_1student__loan_1_1model_1_1Loan.html#a983340cbfb1c4d7f820cd3d416030340", null ],
+    [ "setEstimatedReturnDate", "classcom_1_1student__loan_1_1model_1_1Loan.html#a0396e0a40bec5924b00741bd046ec7a4", null ],
+    [ "setId", "classcom_1_1student__loan_1_1model_1_1Loan.html#a0ada6c06e32e8422dfcc341be6406478", null ],
+    [ "setItem", "classcom_1_1student__loan_1_1model_1_1Loan.html#a5da0a52965b13481b30f232739b898fa", null ],
+    [ "setLender", "classcom_1_1student__loan_1_1model_1_1Loan.html#a91e62ca3af17acd44f179743f851d496", null ],
+    [ "setLoanDate", "classcom_1_1student__loan_1_1model_1_1Loan.html#a2f73f3807b116d25a26dce2d6153a7af", null ],
+    [ "setLoanStatus", "classcom_1_1student__loan_1_1model_1_1Loan.html#ae250b8b78eb9aeea2f828734e4054f9c", null ],
+    [ "setObservations", "classcom_1_1student__loan_1_1model_1_1Loan.html#a1c8e65c2143bf751ad4f7600b87fe31f", null ],
+    [ "setRating", "classcom_1_1student__loan_1_1model_1_1Loan.html#ab30de9ba292e30db59d7a26f8d57b2d2", null ],
+    [ "setRealReturnDate", "classcom_1_1student__loan_1_1model_1_1Loan.html#a4d2b263afe475a16499df24fc13fe066", null ],
+    [ "toString", "classcom_1_1student__loan_1_1model_1_1Loan.html#a453daecb6afe127f1499c72dbe98fbc8", null ]
+];

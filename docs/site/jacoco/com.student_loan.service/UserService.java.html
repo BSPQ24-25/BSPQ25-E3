@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">StudentLoanManagement</a> &gt; <a href="index.source.html" class="el_package">com.student_loan.service</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package com.student_loan.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.student_loan.model.User;
+import com.student_loan.model.User.DegreeType;
+import com.student_loan.dtos.CredentialsDTO;
+import com.student_loan.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.student_loan.security.JwtUtil;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+/**
+ * Service class for managing users in the system. Handles operations such as
+ * retrieving, creating, saving, and deleting users.
+ */
+@Service
+@Transactional
+<span class="fc" id="L24">public class UserService {</span>
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+<span class="fc" id="L34">    private Map&lt;String, User&gt; tokens = new HashMap&lt;&gt;();</span>
+
+	/**
+	 * Retrieves all users from the repository.
+	 *
+	 * @return List of all users.
+	 */
+    public List&lt;User&gt; getAllUsers() {
+<span class="fc" id="L42">        return userRepository.findAll();</span>
+    }
+
+        /**
+         * Finds a user by their ID.	
+         * @param id
+         * @return
+         */
+    public Optional&lt;User&gt; getUserById(Long id) {
+<span class="fc" id="L51">        return userRepository.findById(id);</span>
+    }
+
+    /**
+     * Updates a user's information.
+     *
+     * @param id The ID of the user to update.
+     * @param updatedUserData Object containing updated fields.
+     * @return The updated user.
+     * @throws RuntimeException if user is not found.
+     */
+    public User updateUser(Long id, User updatedUserData) {
+<span class="fc" id="L63">        Optional&lt;User&gt; existingUserOptional = userRepository.findById(id);</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (existingUserOptional.isPresent()) {</span>
+<span class="fc" id="L66">            User existingUser = existingUserOptional.get();</span>
+            // Update only the fields that are not null in the updatedUserData
+<span class="fc bfc" id="L68" title="All 2 branches covered.">            String newName = updatedUserData.getName() == null ? existingUser.getName() : updatedUserData.getName();</span>
+<span class="fc" id="L69">            existingUser.setName(newName);</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            String newEmail = updatedUserData.getEmail() == null ? existingUser.getEmail() : updatedUserData.getEmail();</span>
+<span class="fc" id="L71">            existingUser.setEmail(newEmail);</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            String newTelephoneNumber = updatedUserData.getTelephoneNumber() == null ? existingUser.getTelephoneNumber() : updatedUserData.getTelephoneNumber();</span>
+<span class="fc" id="L73">            existingUser.setTelephoneNumber(newTelephoneNumber);</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            String newAddress = updatedUserData.getAddress() == null ? existingUser.getAddress() : updatedUserData.getAddress();</span>
+<span class="fc" id="L75">            existingUser.setAddress(newAddress);</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            String newpassword = updatedUserData.getPassword() == null ? existingUser.getPassword() : updatedUserData.getPassword();</span>
+<span class="fc" id="L77">            existingUser.setPassword(newpassword);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            DegreeType newDegreeType = updatedUserData.getDegreeType() == null ? existingUser.getDegreeType() : updatedUserData.getDegreeType();</span>
+<span class="fc" id="L79">            existingUser.setDegreeType(newDegreeType);</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            Integer newDegreeYear = updatedUserData.getDegreeYear() == null ? existingUser.getDegreeYear() : updatedUserData.getDegreeYear();</span>
+<span class="fc" id="L81">            existingUser.setDegreeYear(newDegreeYear);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            Integer newPenalties = updatedUserData.getPenalties() == null ? existingUser.getPenalties() : updatedUserData.getPenalties();</span>
+<span class="fc" id="L83">            existingUser.setPenalties(newPenalties);</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            Double newAverageRating = updatedUserData.getAverageRating() == null ? existingUser.getAverageRating() : updatedUserData.getAverageRating();</span>
+<span class="fc" id="L85">            existingUser.setAverageRating(newAverageRating);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">            Boolean newAdmin = updatedUserData.getAdmin() == null ? existingUser.getAdmin() : updatedUserData.getAdmin();</span>
+<span class="fc" id="L87">            existingUser.setAdmin(newAdmin);</span>
+            
+
+<span class="fc bfc" id="L90" title="All 4 branches covered.">            if (updatedUserData.getPassword() != null &amp;&amp; !updatedUserData.getPassword().isEmpty()) {</span>
+<span class="fc" id="L91">                existingUser.setPassword(passwordEncoder.encode(updatedUserData.getPassword()));</span>
+            }
+            
+<span class="fc" id="L94">            return userRepository.save(existingUser);</span>
+        } else {
+<span class="fc" id="L96">            throw new RuntimeException(&quot;User not found with id: &quot; + id);</span>
+        }
+    }
+
+    /**
+     * Registers a new user after checking for email uniqueness.
+     *
+     * @param user The user to register.
+     * @return true if registration is successful, false if email already exists.
+     */
+    public boolean register(User user) {
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if(userRepository.findByEmail(user.getEmail())!=null) {</span>
+<span class="fc" id="L108">    		return false;</span>
+    	}else {
+<span class="fc" id="L110">            user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypts the password</span>
+<span class="fc" id="L111">            userRepository.save(user);</span>
+<span class="fc" id="L112">			return true;</span>
+    	}
+    }
+
+    
+    /**
+     * Authenticates a user using email and password.
+     *
+     * @param credentials Login credentials.
+     * @return JWT token if successful, or error message.
+     */
+    public String login(CredentialsDTO credentials) {
+<span class="fc" id="L124">        User user = userRepository.findByEmail(credentials.getEmail());</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (tokens.containsValue(user)) {</span>
+<span class="fc" id="L126">            return &quot;User already logged in&quot;;</span>
+<span class="fc bfc" id="L127" title="All 4 branches covered.">        } else if (user != null &amp;&amp; passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {</span>
+<span class="fc" id="L128">            String token = jwtUtil.generateToken(credentials.getEmail());</span>
+<span class="fc" id="L129">            tokens.put(token, user);</span>
+<span class="fc" id="L130">            return token;</span>
+        } else {
+<span class="fc" id="L132">            return &quot;Invalid credentials&quot;;</span>
+        }
+    }
+    
+    /**
+     * Logs out a user by invalidating their token.
+     *
+     * @param token The user's token.
+     * @return true if logout is successful, false otherwise.
+     */
+
+	public boolean logout(String token) {
+<span class="fc bfc" id="L144" title="All 2 branches covered.">		if(tokens.containsKey(token)) {</span>
+<span class="fc" id="L145">            tokens.remove(token);</span>
+<span class="fc" id="L146">            return true;</span>
+        }else{
+<span class="fc" id="L148">        	return false;}</span>
+	}
+    
+	 /**
+     * Deletes a user by ID.
+     *
+     * @param id User ID.
+     * @throws RuntimeException if the user is not found.
+     */
+    public void deleteUser(Long id) {
+<span class="fc" id="L158">        Optional&lt;User&gt; user = userRepository.findById(id);</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        if (user.isPresent()) {</span>
+<span class="fc" id="L160">            userRepository.deleteById(id);</span>
+        } else {
+<span class="fc" id="L162">            throw new RuntimeException(&quot;User not found&quot;);</span>
+        }
+<span class="fc" id="L164">    }</span>
+    /**
+     * Retrieves a user based on a valid JWT token.
+     *
+     * @param token JWT token.
+     * @return The user associated with the token.
+     */
+	public User getUserByToken(String token) {
+<span class="fc" id="L172">		return tokens.get(token);</span>
+	}
+
+	  /**
+     * Finds a user by their email address.
+     *
+     * @param email The user's email.
+     * @return The user if found, or null otherwise.
+     */
+    public User getUserByEmail(String email) {
+<span class="fc" id="L182">        return userRepository.findByEmail(email);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

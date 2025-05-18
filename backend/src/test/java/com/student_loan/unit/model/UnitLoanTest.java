@@ -132,4 +132,36 @@ class UnitLoanTest {
         verify(repository, times(1)).save(loan);
         assertEquals(404L, result.getBorrower());
     }
+
+    @Test
+    @DisplayName("getEstimatedReturnDate returns the value set")
+    void testGetEstimatedReturnDate() {
+        Date estimated = new Date(1620000000000L);
+        loan.setEstimatedReturnDate(estimated);
+        assertEquals(estimated, loan.getEstimatedReturnDate());
+    }
+
+    @Test
+    @DisplayName("setLoanDate and getLoanDate work correctly")
+    void testGetSetLoanDate() {
+        Date loanDate = new Date(1630000000000L);
+        loan.setLoanDate(loanDate);
+        assertEquals(loanDate, loan.getLoanDate());
+    }
+
+    @Test
+    @DisplayName("toString includes all loan fields and values")
+    void testToStringIncludesAllFields() {
+        String str = loan.toString();
+        assertTrue(str.contains("id=" + loan.getId()));
+        assertTrue(str.contains("lender=" + loan.getLender()));
+        assertTrue(str.contains("borrower=" + loan.getBorrower()));
+        assertTrue(str.contains("item=" + loan.getItem()));
+        assertTrue(str.contains("loanDate=" + loan.getLoanDate()));
+        assertTrue(str.contains("estimatedReturnDate=" + loan.getEstimatedReturnDate()));
+        assertTrue(str.contains("realReturnDate=" + loan.getRealReturnDate()));
+        assertTrue(str.contains("loanStatus=" + loan.getLoanStatus()));
+        assertTrue(str.contains("rating=" + loan.getRating()));
+        assertTrue(str.contains("observations='" + loan.getObservations() + "'"));
+    }
 }
