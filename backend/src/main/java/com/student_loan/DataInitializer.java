@@ -1,14 +1,5 @@
 package com.student_loan;
 
-import com.student_loan.model.Item;
-import com.student_loan.model.Loan;
-import com.student_loan.model.User;
-import com.student_loan.repository.ItemRepository;
-import com.student_loan.repository.LoanRepository;
-import com.student_loan.repository.UserRepository;
-import com.student_loan.service.NotificationService;
-
-import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,9 +8,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import com.student_loan.model.Item;
+import com.student_loan.model.Loan;
+import com.student_loan.model.User;
+import com.student_loan.repository.ItemRepository;
+import com.student_loan.repository.LoanRepository;
+import com.student_loan.repository.UserRepository;
+import com.student_loan.service.NotificationService;
+import java.util.Optional;
 
 @Configuration
 public class DataInitializer {
+
+   private final BCryptPasswordEncoder passwordEncoder;
+
+   public DataInitializer(BCryptPasswordEncoder passwordEncoder) {
+      this.passwordEncoder = passwordEncoder;
+   }
 	
 	//Logger
 	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DataInitializer.class);
@@ -45,24 +52,24 @@ public class DataInitializer {
       List <User> users = new ArrayList<>();
    
       // Set of users to insert
-      users.add(new User(null, "Ana García", "ana.garcia@email.com", "dF!94vH*2kQ#bR", "612 345 678", "Calle de Gran Vía, 23, 28013 Madrid", User.DegreeType.UNIVERSITY_DEGREE, 3, 0, 4.5, false));
-      users.add(new User(null, "Carlos Pérez", "carlos.perez@email.com", "mA3!9bL2zR@xZ0", "633 111 222", "Carrer de Pau Claris, 46, 08010 Barcelona", User.DegreeType.MASTER, 2, 1, 4.2, false));
-      users.add(new User(null, "Laura Fernández", "laura.fernandez@email.com", "lauraFSevilla", "622 333 444", "Avenida de la Constitución, 8, 41001 Sevilla", User.DegreeType.UNIVERSITY_DEGREE, 1, 0, 4.8, false));
-      users.add(new User(null, "David López", "david.lopez@email.com", "qZ6!L@j*0eD9fT", "678 555 666", "Calle de Alcalá, 180, 28009 Madrid", User.DegreeType.DOCTORATE, 4, 0, 4.9, false));
-      users.add(new User(null, "Marta Rodríguez", "marta.rodriguez@email.com", "yX5!8OqR2jW9hZ", "655 431 549", "Carrer de Roger de Llúria, 24, 08037 Barcelona", User.DegreeType.MASTER, 1, 0, 4.7, false));
-      users.add(new User(null, "José Martínez", "jose.martinez@email.com", "deusto#00", "690 234 567", "Calle de Fuentecilla, 5, 14010 Córdoba", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.3, false));
-      users.add(new User(null, "Raquel Sánchez", "raquel.sanchez@email.com", "rG5uT$7vI2gO#p1", "677 123 456", "Calle de la Paz, 34, 15001 A Coruña", User.DegreeType.UNIVERSITY_DEGREE, 3, 2, 3.8, false));
-      users.add(new User(null, "José Antonio Torres", "jose.antonio@email.com", "uZ0!W6tP#3rV!fL", "616 741 982", "Calle San Fernando, 18, 41004 Sevilla", User.DegreeType.MASTER, 1, 0, 4.6, false));
-      users.add(new User(null, "Beatriz García", "beatriz.garcia@email.com", "wQ2bF!xL5tCj9Z", "636 984 211", "Carrer de Valencia, 35, 08015 Barcelona", User.DegreeType.DOCTORATE, 3, 1, 4.4, false));
-      users.add(new User(null, "Pedro Gómez", "pedro.gomez@email.com", "micontraseña", "688 234 123", "Calle Mayor, 12, 28013 Madrid", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.6, false));
-      users.add(new User(null, "Carmen Martínez", "carmen.martinez@email.com", "vX0nP9!fS3zT1dQ", "676 453 782", "Avenida de la Paz, 40, 29012 Málaga", User.DegreeType.MASTER, 2, 1, 4.5, false));
-      users.add(new User(null, "Antonio Fernández", "antonio.fernandez@email.com", "antoFernan01", "645 876 543", "Calle de Núñez de Balboa, 45, 28001 Madrid", User.DegreeType.UNIVERSITY_DEGREE, 3, 2, 4.7, false));
-      users.add(new User(null, "Elena López", "elena.lopez@email.com", "qZ5#V7tJ3kL2A*1", "659 321 987", "Carrer de Sants, 58, 08014 Barcelona", User.DegreeType.MASTER, 1, 0, 4.8, false));
-      users.add(new User(null, "Juan Pérez", "juan.perez@email.com", "kF3uT0hS7!pVbD2", "656 789 432", "Calle de Santiago, 14, 37001 Salamanca", User.DegreeType.DOCTORATE, 4, 0, 5.0, false));
-      users.add(new User(null, "Sara García", "sara.garcia@email.com", "contra123", "602 123 654", "Calle del Sol, 22, 46001 Valencia", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));
-      users.add(new User(null, "Alex", "alexoladom@gmail.com", "123", "602 123 654", "Calle del Sol, 22, 46001 Valencia", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));
+      users.add(new User(null, "Ana García", "ana.garcia@email.com", passwordEncoder.encode("dF!94vH*2kQ#bR"), "612 345 678", "Calle de Gran Vía, 23, 28013 Madrid", User.DegreeType.UNIVERSITY_DEGREE, 3, 0, 4.5, false));
+      users.add(new User(null, "Carlos Pérez", "carlos.perez@email.com", passwordEncoder.encode("mA3!9bL2zR@xZ0"), "633 111 222", "Carrer de Pau Claris, 46, 08010 Barcelona", User.DegreeType.MASTER, 2, 1, 4.2, false));
+      users.add(new User(null, "Laura Fernández", "laura.fernandez@email.com", passwordEncoder.encode("lauraFSevilla"), "622 333 444", "Avenida de la Constitución, 8, 41001 Sevilla", User.DegreeType.UNIVERSITY_DEGREE, 1, 0, 4.8, false));
+      users.add(new User(null, "David López", "david.lopez@email.com", passwordEncoder.encode("qZ6!L@j*0eD9fT"), "678 555 666", "Calle de Alcalá, 180, 28009 Madrid", User.DegreeType.DOCTORATE, 4, 0, 4.9, false));
+      users.add(new User(null, "Marta Rodríguez", "marta.rodriguez@email.com", passwordEncoder.encode("yX5!8OqR2jW9hZ"), "655 431 549", "Carrer de Roger de Llúria, 24, 08037 Barcelona", User.DegreeType.MASTER, 1, 0, 4.7, false));
+      users.add(new User(null, "José Martínez", "jose.martinez@email.com", passwordEncoder.encode("deusto#00"), "690 234 567", "Calle de Fuentecilla, 5, 14010 Córdoba", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.3, false));
+      users.add(new User(null, "Raquel Sánchez", "raquel.sanchez@email.com", passwordEncoder.encode("rG5uT$7vI2gO#p1"), "677 123 456", "Calle de la Paz, 34, 15001 A Coruña", User.DegreeType.UNIVERSITY_DEGREE, 3, 2, 3.8, false));
+      users.add(new User(null, "José Antonio Torres", "jose.antonio@email.com", passwordEncoder.encode("uZ0!W6tP#3rV!fL"), "616 741 982", "Calle San Fernando, 18, 41004 Sevilla", User.DegreeType.MASTER, 1, 0, 4.6, false));
+      users.add(new User(null, "Beatriz García", "beatriz.garcia@email.com", passwordEncoder.encode("wQ2bF!xL5tCj9Z"), "636 984 211", "Carrer de Valencia, 35, 08015 Barcelona", User.DegreeType.DOCTORATE, 3, 1, 4.4, false));
+      users.add(new User(null, "Pedro Gómez", "pedro.gomez@email.com", passwordEncoder.encode("micontraseña"), "688 234 123", "Calle Mayor, 12, 28013 Madrid", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.6, false));
+      users.add(new User(null, "Carmen Martínez", "carmen.martinez@email.com", passwordEncoder.encode("vX0nP9!fS3zT1dQ"), "676 453 782", "Avenida de la Paz, 40, 29012 Málaga", User.DegreeType.MASTER, 2, 1, 4.5, false));
+      users.add(new User(null, "Antonio Fernández", "antonio.fernandez@email.com", passwordEncoder.encode("antoFernan01"), "645 876 543", "Calle de Núñez de Balboa, 45, 28001 Madrid", User.DegreeType.UNIVERSITY_DEGREE, 3, 2, 4.7, false));
+      users.add(new User(null, "Elena López", "elena.lopez@email.com", passwordEncoder.encode("qZ5#V7tJ3kL2A*1"), "659 321 987", "Carrer de Sants, 58, 08014 Barcelona", User.DegreeType.MASTER, 1, 0, 4.8, false));
+      users.add(new User(null, "Juan Pérez", "juan.perez@email.com", passwordEncoder.encode("kF3uT0hS7!pVbD2"), "656 789 432", "Calle de Santiago, 14, 37001 Salamanca", User.DegreeType.DOCTORATE, 4, 0, 5.0, false));
+      users.add(new User(null, "Sara García", "sara.garcia@email.com", passwordEncoder.encode("contra123"), "602 123 654", "Calle del Sol, 22, 46001 Valencia", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));
+      users.add(new User(null, "Alex", "alexoladom@gmail.com", passwordEncoder.encode("123"), "602 123 654", "Calle del Sol, 22, 46001 Valencia", User.DegreeType.UNIVERSITY_DEGREE, 2, 0, 4.4, false));
       // Admin users
-      users.add(new User(null, "Sabin Luja", "sabin.luja@opendeusto.es", "sabin", "602 153 654", "Hermanos Aguirre Kalea, 2, 48014 Bilbao", User.DegreeType.UNIVERSITY_DEGREE, 4, 0, 5.0, true));
+      users.add(new User(null, "Sabin Luja", "sabin.luja@opendeusto.es", passwordEncoder.encode("sabin"), "602 153 654", "Hermanos Aguirre Kalea, 2, 48014 Bilbao", User.DegreeType.UNIVERSITY_DEGREE, 4, 0, 5.0, true));
       
       return users;
    }
@@ -173,7 +180,7 @@ public class DataInitializer {
       Long user_loan8 = userRepository.findById(8L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
       Long user_loan9 = userRepository.findById(9L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
       Long user_loan10 = userRepository.findById(10L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
-      Long user_Alex =userRepository.findById(24L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
+      //Long user_Alex =userRepository.findById(24L).map(User::getId).orElseThrow(() -> new RuntimeException("User not found"));
 
       // Get the ID of the Item
       Long item_loan1 = itemRepository.findById(1L).map(Item::getId).orElseThrow(() -> new RuntimeException("Item not found"));
@@ -220,7 +227,7 @@ public class DataInitializer {
       loans.add(new Loan(null, user_loan4, user_loan10, item_loan34, new Date(125, 2, 11), new Date(125, 2, 20), new Date(125, 2, 20), Loan.Status.RETURNED, 5.0, "Excellent return"));
       loans.add(new Loan(null, user_loan5, user_loan5, item_loan35, new Date(125, 1, 1), new Date(125, 1, 14), new Date(125, 1, 13), Loan.Status.RETURNED, 4.2, "Returned without issues"));
       loans.add(new Loan(null, user_loan6, user_loan3, item_loan31, new Date(125, 0, 5), new Date(125, 0, 12), null, Loan.Status.IN_USE, null, ""));
-      loans.add(new Loan(null, user_loan6, user_Alex, item_loan35, new Date(125, 0, 5), new Date(125, 4, 19), null, Loan.Status.IN_USE, null, ""));
+      //loans.add(new Loan(null, user_loan6, user_Alex, item_loan35, new Date(125, 0, 5), new Date(125, 4, 19), null, Loan.Status.IN_USE, null, ""));
 
       return loans;
    }
@@ -251,21 +258,27 @@ public class DataInitializer {
             long diffInMillies = returnDate.getTime() - currentDate.getTime();
             long diffInDays = diffInMillies / (1000 * 60 * 60 * 24);
             if (diffInDays<10) {
-            	User u=userRepository.findById(loan.getBorrower()).get();
-				Item i= itemRepo.findById(loan.getItem()).get();
-				if (u.getEmail().contains("gmail.com")|| u.getEmail().contains("opendeusto.es")){
-					if (diffInDays<10 && diffInDays>0) {
-	    				notificationService.enviarCorreo(u.getEmail(), "RETURN REMINDER", "Return reminder:\n you have "+ (diffInDays+1)+" days to return the item "+i.getName()+".\nDo not be late!");		
-	    			}else if( diffInDays<0) {
-	    				notificationService.enviarCorreo(u.getEmail(), "RETURN OVERDUE",
-	    						"Return overdue:\n you have to return the item " + i.getName()
-	    								+ ". You are "+(Math.abs(diffInDays))+" days late!Please do it as soon as possible!");
-	    			}else if(diffInDays==0) {
-	    				notificationService.enviarCorreo(u.getEmail(), "RETURN TODAY",
-	    						"Return today:\n You have to return the item " + i.getName() + ".\nPlease do it today!");
-	    			}
-				}
-            	
+            	Optional<User> optionalUser = userRepository.findById(loan.getBorrower());
+               Optional<Item> optionalItem = itemRepo.findById(loan.getItem());
+
+               if (optionalUser.isEmpty() || optionalItem.isEmpty()) {
+                  continue;  // skip this loan if user or item not found
+               }
+
+               User u = optionalUser.get();
+               Item i = optionalItem.get();
+               if (u.getEmail().contains("gmail.com")|| u.getEmail().contains("opendeusto.es")){
+                  if (diffInDays<10 && diffInDays>0) {
+                     notificationService.enviarCorreo(u.getEmail(), "RETURN REMINDER", "Return reminder:\n you have "+ (diffInDays+1)+" days to return the item "+i.getName()+".\nDo not be late!");		
+                  }else if( diffInDays<0) {
+                     notificationService.enviarCorreo(u.getEmail(), "RETURN OVERDUE",
+                           "Return overdue:\n you have to return the item " + i.getName()
+                                 + ". You are "+(Math.abs(diffInDays))+" days late!Please do it as soon as possible!");
+                  }else if(diffInDays==0) {
+                     notificationService.enviarCorreo(u.getEmail(), "RETURN TODAY",
+                           "Return today:\n You have to return the item " + i.getName() + ".\nPlease do it today!");
+                  }
+               }
             }
 			
          }
