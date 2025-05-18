@@ -227,9 +227,9 @@ public class UserController {
 	}
 
     public UserRecord userToUserRecord(User user) {
-<span class="fc" id="L230">        String[] nameParts = user.getName().split(&quot; &quot;, 2);</span>
-<span class="pc bpc" id="L231" title="1 of 2 branches missed.">        String firstName = nameParts.length &gt; 0 ? nameParts[0] : &quot;&quot;;</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">        String lastName = nameParts.length &gt; 1 ? nameParts[1] : &quot;&quot;;</span>
+<span class="fc" id="L230">        String[] nameParts = user.getName().split(&quot; &quot;);</span>
+<span class="fc" id="L231">        String firstName = nameParts[0];</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        String lastName  = nameParts.length &gt; 1 ? nameParts[nameParts.length - 1] : &quot;&quot;;</span>
 
 <span class="fc" id="L234">        return new UserRecord(</span>
             firstName,
