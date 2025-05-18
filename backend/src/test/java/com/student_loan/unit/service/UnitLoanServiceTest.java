@@ -10,6 +10,7 @@ import com.student_loan.model.Item;
 import com.student_loan.repository.LoanRepository;
 import com.student_loan.repository.UserRepository;
 import com.student_loan.service.LoanService;
+import com.student_loan.service.NotificationService;
 import com.student_loan.repository.ItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +36,9 @@ class UnitLoanServiceTest {
 
     @InjectMocks
     private LoanService loanService;
+    
+    @Mock
+    private NotificationService notificationService;
 
     @BeforeEach
     void setUp() {

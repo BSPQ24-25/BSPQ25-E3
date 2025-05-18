@@ -7,6 +7,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class NotificationService {
 
@@ -28,4 +29,5 @@ public class NotificationService {
 			logger.error("Error al enviar el correo: " + e.getMessage());
 		}
     }
+    
 }

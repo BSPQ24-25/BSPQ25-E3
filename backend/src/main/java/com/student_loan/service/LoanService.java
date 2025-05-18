@@ -35,6 +35,9 @@ public class LoanService {
 	@Autowired
 	private NotificationService notificationService;
 
+	
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LoanService.class);
+	
 	public List<Loan> getAllLoans() {
 		return loanRepository.findAll();
 	}
@@ -164,6 +167,7 @@ public class LoanService {
 
     public Loan createLoan(Loan loan) {
         // Check existing loan
+    	logger.info("Creating loan" + loan.toString());
         Optional<Loan> existing = loanRepository.findById(loan.getId());
         if (existing != null && existing.isPresent()) {
             throw new RuntimeException("Loan already exists with id: " + loan.getId());
@@ -199,8 +203,7 @@ public class LoanService {
             int activos = loanRepository.countByBorrowerAndLoanStatus(
                 loan.getBorrower(), Loan.Status.IN_USE);
             if (activos >= 3) {
-                throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                throw new RuntimeException(
                     "Failed to save loan with id " + loan.getId() + ": You already have 3 items reserved. Return an item before booking another."
                 );
             }
