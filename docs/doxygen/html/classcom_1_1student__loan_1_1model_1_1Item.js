@@ -1,7 +1,7 @@
 var classcom_1_1student__loan_1_1model_1_1Item =
 [
-    [ "ItemCondition", "enumcom_1_1student__loan_1_1model_1_1Item_1_1ItemCondition.html", "enumcom_1_1student__loan_1_1model_1_1Item_1_1ItemCondition" ],
     [ "ItemStatus", "enumcom_1_1student__loan_1_1model_1_1Item_1_1ItemStatus.html", "enumcom_1_1student__loan_1_1model_1_1Item_1_1ItemStatus" ],
+    [ "ItemCondition", "enumcom_1_1student__loan_1_1model_1_1Item_1_1ItemCondition.html", "enumcom_1_1student__loan_1_1model_1_1Item_1_1ItemCondition" ],
     [ "Item", "classcom_1_1student__loan_1_1model_1_1Item.html#af2f6b4d8f54cd3685c3bbd9ee322942d", null ],
     [ "Item", "classcom_1_1student__loan_1_1model_1_1Item.html#a0d9540df91c5a12461c8bc1fb7aba4a0", null ],
     [ "getCategory", "classcom_1_1student__loan_1_1model_1_1Item.html#ac73b7471da55d030c49666c176279d16", null ],

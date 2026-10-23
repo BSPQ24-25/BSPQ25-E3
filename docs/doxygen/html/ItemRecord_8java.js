@@ -1,4 +1,4 @@
 var ItemRecord_8java =
 [
-    [ "ItemRecord", "ItemRecord_8java.html#af4e7eb181ec47460de823f16fb86ac77", null ]
+    [ "com.student_loan.dtos.ItemRecord", "namespacecom_1_1student__loan_1_1dtos.html#af4e7eb181ec47460de823f16fb86ac77", null ]
 ];

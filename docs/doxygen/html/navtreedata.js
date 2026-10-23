@@ -26,7 +26,7 @@ var NAVTREE =
 [
   [ "StudentLoanManagement", "index.html", [
     [ "Packages", "namespaces.html", [
-      [ "Package List", "namespaces.html", null ],
+      [ "Package List", "namespaces.html", "namespaces_dup" ],
       [ "Package Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ]
@@ -51,8 +51,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "CorsConfig_8java.html",
-"classcom_1_1student__loan_1_1service_1_1ItemService.html#a59539e37c22092ecdc3394dd6683c14f"
+"classcom_1_1student__loan_1_1dtos_1_1UserDTO.html#aca7c16b537cd11cf16bb94d06e9e994b",
+"dir_8a22873406ddef3ffbbc0bacea2033ba.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click to disable panel synchronization';
+var SYNCOFFMSG = 'click to enable panel synchronization';
+var LISTOFALLMEMBERS = 'List of all members';
